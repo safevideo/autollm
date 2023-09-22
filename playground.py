@@ -1,4 +1,4 @@
-from llama_index import VectorStoreIndex, download_loader
+from llama_index import VectorStoreIndex
 from pathlib import Path
 from multi_markdown_reader import MultiMarkdownReader
 
