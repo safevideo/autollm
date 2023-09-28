@@ -1,5 +1,7 @@
 from multi_markdown_reader import MultiMarkdownReader
 from pathlib import Path
+from typing import List
+
 
 def process_markdown_files(folder_path: Path) -> list:
     """
@@ -14,3 +16,18 @@ def process_markdown_files(folder_path: Path) -> list:
     markdown_reader = MultiMarkdownReader()
     documents = markdown_reader.load_data_from_folder(folder_path)
     return documents
+
+
+def get_markdown_files(repo_path: Path, docs_folder: Path = Path("docs")) -> List[Path]:
+    """
+    Get all markdown files in the docs folder of a Git repository.
+
+    Parameters:
+        repo_path (Path): The path to the Git repository.
+        docs_folder (Path): The path to the docs folder within the repository. Defaults to "docs".
+
+    Returns:
+        List[Path]: List of Paths to all markdown files.
+    """
+    docs_path = repo_path / docs_folder
+    return list(docs_path.glob('**/*.md'))

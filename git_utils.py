@@ -1,26 +1,16 @@
-import subprocess
+from git import Repo
 from pathlib import Path
-import os
 
-def clone_and_list_markdown_files(git_repo_url, local_path):
+def clone_or_pull_repository(git_url: str, local_path: Path) -> None:
     """
-    Clone the git repository and list all markdown files in the 'docs' folder.
-    
+    Clone a Git repository or pull latest changes if it already exists.
+
     Parameters:
-        git_repo_url (str): URL of the git repository.
-        local_path (str): Local path to clone the repository.
-        
-    Returns:
-        list: List of markdown file paths.
+        git_url (str): The URL of the Git repository.
+        local_path (Path): The local path where the repository will be cloned or updated.
     """
-    # Clone or pull the git repository
-    if not os.path.exists(local_path):
-        subprocess.run(["git", "clone", git_repo_url, local_path])
+    if local_path.exists():
+        repo = Repo(str(local_path))
+        repo.remotes.origin.pull()
     else:
-        subprocess.run(["git", "-C", local_path, "pull"])
-    
-    # Identify all markdown files in the 'docs' folder
-    docs_path = Path(local_path) / "docs"
-    markdown_files = list(docs_path.rglob("*.md"))
-    
-    return markdown_files
+        Repo.clone_from(git_url, str(local_path))
