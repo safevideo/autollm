@@ -8,8 +8,10 @@
 pip install -r requirements.txt
 ```
 
-### Setup environment variables
+### Sample .env file
 
 ```bash
-export OPENAI_API_KEY=<your-openai-api-key>
+OPENAI_API_KEY=<your-openai-api-key>
+GIT_REPO_URL="https://github.com/ultralytics/ultralytics.git"
+GIT_REPO_PATH="./ultralytics"
 ```

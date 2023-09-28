@@ -2,10 +2,15 @@ from git_utils import clone_or_pull_repository
 from hash_utils import check_for_changes
 from markdown_processing import process_markdown_files, get_markdown_files
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
 
 def main():
-    git_repo_url = "https://github.com/ultralytics/ultralytics.git"
-    git_repo_path = Path("./ultralytics")
+    load_dotenv()
+
+    git_repo_url = os.getenv("GIT_REPO_URL")
+    git_repo_path = Path(os.getenv("GIT_REPO_PATH"))
     docs_path = git_repo_path / "docs"
 
     # Clone or update the repository
