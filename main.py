@@ -19,11 +19,11 @@ def main():
     changed_files = check_for_changes(markdown_files)
 
     if changed_files:
-        # Step 3: Process the updated markdown files
+        print(f"Number of changed files: {len(changed_files)}")
+        # Process the updated markdown files
         documents = process_markdown_files(docs_path)
 
         # TODO: Implement function to update the vector database
-        # Step 4: Update the vector database
         # update_vector_index(documents)
     else:
         print("No changes detected.")
