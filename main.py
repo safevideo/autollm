@@ -9,7 +9,8 @@ def main():
 
     # Step 1: Clone and list markdown files
     markdown_files = clone_and_list_markdown_files(git_repo_url, local_path)
-
+    print(f"Number of markdown files: {len(markdown_files)}")
+    
     # Step 2: Check for file changes
     changed_files = check_for_changes(markdown_files)
 
@@ -20,6 +21,8 @@ def main():
         # TODO: Implement function to update the vector database
         # Step 4: Update the vector database
         # update_vector_index(documents)
+    else:
+        print("No changes detected.")
 
 if __name__ == "__main__":
     main()

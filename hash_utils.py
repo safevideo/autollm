@@ -1,49 +1,70 @@
 import hashlib
-import os
+from pathlib import Path
+from typing import List, Dict
 
-def get_md5(file_path):
+def get_md5(file_path: Path) -> str:
     """
-    Calculate the MD5 hash of a file.
-    
+    Compute the MD5 hash of a file.
+
     Parameters:
-        file_path (Path): Path to the file.
-        
+        file_path (Path): The path to the file.
+
     Returns:
-        str: MD5 hash of the file.
+        str: The MD5 hash of the file.
     """
     hasher = hashlib.md5()
-    with open(file_path, 'rb') as f:
-        while chunk := f.read(8192):
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
             hasher.update(chunk)
     return hasher.hexdigest()
 
-def check_for_changes(markdown_files, hash_file="file_hashes.txt"):
+def load_last_hashes(hash_file: Path) -> Dict[str, str]:
     """
-    Check for changes in markdown files by comparing MD5 hashes.
-    
+    Load the last known hashes from a file.
+
     Parameters:
-        markdown_files (list): List of markdown file paths.
-        hash_file (str): Path to the file where hashes are stored.
-        
+        hash_file (Path): The path to the hash file.
+
     Returns:
-        list: List of changed file paths.
+        Dict[str, str]: A dictionary mapping file paths to their MD5 hashes.
     """
-    changed_files = []
-    
-    # Load old hashes if available
-    old_hashes = {}
-    if os.path.exists(hash_file):
+    if hash_file.exists():
         with open(hash_file, 'r') as f:
-            old_hashes = {line.split()[0]: line.split()[1] for line in f.readlines()}
-    
-    # Calculate and compare new hashes
-    new_hashes = {}
+            return {line.split()[0]: line.split()[1] for line in f.readlines()}
+    return {}
+
+def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None:
+    """
+    Save the current hashes to a file.
+
+    Parameters:
+        current_hashes (Dict[str, str]): A dictionary mapping file paths to their MD5 hashes.
+        hash_file (Path): The path to the hash file.
+    """
     with open(hash_file, 'w') as f:
-        for file_path in markdown_files:
-            new_hash = get_md5(file_path)
-            if old_hashes.get(str(file_path), None) != new_hash:
-                changed_files.append(file_path)
-            new_hashes[str(file_path)] = new_hash
-            f.write(f"{file_path} {new_hash}\n")
-            
+        for file, hash in current_hashes.items():
+            f.write(f"{file} {hash}\n")
+
+def check_for_changes(markdown_files: List[Path], hash_file: Path = Path("file_hashes.txt")) -> List[Path]:
+    """
+    Check for file changes based on their MD5 hashes.
+
+    Parameters:
+        markdown_files (List[Path]): List of markdown files to check.
+        hash_file (Path): The path to the hash file.
+
+    Returns:
+        List[Path]: List of changed files.
+    """
+    last_hashes = load_last_hashes(hash_file)
+    current_hashes = {}
+    changed_files = []
+
+    for file in markdown_files:
+        current_hash = get_md5(file)
+        current_hashes[str(file)] = current_hash
+        if str(file) not in last_hashes or last_hashes[str(file)] != current_hash:
+            changed_files.append(file)
+
+    save_current_hashes(current_hashes, hash_file)
     return changed_files
