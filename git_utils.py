@@ -1,7 +1,6 @@
 import subprocess
 from pathlib import Path
 import os
-from hash_utils import check_for_changes
 
 def clone_and_list_markdown_files(git_repo_url, local_path):
     """
@@ -25,12 +24,3 @@ def clone_and_list_markdown_files(git_repo_url, local_path):
     markdown_files = list(docs_path.rglob("*.md"))
     
     return markdown_files
-
-# Example usage
-git_repo_url = "https://github.com/ultralytics/ultralytics.git"
-local_path = "./ultralytics_docs"
-markdown_files = clone_and_list_markdown_files(git_repo_url, local_path)
-print("Markdown files:", markdown_files)
-
-changed_files = check_for_changes(markdown_files)
-print("Changed files:", changed_files)
