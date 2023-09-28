@@ -1,7 +1,9 @@
+import logging
 from multi_markdown_reader import MultiMarkdownReader
 from pathlib import Path
 from typing import List
 
+logger = logging.getLogger(__name__)
 
 def process_markdown_files(folder_path: Path) -> list:
     """
@@ -30,4 +32,6 @@ def get_markdown_files(repo_path: Path, docs_folder: Path = Path("docs")) -> Lis
         List[Path]: List of Paths to all markdown files.
     """
     docs_path = repo_path / docs_folder
-    return list(docs_path.glob('**/*.md'))
+    markdown_files = list(docs_path.glob('**/*.md'))
+    logger.info(f"Found {len(markdown_files)} markdown files.")
+    return markdown_files

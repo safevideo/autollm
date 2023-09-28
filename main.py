@@ -1,9 +1,13 @@
+import logging
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
 from git_utils import clone_or_pull_repository
 from hash_utils import check_for_changes
 from markdown_processing import process_markdown_files, get_markdown_files
-from pathlib import Path
-import os
-from dotenv import load_dotenv
+
+logging.basicConfig(level=logging.INFO)
 
 
 def main():
@@ -18,13 +22,11 @@ def main():
 
     # Get all markdown files
     markdown_files = get_markdown_files(git_repo_path)
-    print(f"Number of markdown files: {len(markdown_files)}")
 
     # Check for file changes
     changed_files = check_for_changes(markdown_files)
 
     if changed_files:
-        print(f"Number of changed files: {len(changed_files)}")
         # Process the updated markdown files
         documents = process_markdown_files(docs_path)
 

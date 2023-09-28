@@ -1,6 +1,9 @@
+import logging
 import hashlib
 from pathlib import Path
 from typing import List, Dict
+
+logger = logging.getLogger(__name__)
 
 def get_md5(file_path: Path) -> str:
     """
@@ -65,6 +68,8 @@ def check_for_changes(markdown_files: List[Path], hash_file: Path = Path("file_h
         current_hashes[str(file)] = current_hash
         if str(file) not in last_hashes or last_hashes[str(file)] != current_hash:
             changed_files.append(file)
+
+    logger.info(f"Found {len(changed_files)} changed files.")
 
     save_current_hashes(current_hashes, hash_file)
     return changed_files
