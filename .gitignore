@@ -161,3 +161,7 @@ cython_debug/
 
 # Ignore the cloned Ultralytics repository
 /ultralytics/
+# For testing
+testing.py
+# Hash storage file
+file_hashes.txt
