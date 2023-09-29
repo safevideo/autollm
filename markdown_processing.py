@@ -5,7 +5,7 @@ from typing import List
 
 logger = logging.getLogger(__name__)
 
-def process_markdown_files(folder_path: Path) -> list:
+def process_and_get_header_docs(folder_path: Path) -> list:
     """
     Process markdown files to extract "header-documents."
 
