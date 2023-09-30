@@ -6,6 +6,7 @@ A parser for md files.
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, cast
+import uuid
 
 from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
@@ -117,10 +118,10 @@ class MarkdownReader(BaseReader):
         """
         tups = self.parse_tups(file, content=content)
         results = []
-        
+
         for header, value in tups:
             # Generating doc_id
-            doc_id = f"{str(file)}_{header.replace(' ', '_')}"
+            doc_id = f"{str(file)}_{header.replace(' ', '_')}" if header else str(uuid.uuid4())
             
             # Creating Document object
             results.append(

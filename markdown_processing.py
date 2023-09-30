@@ -23,21 +23,20 @@ def process_and_get_header_docs(folder_path: Path, extra_info: Optional[Dict] = 
     """
     multi_markdown_reader = MultiMarkdownReader()
     documents = multi_markdown_reader.load_data_from_folder(folder_path, extra_info=extra_info)
+    logger.info(f"Found {len(documents)} header-documents.")
     return documents
 
 
-def get_markdown_files(repo_path: Path, docs_folder: Path = Path("docs")) -> List[Path]:
+def get_markdown_files(base_path: Path) -> List[Path]:
     """
-    Get all markdown files in the docs folder of a Git repository.
+    Get all markdown files in a given path.
 
     Parameters:
-        repo_path (Path): The path to the Git repository.
-        docs_folder (Path): The path to the docs folder within the repository. Defaults to "docs".
+        base_path (Path): Base directory to search for markdown files.
 
     Returns:
         List[Path]: List of Paths to all markdown files.
     """
-    docs_path = repo_path / docs_folder
-    markdown_files = list(docs_path.glob('**/*.md'))
+    markdown_files = list(base_path.glob('**/*.md'))
     logger.info(f"Found {len(markdown_files)} markdown files.")
     return markdown_files

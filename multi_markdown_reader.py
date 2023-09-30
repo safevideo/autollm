@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List, Dict, Optional
-import os
+from tqdm import tqdm
 
 from llama_index.schema import Document
 
@@ -31,17 +31,18 @@ class MultiMarkdownReader(MarkdownReader):
     def load_data_from_folder(
             self,
             folder_path: Path,
-            extra_info: Optional[Dict] = None
+            extra_info: Optional[Dict] = None,
+            show_progress: bool = True,
     ) -> List[Document]:
         """Parse all markdown files in a given folder into Documents."""
         all_documents = []
         
-        # Loop through each markdown file in the folder
-        for file_name in os.listdir(folder_path):
-            if file_name.endswith(".md"):
-                file_path = folder_path / file_name
-                # Using the inherited load_data method
-                documents = self.load_data(file_path, extra_info=extra_info)
-                all_documents.extend(documents)
+        # Gather all markdown files in the folder and its subfolders
+        all_files = list(folder_path.rglob("*.md"))
+        
+        for file_path in all_files:
+            # Use the overridden load_data method
+            documents = self.load_data(file_path, extra_info)
+            all_documents.extend(documents)
 
         return all_documents
