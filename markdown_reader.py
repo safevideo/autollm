@@ -103,24 +103,32 @@ class MarkdownReader(BaseReader):
         extra_info: Optional[Dict] = None,
         content: Optional[str] = None,
     ) -> List[Document]:
-        """Parse file into string.
-        If content is provided, use that instead of reading from file."""
+        """
+        Parse file into string.
+        If content is provided, use that instead of reading from file.
+        
+        Parameters:
+            file (Path): The path to the markdown file.
+            extra_info (Optional[Dict]): Additional metadata to include.
+            content (Optional[str]): Content to use instead of reading from file.
+        
+        Returns:
+            List[Document]: List of Document objects representing header-docs.
+        """
         tups = self.parse_tups(file, content=content)
         results = []
         
-        # Add file path to metadata for tracking
-        metadata = {'original_file_path': str(file)}
-        
-        # Merge with any additional metadata
-        if extra_info:
-            metadata.update(extra_info)
-        
-        results = [
-            Document(
-                text=f"\n\n{header}\n{value}" if header else value,
-                metadata=metadata,
+        for header, value in tups:
+            # Generating doc_id
+            doc_id = f"{str(file)}_{header.replace(' ', '_')}"
+            
+            # Creating Document object
+            results.append(
+                Document(
+                    id_=doc_id,  # Set the id_
+                    text=f"\n\n{header}\n{value}" if header else value,
+                    metadata=extra_info or {}
+                )
             )
-            for header, value in tups
-        ]
         
         return results
