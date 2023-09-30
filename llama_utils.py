@@ -1,45 +1,46 @@
-from pathlib import Path
-from typing import List
+# Desc: Utility functions for llama index.
+from llama_index import VectorStoreIndex
+from typing import List, Type
 
-from llama_index.vector_stores.types import ExactMatchFilter, MetadataFilters
-from llama_index import VectorStoreIndex, Document
+from markdown_reader import MarkdownReader
 
-
-def delete_docs_from_changed_files(index: VectorStoreIndex, changed_files: List[Path]):
+def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[str]):
     """
-    Delete all documents in the index that belong to the list of changed files.
+    Update the index with the changed markdown files.
 
-    Parameters:
-        index (SummaryIndex): The index object.
-        changed_files (List[Path]): List of changed markdown files.
+    This function first deletes all the old documents associated with the changed files
+    from the index and then inserts the updated documents.
+
+    Args:
+        index (Type[BaseIndex]): The LlamaIndex object to be updated.
+        files (List[str]): List of markdown files that have changed.
+
+    Returns:
+        None
     """
-    for file in changed_files:
-        filters = MetadataFilters(filters=[ExactMatchFilter(key="original_file_path", value=str(file))])
-        retriever = index.as_retriever(filters=filters)
-        
-        # Retrieve the documents to delete
-        docs_to_delete = retriever.retrieve("")  
-        
-        for doc in docs_to_delete:
-            index.delete_ref_doc(doc.node.id_, delete_from_docstore=True)
+    # Initialize a MarkdownReader object
+    markdown_reader = MarkdownReader()
+    
+    # Loop through each file in the list of changed files
+    for file in files:
+        # Initialize an empty list to store existing doc_ids
+        existing_doc_ids = []
 
+        # Iterate over the items in index.ref_doc_info
+        for key, value in index.ref_doc_info.items():
+            # Check if 'original_file_path' in metadata matches the file path
+            if value.metadata.get('original_file_path') == str(file):
+                # Append the key (doc_id) to the existing_doc_ids list
+                existing_doc_ids.append(key)
 
-def update_index_for_changed_files(index: VectorStoreIndex, changed_files: List[Path], markdown_reader) -> None:
-    """
-    Delete old documents and insert new ones for the changed files.
-
-    Parameters:
-        index (VectorStoreIndex): The current Llama VectorStoreIndex.
-        changed_files (List[Path]): List of changed markdown files.
-        markdown_reader: An instance of MarkdownReader class.
-    """
-    # Delete old header-docs for changed files
-    delete_docs_from_changed_files(index, changed_files)
-
-    # Process the updated markdown files and insert new header-docs
-    for file in changed_files:
+        # Delete old documents related to the current file from the index
+        for doc_id in existing_doc_ids:
+            index.delete_ref_doc(doc_id, delete_from_docstore=True)
+ 
+        # Parse the updated file into a list of Documents
         extra_info = {"original_file_path": str(file)}
         new_documents = markdown_reader.load_data(file, extra_info=extra_info)
 
+        # Insert the new documents into the index
         for doc in new_documents:
-            index.insert(Document(text=doc.text, metadata=doc.metadata))
+            index.insert(doc)

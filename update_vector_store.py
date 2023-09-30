@@ -5,8 +5,7 @@ import os
 
 from git_utils import clone_or_pull_repository
 from hash_utils import check_for_changes
-from llama_utils import delete_docs_from_changed_files, update_index_for_changed_files
-from markdown_reader import MarkdownReader
+from llama_utils import update_index_for_changed_files
 from markdown_processing import process_and_get_header_docs, get_markdown_files
 
 from llama_index import VectorStoreIndex, StorageContext, load_index_from_storage
@@ -42,24 +41,18 @@ def update_vector_store():
         # If index doesn't exist, create a new one from available documents
         documents = process_and_get_header_docs(docs_path)
         index = VectorStoreIndex.from_documents(documents)
-
+    
     # Get the list of all markdown files in the repository
-    markdown_files_to_update = get_markdown_files(git_repo_path)
+    markdown_files = get_markdown_files(git_repo_path)
 
     # Identify files that have changed since the last update
-    files_to_update_in_vector_store = check_for_changes(markdown_files_to_update)
+    markdown_files_to_update = check_for_changes(markdown_files)
 
-    if files_to_update_in_vector_store:
-        # Delete outdated documents from the index
-        delete_docs_from_changed_files(index, files_to_update_in_vector_store)
-
-        # Initialize the MarkdownReader
-        markdown_reader = MarkdownReader()
-
+    if markdown_files_to_update:
         # Update the index with new documents
-        update_index_for_changed_files(index, files_to_update_in_vector_store, markdown_reader)
+        update_index_for_changed_files(index, markdown_files_to_update)
     else:
-        print("No changes detected for vector store update.")
+        logging.info("No changes detected.")
 
     # Persist the updated index to disk
     index.storage_context.persist()
