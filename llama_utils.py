@@ -4,7 +4,7 @@ from llama_index import VectorStoreIndex, StorageContext, load_index_from_storag
 from typing import List, Type, Tuple
 from pathlib import Path
 
-from markdown_reader import MarkdownReader
+from multi_markdown_reader import MultiMarkdownReader
 from hash_utils import check_for_changes
 from markdown_processing import get_markdown_files, process_and_get_header_docs
 
@@ -24,8 +24,8 @@ def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[st
     Returns:
         None
     """
-    # Initialize a MarkdownReader object
-    markdown_reader = MarkdownReader()
+    # Initialize a MultiMarkdownReader object
+    markdown_reader = MultiMarkdownReader()
 
     # Loop through each file in the list of changed files
     for file in files:

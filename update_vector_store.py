@@ -42,3 +42,6 @@ def update_vector_store(base_path: Path = docs_path):
 
     # Persist the updated index to disk
     index.storage_context.persist()
+
+if __name__ == "__main__":
+    update_vector_store()

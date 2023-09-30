@@ -18,7 +18,7 @@ print(f"Number of 'header-documents' loaded: {len(documents)}")
 if documents:
     print("Sample 'header-document':")
     print(documents[0].text)
-
+documents[0].get_metadata_str()
 
 # Create an index from the documents
 index = VectorStoreIndex.from_documents(documents)

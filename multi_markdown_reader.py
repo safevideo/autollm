@@ -32,7 +32,6 @@ class MultiMarkdownReader(MarkdownReader):
             self,
             folder_path: Path,
             extra_info: Optional[Dict] = None,
-            show_progress: bool = True,
     ) -> List[Document]:
         """Parse all markdown files in a given folder into Documents."""
         all_documents = []
