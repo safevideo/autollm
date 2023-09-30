@@ -20,7 +20,7 @@ def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[st
     """
     # Initialize a MarkdownReader object
     markdown_reader = MarkdownReader()
-    
+
     # Loop through each file in the list of changed files
     for file in files:
         # Initialize an empty list to store existing doc_ids
@@ -37,9 +37,8 @@ def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[st
         for doc_id in existing_doc_ids:
             index.delete_ref_doc(doc_id, delete_from_docstore=True)
  
-        # Parse the updated file into a list of Documents
-        extra_info = {"original_file_path": str(file)}
-        new_documents = markdown_reader.load_data(file, extra_info=extra_info)
+        # Parse the updated file into a list of Header Documents
+        new_documents = markdown_reader.load_data(file)
 
         # Insert the new documents into the index
         for doc in new_documents:
