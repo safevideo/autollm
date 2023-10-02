@@ -25,12 +25,12 @@ app = FastAPI(
 )
 
 # Initialize or load the vector store index
-folder_path = Path('./README.md')
+folder_path = Path("llama_index/docs")
 index, initial_load = initialize_or_load_index(docs_path=folder_path)
 query_engine = index.as_query_engine()
 
 @app.get("/ask", tags=["ask"])
-async def read_query(user_query: str):
+async def ask_docs(user_query: str):
     """
     Endpoint to perform text-based natural language queries.
 
