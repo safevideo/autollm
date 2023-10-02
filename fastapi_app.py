@@ -27,7 +27,7 @@ app = FastAPI(
 # Initialize or load the vector store index
 folder_path = Path("llama_index/docs")
 index, initial_load = initialize_or_load_index(docs_path=folder_path)
-query_engine = index.as_query_engine()
+query_engine = index.as_query_engine(similarity_top_k=10)
 
 @app.get("/ask_question", tags=["ask"])
 async def ask_question(user_query: str):
