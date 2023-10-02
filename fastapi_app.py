@@ -29,16 +29,18 @@ folder_path = Path("llama_index/docs")
 index, initial_load = initialize_or_load_index(docs_path=folder_path)
 query_engine = index.as_query_engine()
 
-@app.get("/ask", tags=["ask"])
-async def ask_docs(user_query: str):
+@app.get("/ask_question", tags=["ask"])
+async def ask_question(user_query: str):
     """
-    Endpoint to perform text-based natural language queries.
+    Perform Text-Based Queries on Document Store
+    
+    This endpoint receives a natural language query from the user and returns the most relevant answer from the document store.
 
     Args:
-        user_query (str): The user's query.
+        user_query (str): The natural language query from the user.
 
     Returns:
-        RESPONSE_TYPE: The query response.
+        dict: The response containing the answer to the user's query.
     """
     # Query the engine
     response = query_engine.query(user_query)
