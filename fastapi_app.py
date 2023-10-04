@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pathlib import Path
 import logging
 
-from llama_utils import initialize_or_load_index
+from ai_doc_assistant_setup import initialize_query_engine
 from fastapi_docs import (
     title,
     description,
@@ -26,8 +26,7 @@ app = FastAPI(
 
 # Initialize or load the vector store index
 folder_path = Path("llama_index/docs")
-index, initial_load = initialize_or_load_index(docs_path=folder_path, read_as_single_doc=True)
-query_engine = index.as_query_engine(similarity_top_k=5)
+query_engine = initialize_query_engine(docs_path=folder_path)
 
 @app.get("/ask_question", tags=["ask"])
 async def ask_question(user_query: str):
