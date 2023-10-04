@@ -9,10 +9,17 @@ pip install -r requirements.txt
 
 ## Sample .env file
 
-```bash
+```.env
 OPENAI_API_KEY=<your-openai-api-key>
+
 GIT_REPO_URL="https://github.com/ultralytics/ultralytics.git"
 GIT_REPO_PATH="./ultralytics"
+
+MAX_TOKENS = 1024
+CHUNK_SIZE = 1024
+CHUNK_OVERLAP = 20
+CONTEXT_WINDOW = 4096
+SIMILARITY_TOP_K = 4
 ```
 
 ## Run FastAPI Server
