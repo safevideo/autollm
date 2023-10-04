@@ -1,14 +1,13 @@
 # doc-qa-ai
 
-## Setup
-
-### Install dependencies
-
+## installation
 ```bash
+conda create --name aidocs python=3.10
+conda activate aidocs
 pip install -r requirements.txt
 ```
 
-### Sample .env file
+## Sample .env file
 
 ```bash
 OPENAI_API_KEY=<your-openai-api-key>
