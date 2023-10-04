@@ -35,13 +35,10 @@ def update_vector_store(base_path: Path = docs_path):
     clone_or_pull_repository(git_repo_url, git_repo_path)
 
     # Initialize or load the vector store index
-    index, initial_load = initialize_or_load_index(docs_path=base_path)
+    index, initial_load = initialize_or_load_index(docs_path=base_path, persist_index=True)
         
     # Process markdown files and update the index
     process_and_update_docs(index, base_path, initial_load=initial_load)
-
-    # Persist the updated index to disk
-    index.storage_context.persist()
 
 if __name__ == "__main__":
     update_vector_store()

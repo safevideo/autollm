@@ -6,7 +6,7 @@ from pathlib import Path
 
 from multi_markdown_reader import MultiMarkdownReader
 from hash_utils import check_for_changes
-from markdown_processing import get_markdown_files, process_and_get_header_docs
+from markdown_processing import get_markdown_files, process_and_get_documents
 
 logger = logging.getLogger(__name__)
 
@@ -75,12 +75,19 @@ def process_and_update_docs(index, base_path, initial_load: bool):
 
 
 
-def initialize_or_load_index(docs_path: Path, show_progress: bool = True) -> Tuple[VectorStoreIndex, bool]:
+def initialize_or_load_index(docs_path: Path,
+    read_as_single_doc: bool = True,
+    persist_index: bool = True,
+    show_progress: bool = True
+    ) -> Tuple[VectorStoreIndex, bool]:
     """
     Initialize or load the Vector Store Index.
 
     Parameters:
         docs_path (Path): Path to the documents folder.
+        read_as_single_doc (bool): Flag to read entire markdown as a single document.
+        persist_index (bool): Flag to persist the index to disk.
+        show_progress (bool): Flag to show progress bar.
 
     Returns:
         VectorStoreIndex: The initialized or loaded index.
@@ -96,9 +103,11 @@ def initialize_or_load_index(docs_path: Path, show_progress: bool = True) -> Tup
     except FileNotFoundError:
         # If index doesn't exist, create a new one
         logger.info("No existing index found. Creating a new one.")
-        documents = process_and_get_header_docs(docs_path)
+        documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
         index = VectorStoreIndex.from_documents(documents, show_progress=show_progress)
         logger.info("New index successfully created.")
+        # Persist the index to disk if persist_index is True
+        index.storage_context.persist() if persist_index else None
         initial_load = True
 
     return index, initial_load
