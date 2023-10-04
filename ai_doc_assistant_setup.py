@@ -122,11 +122,5 @@ def initialize_query_engine(docs_path: str, persist_index: bool = True) -> Tuple
     # Initialize the query engine
     query_engine = AIDocQueryEngine(retriever=retriever)
 
-    # Configure the global service context
-    service_context = ServiceContext.from_defaults(
-        query_engine=query_engine
-    )
-    set_global_service_context(service_context)
-
     logger.info("Query engine successfully initialized.")
     return query_engine
