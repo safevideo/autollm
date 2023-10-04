@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from pathlib import Path
 import logging
 
-from llama_utils import initialize_or_load_index
+from ai_doc_assistant_setup import initialize_query_engine, initialize_service_context
+from git_utils import clone_or_pull_repository
+from env_utils import read_env_variable
 from fastapi_docs import (
     title,
     description,
@@ -24,10 +26,20 @@ app = FastAPI(
     openapi_tags=tags_metadata,
 )
 
-# Initialize or load the vector store index
-folder_path = Path("llama_index/docs")
-index, initial_load = initialize_or_load_index(docs_path=folder_path, read_as_single_doc=True)
-query_engine = index.as_query_engine(similarity_top_k=5)
+# Get environment variables
+git_repo_url = read_env_variable("GIT_REPO_URL")
+git_repo_path = Path(read_env_variable("GIT_REPO_PATH"))
+# Configure where the markdown files are located
+docs_path = git_repo_path / "docs"
+
+# Clone or pull the git repository to get the latest markdown files
+clone_or_pull_repository(git_repo_url, git_repo_path)
+
+# Initialize the service context
+service_context = initialize_service_context()
+
+# Initialize the query engine
+query_engine = initialize_query_engine(docs_path=docs_path)
 
 @app.get("/ask_question", tags=["ask"])
 async def ask_question(user_query: str):
