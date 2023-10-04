@@ -41,13 +41,13 @@ Answer:
 
 def initialize_service_context() -> ServiceContext:
     """
-    Initialize and configure the service context.
+    Initialize and configure the service context utility container for LlamaIndex
+    index and query classes.
 
     Returns:
         ServiceContext: The initialized service context.
     """
 
-    max_tokens = int(read_env_variable("MAX_TOKENS", 1024))
     chunk_size = int(read_env_variable("CHUNK_SIZE", 1024))
     chunk_overlap = int(read_env_variable("CHUNK_OVERLAP", 20))
     context_window = int(read_env_variable("CONTEXT_WINDOW", 4096))

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pathlib import Path
 import logging
 
-from ai_doc_assistant_setup import initialize_query_engine
+from ai_doc_assistant_setup import initialize_query_engine, initialize_service_context
 from fastapi_docs import (
     title,
     description,
@@ -26,6 +26,11 @@ app = FastAPI(
 
 # Initialize or load the vector store index
 folder_path = Path("llama_index/docs")
+
+# Initialize the service context
+service_context = initialize_service_context()
+
+# Initialize the query engine
 query_engine = initialize_query_engine(docs_path=folder_path)
 
 @app.get("/ask_question", tags=["ask"])
