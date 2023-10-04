@@ -1,19 +1,17 @@
 import logging
 from pathlib import Path
-from dotenv import load_dotenv
 import os
 
 from git_utils import clone_or_pull_repository
+from env_utils import read_env_variable
 from llama_utils import process_and_update_docs, initialize_or_load_index
 
 logging.basicConfig(level=logging.INFO)
 
-# Load environment variables
-load_dotenv()
 
 # Get environment variables
-git_repo_url = os.getenv("GIT_REPO_URL")
-git_repo_path = Path(os.getenv("GIT_REPO_PATH"))
+git_repo_url = read_env_variable("GIT_REPO_URL")
+git_repo_path = Path(read_env_variable("GIT_REPO_PATH"))
 # Configure where the markdown files are located
 docs_path = git_repo_path / "docs"
 
