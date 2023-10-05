@@ -16,6 +16,7 @@ from multi_markdown_reader import MultiMarkdownReader
 
 logger = logging.getLogger(__name__)
 
+
 def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[str]):
     """
     Update the index with the changed markdown files.
@@ -76,7 +77,6 @@ def process_and_update_docs(index: VectorStoreIndex, docs_path: Path):
         update_index_for_changed_files(index, markdown_files_to_update)
     else:
         logger.info("No changes detected.")
-
 
 
 def initialize_or_load_index(docs_path: Path,
@@ -219,16 +219,16 @@ def connect_database(index_name: str) -> Union[VectorStoreIndex, None]:
     """
     
     try:
-        # Initialize an index instance with the given index name
+        # Create an index instance that targets the given index_name
         pinecone_index = pinecone.Index(index_name)
         
-        # Create a Pinecone vector store from the initialized index
+        # Initialize an instance of the Pinecone vector store module
         vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
         
-        # Load the Pinecone index into a VectorStoreIndex object
+        # Connect to the vectore store with the data already loaded in
         loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
         
-        logger.info(f"Successfully loaded Pinecone vector store index: {index_name}")
+        logger.info(f"Successfully connected to the database with index: {index_name}")
         
         return loaded_index
 
