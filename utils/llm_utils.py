@@ -2,7 +2,8 @@
 import logging
 
 import pinecone
-from llama_index import VectorStoreIndex, StorageContext, ServiceContext, PromptHelper
+from llama_index import VectorStoreIndex, StorageContext, ServiceContext, PromptHelper, set_global_service_context
+from llama_index.embeddings import OpenAIEmbedding
 from llama_index.vector_stores import PineconeVectorStore
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.prompts import ChatPromptTemplate, ChatMessage, MessageRole
@@ -232,7 +233,7 @@ Query: {query_str}
 Answer:
 '''
 
-
+# TODO: Add llm options
 def initialize_service_context() -> ServiceContext:
     """
     Initialize and configure the service context utility container for LlamaIndex
@@ -255,11 +256,13 @@ def initialize_service_context() -> ServiceContext:
         chunk_size_limit=None
     )
 
+    embed_model = OpenAIEmbedding() # text-embedding-ada-002 by default
     service_context = ServiceContext.from_defaults(
-        node_parser=node_parser,
         prompt_helper=prompt_helper,
+        embed_model=embed_model,
+        node_parser=node_parser,
     )
-
+    set_global_service_context(service_context)
     return service_context
 
 
