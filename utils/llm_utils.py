@@ -5,6 +5,7 @@ import pinecone
 from llama_index import VectorStoreIndex, StorageContext, ServiceContext, PromptHelper, set_global_service_context
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index.vector_stores import PineconeVectorStore
+from llama_index.llms import OpenAI, PaLM, Anyscale
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.prompts import ChatPromptTemplate, ChatMessage, MessageRole
 from llama_index.text_splitter import TokenTextSplitter
@@ -214,6 +215,9 @@ def initialize_service_context() -> ServiceContext:
     chunk_overlap = int(read_env_variable("CHUNK_OVERLAP", 20))
     context_window = int(read_env_variable("CONTEXT_WINDOW", 4096))
 
+    # Initialize LLM based on the backend selection from environment variables
+    llm = initialize_llm()  # Default is OpenAI
+
     node_parser = SimpleNodeParser.from_defaults(
         text_splitter=TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     )
@@ -223,9 +227,10 @@ def initialize_service_context() -> ServiceContext:
         chunk_overlap_ratio=0.1,
     )
 
-    # TODO: add system prompt and query prompt template directly to service context
+    # TODO: add system prompt and query prompt template directly to service context instead of qa_template?
     embed_model = OpenAIEmbedding() # text-embedding-ada-002 by default
     service_context = ServiceContext.from_defaults(
+        llm=llm,
         prompt_helper=prompt_helper,
         embed_model=embed_model,
         node_parser=node_parser,
@@ -262,3 +267,22 @@ def create_text_qa_template(
     ]
     
     return ChatPromptTemplate(chat_text_qa_msgs)
+
+
+def initialize_llm() -> Union[OpenAI, PaLM, Anyscale]:
+    """Initializes the language model based on the backend selection, returning the initialized LLM object."""
+    llm_backend = read_env_variable("LLM_BACKEND", "OPENAI")
+    max_tokens = int(read_env_variable("MAX_TOKENS", 1024))
+
+    openai_model_name = read_env_variable("OPENAI_MODEL_NAME", "gpt-3.5-turbo")
+    palm_model_name = read_env_variable("PALM_MODEL_NAME", "models/text-bison-001")
+    anyscale_model_name = read_env_variable("ANYSCALE_MODEL_NAME", "meta-llama/Llama-2-70b-chat-hf")
+
+    if llm_backend == "OPENAI":
+        return OpenAI(temperature=0.1, model=openai_model_name, max_tokens=max_tokens)
+    elif llm_backend == "PALM":
+        return PaLM(model_name=palm_model_name, num_output=max_tokens)
+    elif llm_backend == "ANYSCALE":
+        return Anyscale(model=anyscale_model_name, max_tokens=max_tokens)
+    else:
+        raise ValueError(f"Invalid LLM_BACKEND: {llm_backend}")
