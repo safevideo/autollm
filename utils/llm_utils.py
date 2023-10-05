@@ -221,9 +221,9 @@ def initialize_service_context() -> ServiceContext:
         context_window=context_window,
         num_output=256,
         chunk_overlap_ratio=0.1,
-        chunk_size_limit=None
     )
 
+    # TODO: add system prompt and query prompt template directly to service context
     embed_model = OpenAIEmbedding() # text-embedding-ada-002 by default
     service_context = ServiceContext.from_defaults(
         prompt_helper=prompt_helper,
