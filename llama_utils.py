@@ -181,17 +181,38 @@ def update_db(docs_path: Path, target_db='local') -> None:
     # Implementation here
     pass
 
-def load_db(target_db='local') -> VectorStoreIndex:
+from typing import Union
+import logging
+
+def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, None]:
     """
-    Loads an existing database into memory.
-    
+    Conntect to existing database with data already loaded in.
+
     Parameters:
-        target_db (str): The target database. Defaults to 'local'.
-        
+        index_name (str): The name of the Pinecone index_name to load. Defaults to "quickstart".
+
     Returns:
-        VectorStoreIndex: The loaded database index.
+        VectorStoreIndex: The loaded vector store index.
+        None: If the index could not be loaded.
+
+    Raises:
+        Exception: Detailed exception information if the index fails to load.
     """
-    index = pinecone.Index("quickstart")
-    vector_store = PineconeVectorStore(pinecone_index=index)
-    loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
-    return loaded_index
+    
+    try:
+        # Initialize Pinecone index with the given database name
+        pinecone_index = pinecone.Index(index_name)
+        
+        # Create a Pinecone vector store from the initialized index
+        vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
+        
+        # Load the Pinecone index into a VectorStoreIndex object
+        loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
+        
+        logger.info(f"Successfully loaded Pinecone vector store index: {index_name}")
+        
+        return loaded_index
+
+    except Exception as e:
+        logger.error(f"Failed to load Pinecone vector store index: {index_name}. Error: {e}")
+        return None
