@@ -165,12 +165,12 @@ def update_database(
     logger.info("Vector database successfully updated.")
 
 
-def connect_database(index_name: str) -> Union[VectorStoreIndex, None]:
+def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, None]:
     """
     Conntect to existing database with data already loaded in.
 
     Parameters:
-        index_name (str): The name of the Pinecone index to connect to.
+        index_name (str): The name of the Pinecone index to connect to. Default is 'quickstart'.
 
     Returns:
         VectorStoreIndex: The loaded vector store index.
@@ -188,7 +188,7 @@ def connect_database(index_name: str) -> Union[VectorStoreIndex, None]:
     try:
         # Initialize Pinecone
         pinecone.init(api_key=api_key, environment=environment)
-        
+
         # Create an index instance that targets the given index_name
         pinecone_index = pinecone.Index(index_name)
         

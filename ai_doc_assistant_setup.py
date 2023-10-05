@@ -1,16 +1,10 @@
 import logging
 
-from llama_index import (
-    PromptHelper,
-    ServiceContext,
-    set_global_service_context
-)
+from llama_index import PromptHelper, ServiceContext
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.prompts import ChatPromptTemplate, ChatMessage, MessageRole
-from llama_index.query_engine import BaseQueryEngine
 from llama_index.text_splitter import TokenTextSplitter
 
-from llama_utils import initialize_or_load_index
 from env_utils import read_env_variable
 
 
@@ -47,7 +41,6 @@ def initialize_service_context() -> ServiceContext:
     Returns:
         ServiceContext: The initialized service context.
     """
-
     chunk_size = int(read_env_variable("CHUNK_SIZE", 1024))
     chunk_overlap = int(read_env_variable("CHUNK_OVERLAP", 20))
     context_window = int(read_env_variable("CONTEXT_WINDOW", 4096))
@@ -66,8 +59,6 @@ def initialize_service_context() -> ServiceContext:
         node_parser=node_parser,
         prompt_helper=prompt_helper,
     )
-    set_global_service_context(service_context)
-    logger.info("Service context successfully initialized.")
 
     return service_context
 
