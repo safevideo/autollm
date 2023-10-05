@@ -168,7 +168,7 @@ def initialize_database(index_name: str, docs_path: Path, read_as_single_doc: bo
 def update_database(
     git_repo_url: str, 
     git_repo_path: Path, 
-    index_name: str = "quickstart",
+    index_name: str,
     docs_path: Optional[Path] = None
 ) -> None:
     """
@@ -180,7 +180,7 @@ def update_database(
     Parameters:
         git_repo_url (str): URL of the git repository to clone or pull.
         git_repo_path (Path): Local path to clone the git repository.
-        index_name (str): The name of the Pinecone index_name to load. Defaults to "quickstart".
+        index_name (str): The name of the Pinecone index_name to load.
         docs_path (Optional[Path]): Base directory to search for markdown files. If not provided, defaults to git_repo_path.
 
     Returns:
