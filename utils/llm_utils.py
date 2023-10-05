@@ -17,6 +17,7 @@ from .git_utils import clone_or_pull_repository
 from .hash_utils import check_for_changes
 from .markdown_processing import get_markdown_files, process_and_get_documents
 from .multimarkdown_reader import MultiMarkdownReader
+from .templates import SYSTEM_PROMPT, QUERY_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
@@ -200,28 +201,6 @@ def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, 
     return loaded_index
 
 
-
-# TODO: Move these to a config file?
-# Define the system prompt and query prompt template
-system_prompt = '''
-You are an AI document assistant specialized in retrieving and summarizing information from a database of documents.
-Your purpose is to help users find the most relevant and accurate answers to their questions based on the documents you have access to.
-You can answer questions based on the information available in the documents.
-Your answers should be detailed, accurate, and directly related to the query.
-When answering the questions, mostly rely on the info in documents.
-'''
-
-query_prompt_template = '''
-The document information is below.
----------------------
-{context_str}
----------------------
-Using the document information and not prior knowledge,
-answer the query.
-Query: {query_str}
-Answer:
-'''
-
 # TODO: Add llm options
 def initialize_service_context() -> ServiceContext:
     """
@@ -256,7 +235,10 @@ def initialize_service_context() -> ServiceContext:
     logger.info("Service context for index and query has initialized successfully.")
 
 
-def create_text_qa_template(system_prompt: str, query_prompt_template: str) -> ChatPromptTemplate:
+def create_text_qa_template(
+    system_prompt: str = SYSTEM_PROMPT,
+    query_prompt_template: str = QUERY_PROMPT_TEMPLATE
+) -> ChatPromptTemplate:
     """
     Create a Text QA Template for the query engine.
 
