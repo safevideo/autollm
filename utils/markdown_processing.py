@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 
 from llama_index.schema import Document
 
-from multi_markdown_reader import MultiMarkdownReader
+from .multimarkdown_reader import MultiMarkdownReader
 
 
 logger = logging.getLogger(__name__)

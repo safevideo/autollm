@@ -1,10 +1,9 @@
 from pathlib import Path
 from typing import List, Dict, Optional
-from tqdm import tqdm
 
 from llama_index.schema import Document
 
-from markdown_reader import MarkdownReader
+from .markdown_reader import MarkdownReader
 
 
 class MultiMarkdownReader(MarkdownReader):

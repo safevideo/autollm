@@ -1,10 +1,11 @@
 from pathlib import Path
 import logging
-import os
 
-from env_utils import read_env_variable, validate_environment_variables
-from git_utils import clone_or_pull_repository
-from llama_utils import initialize_database
+from .utils import(
+    env_utils,
+    git_utils,
+    llm_utils
+)
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -23,20 +24,20 @@ def setup_database(index_name: str = "quickstart", read_as_single_doc: bool = Tr
         read_as_single_doc (bool): Whether to treat each markdown file as a single document. Default is True.
     """
     required_env_variables = ["DOCS_PATH"]
-    validate_environment_variables(required_env_variables)
+    env_utils.validate_environment_variables(required_env_variables)
 
     # Get environment variables
-    git_repo_url = read_env_variable("GIT_REPO_URL", "https://github.com/ultralytics/ultralytics.git")
-    git_repo_path = Path(read_env_variable("GIT_REPO_PATH", "./ultralytics"))
-    docs_path = read_env_variable("DOCS_PATH").lstrip('/') # Remove leading slash if present
+    git_repo_url = env_utils.read_env_variable("GIT_REPO_URL", "https://github.com/ultralytics/ultralytics.git")
+    git_repo_path = Path(env_utils.read_env_variable("GIT_REPO_PATH", "./ultralytics"))
+    docs_path = env_utils.read_env_variable("DOCS_PATH").lstrip('/') # Remove leading slash if present
     full_path = git_repo_path.joinpath(docs_path)   # Concatenate paths
 
     # Clone or pull the git repository to get the latest markdown files
-    clone_or_pull_repository(git_repo_url, git_repo_path)
+    git_utils.clone_or_pull_repository(git_repo_url, git_repo_path)
 
     # Setup the database
     logger.info("Starting database setup.")
-    initialize_database(index_name, full_path, read_as_single_doc=read_as_single_doc)
+    llm_utils.initialize_database(index_name, full_path, read_as_single_doc=read_as_single_doc)
     logger.info("Database setup completed successfully.")
 
 

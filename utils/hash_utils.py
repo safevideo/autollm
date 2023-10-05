@@ -21,6 +21,7 @@ def get_md5(file_path: Path) -> str:
             hasher.update(chunk)
     return hasher.hexdigest()
 
+
 def load_last_hashes(hash_file: Path) -> Dict[str, str]:
     """
     Load the last known hashes from a file.
@@ -36,6 +37,7 @@ def load_last_hashes(hash_file: Path) -> Dict[str, str]:
             return {line.split()[0]: line.split()[1] for line in f.readlines()}
     return {}
 
+
 def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None:
     """
     Save the current hashes to a file.
@@ -47,6 +49,7 @@ def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None
     with open(hash_file, 'w') as f:
         for file, hash in current_hashes.items():
             f.write(f"{file} {hash}\n")
+
 
 def check_for_changes(markdown_files: List[Path], hash_file: Path = Path("file_hashes.txt")) -> List[Path]:
     """

@@ -11,11 +11,11 @@ from llama_index.text_splitter import TokenTextSplitter
 from pathlib import Path
 from typing import List, Type, Union
 
-from env_utils import read_env_variable, validate_environment_variables
-from git_utils import clone_or_pull_repository
-from hash_utils import check_for_changes
-from markdown_processing import get_markdown_files, process_and_get_documents
-from multi_markdown_reader import MultiMarkdownReader
+from .env_utils import read_env_variable, validate_environment_variables
+from .git_utils import clone_or_pull_repository
+from .hash_utils import check_for_changes
+from .markdown_processing import get_markdown_files, process_and_get_documents
+from .multimarkdown_reader import MultiMarkdownReader
 
 logger = logging.getLogger(__name__)
 
@@ -210,7 +210,7 @@ def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, 
         return None
 
 
-
+# TODO: Move these to a config file?
 # Define the system prompt and query prompt template
 system_prompt = '''
 You are an AI document assistant specialized in specialized in retrieving and summarizing information from a database of documents.
