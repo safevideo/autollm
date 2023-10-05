@@ -10,6 +10,7 @@ from pathlib import Path
 
 from multi_markdown_reader import MultiMarkdownReader
 from hash_utils import check_for_changes
+from env_utils import read_env_variable
 from markdown_processing import get_markdown_files, process_and_get_documents
 
 logger = logging.getLogger(__name__)
@@ -119,37 +120,45 @@ def initialize_or_load_index(docs_path: Path,
 
 # llama_utils.py
 
-def initialize_db(docs_path: Path, target_db='local') -> None:
+def initialize_database(docs_path: Path) -> None:
     """
-    Initializes the database with documents from a given path.
+    Initialize the database with documents from the specified directory path.
+    
+    This function initializes the database by reading the document data from a
+    given directory path and storing it in a vector database. The function
+    uses Pinecone to manage the vector database.
     
     Parameters:
-        docs_path (Path): Path to the documents folder.
-        target_db (str): The target database. Defaults to 'local'.
+        docs_path (Path): The filesystem path to the directory containing the documents.
         
     Returns:
-        None
+        None: This function returns None and is used for its side effects.
     """
-    logger.info("Initializing database.")
+    logger.info("Initializing the Pinecone database.")
 
-    # Creating a Pinecone index
-    api_key = "api_key"
-    pinecone.init(api_key=api_key, environment="us-west1-gcp")
+    # Read environment variables for Pinecone initialization
+    api_key = read_env_variable("PINECONE_API_KEY")
+    environment = read_env_variable("PINECONE_ENVIRONMENT")
+    db_name = read_env_variable("PINECONE_DB_NAME")
+
+    # Initialize Pinecone
+    pinecone.init(api_key=api_key, environment=environment)
+    # Dimensions are for text-embedding-ada-002
     pinecone.create_index(
         "quickstart",
         dimension=1536,
         metric="euclidean",
         pod_type="p1"
     )
-    index = pinecone.Index("quickstart")
+    index = pinecone.Index(db_name)
 
-    # construct vector store
+    # Construct vector store
     vector_store = PineconeVectorStore(pinecone_index=index)
 
-    # create storage context
+    # Create storage context
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-    # load documents
+    # Process documents and load them into Pinecone Index
     documents = process_and_get_documents(docs_path)
 
     # create index, which will insert documents/vectors to pinecone
@@ -182,5 +191,7 @@ def load_db(target_db='local') -> VectorStoreIndex:
     Returns:
         VectorStoreIndex: The loaded database index.
     """
-    # Implementation here
-    pass
+    index = pinecone.Index("quickstart")
+    vector_store = PineconeVectorStore(pinecone_index=index)
+    loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
+    return loaded_index
