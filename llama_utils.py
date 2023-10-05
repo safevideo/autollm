@@ -5,7 +5,7 @@ import pinecone
 from llama_index import VectorStoreIndex, StorageContext, load_index_from_storage
 from llama_index.vector_stores import PineconeVectorStore
 
-from typing import List, Type, Tuple
+from typing import List, Type, Tuple, Union
 from pathlib import Path
 
 from multi_markdown_reader import MultiMarkdownReader
@@ -118,9 +118,7 @@ def initialize_or_load_index(docs_path: Path,
     return index, initial_load
 
 
-# llama_utils.py
-
-def initialize_database(docs_path: Path) -> None:
+def initialize_database(docs_path: Path, read_as_single_doc: bool) -> None:
     """
     Initialize the database with documents from the specified directory path.
     
@@ -130,6 +128,7 @@ def initialize_database(docs_path: Path) -> None:
     
     Parameters:
         docs_path (Path): The filesystem path to the directory containing the documents.
+        read_as_single_doc (bool): Flag to read entire markdown as a single document.
         
     Returns:
         None: This function returns None and is used for its side effects.
@@ -159,7 +158,7 @@ def initialize_database(docs_path: Path) -> None:
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
     # Process documents and load them into Pinecone Index
-    documents = process_and_get_documents(docs_path)
+    documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
 
     # create index, which will insert documents/vectors to pinecone
     index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
@@ -181,8 +180,6 @@ def update_db(docs_path: Path, target_db='local') -> None:
     # Implementation here
     pass
 
-from typing import Union
-import logging
 
 def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, None]:
     """
