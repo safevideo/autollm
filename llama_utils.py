@@ -1,6 +1,10 @@
 # Desc: Utility functions for llama index.
 import logging
+
+import pinecone
 from llama_index import VectorStoreIndex, StorageContext, load_index_from_storage
+from llama_index.vector_stores import PineconeVectorStore
+
 from typing import List, Type, Tuple
 from pathlib import Path
 
@@ -126,8 +130,33 @@ def initialize_db(docs_path: Path, target_db='local') -> None:
     Returns:
         None
     """
-    # Implementation here
-    pass
+    logger.info("Initializing database.")
+
+    # Creating a Pinecone index
+    api_key = "api_key"
+    pinecone.init(api_key=api_key, environment="us-west1-gcp")
+    pinecone.create_index(
+        "quickstart",
+        dimension=1536,
+        metric="euclidean",
+        pod_type="p1"
+    )
+    index = pinecone.Index("quickstart")
+
+    # construct vector store
+    vector_store = PineconeVectorStore(pinecone_index=index)
+
+    # create storage context
+    storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+    # load documents
+    documents = process_and_get_documents(docs_path)
+
+    # create index, which will insert documents/vectors to pinecone
+    index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+
+    return index
+
 
 def update_db(docs_path: Path, target_db='local') -> None:
     """
