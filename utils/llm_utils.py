@@ -202,7 +202,6 @@ def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, 
     return loaded_index
 
 
-# TODO: Add llm options
 def initialize_service_context() -> ServiceContext:
     """
     Initialize and configure the service context utility container for LlamaIndex
