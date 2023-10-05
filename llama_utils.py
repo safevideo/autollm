@@ -2,15 +2,15 @@
 import logging
 
 import pinecone
-from llama_index import VectorStoreIndex, StorageContext, load_index_from_storage
+from llama_index import VectorStoreIndex, StorageContext
 from llama_index.vector_stores import PineconeVectorStore
 
 from pathlib import Path
-from typing import List, Type, Tuple, Union, Optional
+from typing import List, Type, Union, Optional
 
 from env_utils import read_env_variable
-from hash_utils import check_for_changes
 from git_utils import clone_or_pull_repository
+from hash_utils import check_for_changes
 from markdown_processing import get_markdown_files, process_and_get_documents
 from multi_markdown_reader import MultiMarkdownReader
 
@@ -77,44 +77,6 @@ def process_and_update_docs(index: VectorStoreIndex, docs_path: Path):
         update_index_for_changed_files(index, markdown_files_to_update)
     else:
         logger.info("No changes detected.")
-
-
-def initialize_or_load_index(docs_path: Path,
-    read_as_single_doc: bool = True,
-    persist_index: bool = True,
-    show_progress: bool = True
-    ) -> Tuple[VectorStoreIndex, bool]:
-    """
-    Initialize or load the Vector Store Index.
-
-    Parameters:
-        docs_path (Path): Path to the documents folder.
-        read_as_single_doc (bool): Flag to read entire markdown as a single document.
-        persist_index (bool): Flag to persist the index to disk.
-        show_progress (bool): Flag to show progress bar.
-
-    Returns:
-        VectorStoreIndex: The initialized or loaded index.
-        bool: Whether the index was initialized or loaded from disk.
-    """
-    initial_load = False
-    try:
-        # Try to load the existing vector store index from disk
-        logger.info("Loading existing index.")
-        storage_context = StorageContext.from_defaults(persist_dir="./storage")
-        index = load_index_from_storage(storage_context)
-        logger.info("Existing index successfully loaded.")
-    except FileNotFoundError:
-        # If index doesn't exist, create a new one
-        logger.info("No existing index found. Creating a new one.")
-        documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
-        index = VectorStoreIndex.from_documents(documents, show_progress=show_progress)
-        logger.info("New index successfully created.")
-        # Persist the index to disk if persist_index is True
-        index.storage_context.persist() if persist_index else None
-        initial_load = True
-
-    return index, initial_load
 
 
 def initialize_database(index_name: str, docs_path: Path, read_as_single_doc: bool) -> None:
