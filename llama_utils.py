@@ -6,9 +6,9 @@ from llama_index import VectorStoreIndex, StorageContext
 from llama_index.vector_stores import PineconeVectorStore
 
 from pathlib import Path
-from typing import List, Type, Union, Optional
+from typing import List, Type, Union
 
-from env_utils import read_env_variable
+from env_utils import read_env_variable, validate_environment_variables
 from git_utils import clone_or_pull_repository
 from hash_utils import check_for_changes
 from markdown_processing import get_markdown_files, process_and_get_documents
@@ -89,13 +89,16 @@ def initialize_database(index_name: str, docs_path: Path, read_as_single_doc: bo
     
     Parameters:
         index_name (str): The name of the Pinecone index_name to load.
-        docs_path (Path): The filesystem path to the directory containing the documents.
+        docs_path (Path): Base directory to search for markdown files.
         read_as_single_doc (bool): Flag to read entire markdown as a single document.
         
     Returns:
         None: This function returns None and is used for its side effects.
     """
     logger.info("Initializing the Pinecone database.")
+
+    required_env_vars = ["PINECONE_API_KEY", "PINECONE_ENVIRONMENT"]
+    validate_environment_variables(required_env_vars)
 
     # Read environment variables for Pinecone initialization
     api_key = read_env_variable("PINECONE_API_KEY")
@@ -131,7 +134,7 @@ def update_database(
     git_repo_url: str, 
     git_repo_path: Path, 
     index_name: str,
-    docs_path: Optional[Path] = None
+    docs_path: Path
 ) -> None:
     """
     Updates the vector database by performing the following tasks:
@@ -143,7 +146,7 @@ def update_database(
         git_repo_url (str): URL of the git repository to clone or pull.
         git_repo_path (Path): Local path to clone the git repository.
         index_name (str): The name of the Pinecone index_name to load.
-        docs_path (Optional[Path]): Base directory to search for markdown files. If not provided, defaults to git_repo_path.
+        docs_path (Path): Base directory to search for markdown files.
 
     Returns:
         None
@@ -157,10 +160,7 @@ def update_database(
     connect_database(index_name=index_name)
 
     # Step 3: Update the index with changed markdown files
-    process_and_update_docs(
-        index = index_name,
-        docs_path = docs_path or git_repo_path
-    )
+    process_and_update_docs(index=index_name, docs_path=docs_path)
 
     logger.info("Vector database successfully updated.")
 
@@ -179,8 +179,16 @@ def connect_database(index_name: str) -> Union[VectorStoreIndex, None]:
     Raises:
         Exception: Detailed exception information if the index fails to load.
     """
-    
+    required_env_vars = ["PINECONE_API_KEY", "PINECONE_ENVIRONMENT"]
+    validate_environment_variables(required_env_vars)
+
+    api_key = read_env_variable("PINECONE_API_KEY")
+    environment = read_env_variable("PINECONE_ENVIRONMENT")
+
     try:
+        # Initialize Pinecone
+        pinecone.init(api_key=api_key, environment=environment)
+        
         # Create an index instance that targets the given index_name
         pinecone_index = pinecone.Index(index_name)
         
