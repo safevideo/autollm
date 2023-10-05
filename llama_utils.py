@@ -111,3 +111,47 @@ def initialize_or_load_index(docs_path: Path,
         initial_load = True
 
     return index, initial_load
+
+
+# llama_utils.py
+
+def initialize_db(docs_path: Path, target_db='local') -> None:
+    """
+    Initializes the database with documents from a given path.
+    
+    Parameters:
+        docs_path (Path): Path to the documents folder.
+        target_db (str): The target database. Defaults to 'local'.
+        
+    Returns:
+        None
+    """
+    # Implementation here
+    pass
+
+def update_db(docs_path: Path, target_db='local') -> None:
+    """
+    Updates the database with new or changed documents from a given path.
+    
+    Parameters:
+        docs_path (Path): Path to the documents folder.
+        target_db (str): The target database. Defaults to 'local'.
+        
+    Returns:
+        None
+    """
+    # Implementation here
+    pass
+
+def load_db(target_db='local') -> VectorStoreIndex:
+    """
+    Loads an existing database into memory.
+    
+    Parameters:
+        target_db (str): The target database. Defaults to 'local'.
+        
+    Returns:
+        VectorStoreIndex: The loaded database index.
+    """
+    # Implementation here
+    pass
