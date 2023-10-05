@@ -1,23 +1,12 @@
 import logging
 
-from fastapi import FastAPI, HTTPException
-from fastapi.logger import logger
+from fastapi import FastAPI
 
-from ai_doc_assistant_setup import initialize_service_context
-from llama_utils import connect_database
-from fastapi_docs import (
-    title,
-    description,
-    version,
-    openapi_url,
-    terms_of_service,
-    tags_metadata,
-)
+from .docs import title, description, version, openapi_url, terms_of_service, tags_metadata
+from .api import ask_question, health_check
 
-logging.basicConfig(handlers=[logging.StreamHandler()],
-                    level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
-# Initialize FastAPI and Logging
 app = FastAPI(
     title=title,
     description=description,
@@ -26,6 +15,11 @@ app = FastAPI(
     terms_of_service=terms_of_service,
     openapi_tags=tags_metadata,
 )
+
+# Include the API routes
+app.include_router(ask_question.router, tags=["ask"])
+app.include_router(health_check.router, tags=["health"])
+
 
 # Initialize the service context
 service_context = initialize_service_context()
