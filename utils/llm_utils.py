@@ -136,8 +136,7 @@ def initialize_database(index_name: str, docs_path: Path, read_as_single_doc: bo
 
 def update_database(
     git_repo_url: str, 
-    git_repo_path: Path, 
-    index_name: str,
+    git_repo_path: Path,
     docs_path: Path
 ) -> None:
     """
@@ -149,7 +148,6 @@ def update_database(
     Parameters:
         git_repo_url (str): URL of the git repository to clone or pull.
         git_repo_path (Path): Local path to clone the git repository.
-        index_name (str): The name of the Pinecone index_name to load.
         docs_path (Path): Base directory to search for markdown files.
 
     Returns:
@@ -160,28 +158,24 @@ def update_database(
     # Step 1: Clone or pull the git repository to get the latest markdown files
     clone_or_pull_repository(git_repo_url, git_repo_path)
 
-    # Step 2: Load the existing vector store index into memory
-    connect_database(index_name=index_name)
+    # Step 2: Connect to the existing vector store database
+    index = connect_database()
 
     # Step 3: Update the index with changed markdown files
-    process_and_update_docs(index=index_name, docs_path=docs_path)
+    process_and_update_docs(index=index, docs_path=docs_path)
 
     logger.info("Vector database successfully updated.")
 
 
 def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, None]:
     """
-    Conntect to existing database with data already loaded in.
+    Conntects to existing database with data already loaded in, returning vector store index.
 
     Parameters:
         index_name (str): The name of the Pinecone index to connect to. Default is 'quickstart'.
 
     Returns:
         VectorStoreIndex: The loaded vector store index.
-        None: If the index could not be loaded.
-
-    Raises:
-        Exception: Detailed exception information if the index fails to load.
     """
     required_env_vars = ["PINECONE_API_KEY", "PINECONE_ENVIRONMENT"]
     validate_environment_variables(required_env_vars)
@@ -189,26 +183,22 @@ def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, 
     api_key = read_env_variable("PINECONE_API_KEY")
     environment = read_env_variable("PINECONE_ENVIRONMENT")
 
-    try:
-        # Initialize Pinecone
-        pinecone.init(api_key=api_key, environment=environment)
+    # Initialize Pinecone
+    pinecone.init(api_key=api_key, environment=environment)
 
-        # Create an index instance that targets the given index_name
-        pinecone_index = pinecone.Index(index_name)
-        
-        # Initialize an instance of the Pinecone vector store module
-        vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
-        
-        # Connect to the vectore store with the data already loaded in
-        loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
-        
-        logger.info(f"Successfully connected to the database with index: {index_name}")
-        
-        return loaded_index
+    # Create an index instance that targets the given index_name
+    pinecone_index = pinecone.Index(index_name)
+    
+    # Initialize an instance of the Pinecone vector store module
+    vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
+    
+    # Connect to the vectore store with the data already loaded in
+    loaded_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
+    
+    logger.info(f"Successfully connected to the database with index: {index_name}")
+    
+    return loaded_index
 
-    except Exception as e:
-        logger.error(f"Failed to load Pinecone vector store index: {index_name}. Error: {e}")
-        return None
 
 
 # TODO: Move these to a config file?
