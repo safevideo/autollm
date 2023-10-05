@@ -5,13 +5,14 @@ import pinecone
 from llama_index import VectorStoreIndex, StorageContext, load_index_from_storage
 from llama_index.vector_stores import PineconeVectorStore
 
-from typing import List, Type, Tuple, Union
 from pathlib import Path
+from typing import List, Type, Tuple, Union, Optional
 
-from multi_markdown_reader import MultiMarkdownReader
-from hash_utils import check_for_changes
 from env_utils import read_env_variable
+from hash_utils import check_for_changes
+from git_utils import clone_or_pull_repository
 from markdown_processing import get_markdown_files, process_and_get_documents
+from multi_markdown_reader import MultiMarkdownReader
 
 logger = logging.getLogger(__name__)
 
@@ -56,27 +57,25 @@ def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[st
             index.insert(doc)
 
 
-def process_and_update_docs(index, base_path, initial_load: bool):
+def process_and_update_docs(index: VectorStoreIndex, docs_path: Path):
     """Process markdown files and update the Vector Store Index.
 
     Parameters:
         index (VectorStoreIndex): The Vector Store Index.
-        base_path (Path): Base directory to search for markdown files.
+        docs_path (Path): Base directory to search for markdown files.
     """
     # Get the list of all markdown files in the repository
-    markdown_files = get_markdown_files(base_path)
+    markdown_files = get_markdown_files(docs_path)
 
-    # If it's not initial load, check for changes
-    if not initial_load:
-        # Identify files that have changed since the last update
-        markdown_files_to_update = check_for_changes(markdown_files)
+    # Identify files that have changed since the last update
+    markdown_files_to_update = check_for_changes(markdown_files)
 
-        # If it's not initial load and there are files to update
-        if markdown_files_to_update:
-            # Update the index with new documents
-            update_index_for_changed_files(index, markdown_files_to_update)
-        else:
-            logger.info("No changes detected.")
+    # If it's not initial load and there are files to update
+    if markdown_files_to_update:
+        # Update the index with new documents
+        update_index_for_changed_files(index, markdown_files_to_update)
+    else:
+        logger.info("No changes detected.")
 
 
 
@@ -118,7 +117,7 @@ def initialize_or_load_index(docs_path: Path,
     return index, initial_load
 
 
-def initialize_database(docs_path: Path, read_as_single_doc: bool) -> None:
+def initialize_database(index_name: str, docs_path: Path, read_as_single_doc: bool) -> None:
     """
     Initialize the database with documents from the specified directory path.
     
@@ -127,6 +126,7 @@ def initialize_database(docs_path: Path, read_as_single_doc: bool) -> None:
     uses Pinecone to manage the vector database.
     
     Parameters:
+        index_name (str): The name of the Pinecone index_name to load.
         docs_path (Path): The filesystem path to the directory containing the documents.
         read_as_single_doc (bool): Flag to read entire markdown as a single document.
         
@@ -138,7 +138,6 @@ def initialize_database(docs_path: Path, read_as_single_doc: bool) -> None:
     # Read environment variables for Pinecone initialization
     api_key = read_env_variable("PINECONE_API_KEY")
     environment = read_env_variable("PINECONE_ENVIRONMENT")
-    db_name = read_env_variable("PINECONE_DB_NAME")
 
     # Initialize Pinecone
     pinecone.init(api_key=api_key, environment=environment)
@@ -149,7 +148,7 @@ def initialize_database(docs_path: Path, read_as_single_doc: bool) -> None:
         metric="euclidean",
         pod_type="p1"
     )
-    index = pinecone.Index(db_name)
+    index = pinecone.Index(index_name)
 
     # Construct vector store
     vector_store = PineconeVectorStore(pinecone_index=index)
@@ -166,27 +165,50 @@ def initialize_database(docs_path: Path, read_as_single_doc: bool) -> None:
     return index
 
 
-def update_db(docs_path: Path, target_db='local') -> None:
+def update_database(
+    git_repo_url: str, 
+    git_repo_path: Path, 
+    index_name: str = "quickstart",
+    docs_path: Optional[Path] = None
+) -> None:
     """
-    Updates the database with new or changed documents from a given path.
-    
+    Updates the vector database by performing the following tasks:
+    1. Clone or pull the latest repository containing markdown files.
+    2. Connect to the the existing vector store database.
+    3. Update the index with changed markdown files.
+
     Parameters:
-        docs_path (Path): Path to the documents folder.
-        target_db (str): The target database. Defaults to 'local'.
-        
+        git_repo_url (str): URL of the git repository to clone or pull.
+        git_repo_path (Path): Local path to clone the git repository.
+        index_name (str): The name of the Pinecone index_name to load. Defaults to "quickstart".
+        docs_path (Optional[Path]): Base directory to search for markdown files. If not provided, defaults to git_repo_path.
+
     Returns:
         None
     """
-    # Implementation here
-    pass
+    logger.info("Starting to update the vector database.")
+
+    # Step 1: Clone or pull the git repository to get the latest markdown files
+    clone_or_pull_repository(git_repo_url, git_repo_path)
+
+    # Step 2: Load the existing vector store index into memory
+    connect_database(index_name=index_name)
+
+    # Step 3: Update the index with changed markdown files
+    process_and_update_docs(
+        index = index_name,
+        docs_path = docs_path or git_repo_path
+    )
+
+    logger.info("Vector database successfully updated.")
 
 
-def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, None]:
+def connect_database(index_name: str) -> Union[VectorStoreIndex, None]:
     """
     Conntect to existing database with data already loaded in.
 
     Parameters:
-        index_name (str): The name of the Pinecone index_name to load. Defaults to "quickstart".
+        index_name (str): The name of the Pinecone index to connect to.
 
     Returns:
         VectorStoreIndex: The loaded vector store index.
@@ -197,7 +219,7 @@ def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, 
     """
     
     try:
-        # Initialize Pinecone index with the given database name
+        # Initialize an index instance with the given index name
         pinecone_index = pinecone.Index(index_name)
         
         # Create a Pinecone vector store from the initialized index
