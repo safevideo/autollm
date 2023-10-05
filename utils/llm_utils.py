@@ -214,12 +214,11 @@ def connect_database(index_name: str = "quickstart") -> Union[VectorStoreIndex, 
 # TODO: Move these to a config file?
 # Define the system prompt and query prompt template
 system_prompt = '''
-You are an AI document assistant specialized in specialized in retrieving and summarizing information from a database of documents.
+You are an AI document assistant specialized in retrieving and summarizing information from a database of documents.
 Your purpose is to help users find the most relevant and accurate answers to their questions based on the documents you have access to.
 You can answer questions based on the information available in the documents.
 Your answers should be detailed, accurate, and directly related to the query.
-Always answer the query using the provided context information
-and not prior knowledge.
+When answering the questions, mostly rely on the info in documents.
 '''
 
 query_prompt_template = '''
@@ -262,8 +261,9 @@ def initialize_service_context() -> ServiceContext:
         embed_model=embed_model,
         node_parser=node_parser,
     )
+
     set_global_service_context(service_context)
-    return service_context
+    logger.info("Service context for index and query has initialized successfully.")
 
 
 def create_text_qa_template(system_prompt: str, query_prompt_template: str) -> ChatPromptTemplate:
