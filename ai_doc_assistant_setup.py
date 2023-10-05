@@ -96,36 +96,3 @@ def create_text_qa_template(system_prompt: str, query_prompt_template: str) -> C
     ]
     
     return ChatPromptTemplate(chat_text_qa_msgs)
-
-
-def initialize_query_engine(
-    docs_path: str, persist_index: bool = True,
-    system_prompt: str = system_prompt,
-    query_prompt_template: str = query_prompt_template
-    ) -> BaseQueryEngine:
-    """
-    Initialize the query engine.
-
-    Parameters:
-        docs_path (str): Path to the documents folder.
-        persist_index (bool): Flag to persist the index to disk.
-        system_prompt (str): The system prompt string.
-        query_prompt_template (str): The query prompt template string.
-
-    Returns:
-        BaseQueryEngine: The initialized query engine.  
-    """
-    # Load environment variables
-    similarity_top_k = int(read_env_variable("SIMILARITY_TOP_K", 4))
-
-    # Initialize or load the vector store index
-    index, _ = initialize_or_load_index(docs_path=docs_path, persist_index=persist_index)
-
-    # Initialize the Text QA Template
-    text_qa_template = create_text_qa_template(system_prompt=system_prompt, query_prompt_template=query_prompt_template)
-    
-    # Initialize the query engine
-    query_engine = index.as_query_engine(text_qa_template=text_qa_template, similarity_top_k=similarity_top_k)
-
-    logger.info("Query engine successfully initialized.")
-    return query_engine
