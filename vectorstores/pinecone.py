@@ -11,7 +11,7 @@ class PineconeVS(BaseVS):
         self._dimension = dimension
         self._metric = metric
         self._pod_type = pod_type
-        super().__init__(self)
+        super().__init__()
 
     def _validate_requirements(self):
         """

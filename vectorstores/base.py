@@ -13,16 +13,14 @@ class BaseVS:
 
     @property
     def vectorstore(self) -> BasePydanticVectorStore:
-        if self.vectorstore is None:
+        if self._vectorstore is None:
             raise ValueError("Vector store not connected. Please connect first using connect_vectorstore().")
-        raise self._vectorstore
+        return self._vectorstore
 
     @property
     def vectorindex(self) -> VectorStoreIndex:
-        if self.vectorstore is None:
-            raise ValueError("Vector store not connected. Please connect first using connect_vectorstore().")
         # Create storage context
-        storage_context = StorageContext.from_defaults(vector_store=self._vectorstore)
+        storage_context = StorageContext.from_defaults(vector_store=self.vectorstore)
         # Create index
         return VectorStoreIndex.from_vector_store(vector_store=self.vectorstore, storage_context=storage_context)
 
@@ -33,19 +31,13 @@ class BaseVS:
         raise NotImplementedError
 
     def update_vectorindex(self, documents: Sequence[Document]):
-        if self._vectorstore is None:
-            raise ValueError("Vector store not connected. Please connect first using connect_vectorstore().")
-
         for document in documents:
             self.vectorindex.delete(document.id_)
             self.vectorindex.insert(document)
 
     def overwrite_vectorindex(self, documents: Sequence[Document]):
-        if self._vectorstore is None:
-            raise ValueError("Vector store not connected. Please connect first using connect_vectorstore().")
-
         # Create storage context
-        storage_context = StorageContext.from_defaults(vector_store=self._vectorstore)
+        storage_context = StorageContext.from_defaults(vector_store=self.vectorstore)
 
         # create index, which will insert documents/vectors to vector store
         _ = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
