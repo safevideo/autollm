@@ -54,7 +54,7 @@ def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None
             f.write(f"{file} {hash}\n")
 
 
-# TODO: check md5 hashes from vector store index metadata instead of a local txt file
+# TODO: check md5 hashes from vector store index metadata instead of a local txt file (3)
 def check_for_changes(documents: Sequence[Document], hash_file: Path = Path("file_hashes.txt")) -> Sequence[Document]:
     """
     Check for file changes based on their MD5 hashes.

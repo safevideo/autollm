@@ -13,15 +13,7 @@ logger = logging.getLogger(__name__)
 token_counter, callback_manager = llm_utils.initialize_token_counting()
 
 # Initialize the service context
-old_service_context = llm_utils.initialize_service_context()
-
-service_context = llm_utils.ServiceContext.from_service_context(
-    service_context=old_service_context,
-    callback_manager=callback_manager
-)
-
-# Set the global default
-llm_utils.set_global_service_context(service_context)
+llm_utils.initialize_service_context(callback_manager=callback_manager)
 
 # Create the text QA template for the query engine
 text_qa_template = llm_utils.create_text_qa_template()

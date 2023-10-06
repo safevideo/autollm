@@ -57,7 +57,10 @@ class MultiMarkdownReader(MarkdownReader):
             # Reading entire markdown as a single document
             with open(file, "r", encoding="utf-8") as f:
                 content = f.read()
-
+            if self._remove_hyperlinks:
+                content = self.remove_hyperlinks(content)
+            if self._remove_images:
+                content = self.remove_images(content)
             # Generate doc_id as file name
             doc_id = relative_file_path
 

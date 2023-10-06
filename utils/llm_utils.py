@@ -4,8 +4,7 @@ from pathlib import Path
 from typing import List, Type, Union
 import tiktoken
 
-from llama_index import (PromptHelper, ServiceContext, VectorStoreIndex,
-                         set_global_service_context)
+from llama_index import (ServiceContext, VectorStoreIndex, set_global_service_context)
 from llama_index.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index.llms import Anyscale, OpenAI, PaLM
@@ -14,7 +13,19 @@ from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
 from llama_index.storage.docstore.types import RefDocInfo
 from llama_index.text_splitter import TokenTextSplitter
 
-from utils.constants import PINECONE_INDEX_NAME
+from utils.constants import (
+    PINECONE_INDEX_NAME,
+    DEFAULT_CHUNK_SIZE,
+    DEFAULT_CHUNK_OVERLAP,
+    DEFAULT_CONTEXT_WINDOW,
+    DEFAULT_LLM_BACKEND,
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_OPENAI_MODEL_NAME,
+    DEFAULT_PALM_MODEL_NAME,
+    DEFAULT_ANYSCALE_MODEL_NAME,
+    DEFAULT_ENABLE_TOKEN_COUNTING,
+    MODEL_COST,
+)
 from vectorstores import \
     PineconeVS  # TODO: utilize vector store factory for generic use
 
@@ -35,7 +46,7 @@ def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[st
     This function first deletes all the old documents associated with the changed files
     from the index and then inserts the updated documents.
 
-    Args:
+    Parameters:
         index (Type[BaseIndex]): The LlamaIndex object to be updated.
         files (List[str]): List of markdown files that have changed.
         read_as_single_doc (bool): If True, read each markdown as a single document.
@@ -158,17 +169,20 @@ def update_database(
     pinecone_vs.update_vectorindex(changed_documents)
 
 
-def initialize_service_context() -> ServiceContext:
+def initialize_service_context(callback_manager: CallbackManager) -> ServiceContext:
     """
-    Initialize and configure the service context utility container for LlamaIndex
-    index and query classes.
+    Initialize and configures the service context utility container for LlamaIndex
+    index and query classes, setting as the global default.
+
+    Parameters:
+        callback_manager (CallbackManager): Callback Manager to be included in the service context.
 
     Returns:
-        ServiceContext: The initialized service context.
+        None
     """
-    chunk_size = int(read_env_variable("CHUNK_SIZE", 1024))  # TODO: read from utils/constants.py
-    chunk_overlap = int(read_env_variable("CHUNK_OVERLAP", 20))  # TODO: read from utils/constants.py
-    context_window = int(read_env_variable("CONTEXT_WINDOW", 4096))  # TODO: read from utils/constants.py
+    chunk_size = int(read_env_variable("CHUNK_SIZE", DEFAULT_CHUNK_SIZE))
+    chunk_overlap = int(read_env_variable("CHUNK_OVERLAP", DEFAULT_CHUNK_OVERLAP))
+    context_window = int(read_env_variable("CONTEXT_WINDOW", DEFAULT_CONTEXT_WINDOW))
 
     # Initialize LLM based on the backend selection from environment variables
     llm = initialize_llm()  # Default is OpenAI
@@ -176,25 +190,20 @@ def initialize_service_context() -> ServiceContext:
     node_parser = SimpleNodeParser.from_defaults(
         text_splitter=TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     )
-    # TODO: PromptHelper deprecated, move parameters into ServiceContext
-    prompt_helper = PromptHelper(
-        context_window=context_window,
-        num_output=256,
-        chunk_overlap_ratio=0.1,
-    )
 
-    callback_manager = initialize_token_counting()
     # TODO: add system prompt and query prompt template directly to service context instead of qa_template
     embed_model = OpenAIEmbedding() # text-embedding-ada-002 by default
     service_context = ServiceContext.from_defaults(
         llm=llm,
-        prompt_helper=prompt_helper,
         embed_model=embed_model,
         node_parser=node_parser,
-        callback_manager=callback_manager
+        callback_manager=callback_manager,
+        context_window=context_window,
+        num_output=256
     )
-
-    return service_context
+    
+    set_global_service_context(service_context)
+    logger.info("Service context initialized successfully.")
 
 
 def create_text_qa_template(
@@ -228,12 +237,12 @@ def create_text_qa_template(
 
 def initialize_llm() -> Union[OpenAI, PaLM, Anyscale]:
     """Initializes the language model based on the backend selection, returning the initialized LLM object."""
-    llm_backend = read_env_variable("LLM_BACKEND", "OPENAI")  # TODO: read from utils/constants.py
-    max_tokens = int(read_env_variable("MAX_TOKENS", 1024))  # TODO: read from utils/constants.py
+    llm_backend = read_env_variable("LLM_BACKEND", DEFAULT_LLM_BACKEND)
+    max_tokens = int(read_env_variable("MAX_TOKENS", DEFAULT_MAX_TOKENS))
 
-    openai_model_name = read_env_variable("OPENAI_MODEL_NAME", "gpt-3.5-turbo")  # TODO: read from utils/constants.py
-    palm_model_name = read_env_variable("PALM_MODEL_NAME", "models/text-bison-001") # TODO: read from utils/constants.py
-    anyscale_model_name = read_env_variable("ANYSCALE_MODEL_NAME", "meta-llama/Llama-2-70b-chat-hf")  # TODO: read from utils/constants.py
+    openai_model_name = read_env_variable("OPENAI_MODEL_NAME", DEFAULT_OPENAI_MODEL_NAME)
+    palm_model_name = read_env_variable("PALM_MODEL_NAME", DEFAULT_PALM_MODEL_NAME)
+    anyscale_model_name = read_env_variable("ANYSCALE_MODEL_NAME", DEFAULT_ANYSCALE_MODEL_NAME)
 
     if llm_backend == "OPENAI":
         return OpenAI(temperature=0.1, model=openai_model_name, max_tokens=max_tokens)
@@ -253,7 +262,7 @@ def initialize_token_counting():
         token_counter (TokenCountingHandler): Initialized Token Counting Handler.
         callback_manager (CallbackManager): Callback Manager with Token Counting Handler included.
     """
-    enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", "False").upper() == "TRUE"
+    enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", DEFAULT_ENABLE_TOKEN_COUNTING).upper() == "TRUE"
     if not enable_token_counting:
         logger.info("Token Counting Handler is not enabled.")
         return None
@@ -281,13 +290,11 @@ def generate_token_counter():
     return token_counter
 
 
-from .constants import MODEL_COST
-
 def calculate_total_cost(token_counter, model_name="gpt-3.5-turbo"):
     """
     Calculate the total cost based on the token usage and model.
 
-    Args:
+    Parameters:
         token_counter (TokenCountingHandler): Token Counting Handler initialized with the tokenizer.
         model_name (str): The name of the model being used.
 
@@ -314,10 +321,10 @@ def log_total_cost(token_counter):
     """
     Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment variables.
     
-    Args:
+    Parameters:
         token_counter (TokenCountingHandler): Initialized Token Counting Handler.
     """
-    enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", "True").lower() == "true"
+    enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", DEFAULT_ENABLE_TOKEN_COUNTING).lower() == "true"
     
     if enable_token_counting:
         total_cost = calculate_total_cost(token_counter)
