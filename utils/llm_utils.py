@@ -194,8 +194,7 @@ def initialize_service_context() -> ServiceContext:
         callback_manager=callback_manager
     )
 
-    set_global_service_context(service_context)
-    logger.info("Service context for index and query has initialized successfully.")
+    return service_context
 
 
 def create_text_qa_template(
@@ -251,6 +250,7 @@ def initialize_token_counting():
     Initializes the Token Counting Handler for tracking token usage.
     
     Returns:
+        token_counter (TokenCountingHandler): Initialized Token Counting Handler.
         callback_manager (CallbackManager): Callback Manager with Token Counting Handler included.
     """
     enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", "False").upper() == "TRUE"
@@ -259,12 +259,68 @@ def initialize_token_counting():
         return None
     
     # Initialize the Token Counting Handler
-    tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo").encode  # Update the model name as needed
-    token_counter = TokenCountingHandler(tokenizer=tokenizer, verbose=True)
+    token_counter = generate_token_counter()
 
     # Initialize Callback Manager and add Token Counting Handler
     callback_manager = CallbackManager([token_counter])
     
-    logger.info("Token Counting Handler and Callback Manager have been initialized.")
+    return token_counter, callback_manager
+
+
+def generate_token_counter():
+    """
+    Generates a Token Counting Handler for tracking token usage.
     
-    return callback_manager
+    Returns:
+        token_counter (TokenCountingHandler): Initialized Token Counting Handler.
+    """
+    # Initialize the Token Counting Handler
+    tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo").encode  # Update the model name as needed
+    token_counter = TokenCountingHandler(tokenizer=tokenizer, verbose=True)
+    
+    return token_counter
+
+
+from .constants import MODEL_COST
+
+def calculate_total_cost(token_counter, model_name="gpt-3.5-turbo"):
+    """
+    Calculate the total cost based on the token usage and model.
+
+    Args:
+        token_counter (TokenCountingHandler): Token Counting Handler initialized with the tokenizer.
+        model_name (str): The name of the model being used.
+
+    Returns:
+        float: The total cost in USD.
+    """
+    model_cost_info = MODEL_COST.get(model_name, {})
+    if not model_cost_info:
+        raise ValueError(f"Cost information for model {model_name} is not available.")
+
+    prompt_token_count = token_counter.prompt_llm_token_count
+    completion_token_count = token_counter.completion_llm_token_count
+
+    prompt_cost = (prompt_token_count / model_cost_info['prompt']['unit']) * model_cost_info['prompt']['price']
+    completion_cost = (completion_token_count / model_cost_info['completion']['unit']) * model_cost_info['completion']['price']
+
+    total_cost = prompt_cost + completion_cost
+
+    return total_cost
+
+
+
+def log_total_cost(token_counter):
+    """
+    Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment variables.
+    
+    Args:
+        token_counter (TokenCountingHandler): Initialized Token Counting Handler.
+    """
+    enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", "True").lower() == "true"
+    
+    if enable_token_counting:
+        total_cost = calculate_total_cost(token_counter)
+        logger.info(f"Total cost for this query: ${total_cost} USD")
+    else:
+        logger.info("Token counting and cost logging are disabled.")
