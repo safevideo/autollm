@@ -174,6 +174,7 @@ def initialize_service_context() -> ServiceContext:
     node_parser = SimpleNodeParser.from_defaults(
         text_splitter=TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     )
+    # TODO: PromptHelper deprecated, move parameters into ServiceContext
     prompt_helper = PromptHelper(
         context_window=context_window,
         num_output=256,

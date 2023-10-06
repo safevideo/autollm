@@ -33,8 +33,8 @@ async def ask_question(user_query: str):
         user_query (str): The natural language query from the user.
 
     Returns:
-        dict: The response containing the answer to the user's query.
+        response (str): The response containing the answer to the user's query.
     """
     # Query the engine
     response = query_engine.query(user_query)
-    return response
+    return response.response    # extracts the response text

@@ -1,9 +1,19 @@
 from dotenv import load_dotenv
-from os.path import dirname, join
+from pathlib import Path
 import os
 
-# Load environment variables from .env file
-dotenv_path = join(dirname(__file__), '.env')
+def find_dotenv_file(start_path: Path) -> Path:
+    """Searches for the .env file from start_path moving upwards."""
+    current_path = start_path
+    while current_path != Path('/'):
+        dotenv_path = current_path / '.env'
+        if dotenv_path.exists():
+            return dotenv_path
+        current_path = current_path.parent
+    raise EnvironmentError("Could not find a .env file.")
+
+# Find and load .env file
+dotenv_path = find_dotenv_file(Path(__file__).parent)
 load_dotenv(dotenv_path)
 
 
