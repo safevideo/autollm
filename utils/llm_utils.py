@@ -2,9 +2,11 @@
 import logging
 from pathlib import Path
 from typing import List, Type, Union
+import tiktoken
 
 from llama_index import (PromptHelper, ServiceContext, VectorStoreIndex,
                          set_global_service_context)
+from llama_index.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index.llms import Anyscale, OpenAI, PaLM
 from llama_index.node_parser import SimpleNodeParser
@@ -181,6 +183,7 @@ def initialize_service_context() -> ServiceContext:
         chunk_overlap_ratio=0.1,
     )
 
+    callback_manager = initialize_token_counting()
     # TODO: add system prompt and query prompt template directly to service context instead of qa_template
     embed_model = OpenAIEmbedding() # text-embedding-ada-002 by default
     service_context = ServiceContext.from_defaults(
@@ -188,6 +191,7 @@ def initialize_service_context() -> ServiceContext:
         prompt_helper=prompt_helper,
         embed_model=embed_model,
         node_parser=node_parser,
+        callback_manager=callback_manager
     )
 
     set_global_service_context(service_context)
@@ -240,3 +244,27 @@ def initialize_llm() -> Union[OpenAI, PaLM, Anyscale]:
         return Anyscale(model=anyscale_model_name, max_tokens=max_tokens)
     else:
         raise ValueError(f"Invalid LLM_BACKEND: {llm_backend}")
+
+
+def initialize_token_counting():
+    """
+    Initializes the Token Counting Handler for tracking token usage.
+    
+    Returns:
+        callback_manager (CallbackManager): Callback Manager with Token Counting Handler included.
+    """
+    enable_token_counting = read_env_variable("ENABLE_TOKEN_COUNTING", "False").upper() == "TRUE"
+    if not enable_token_counting:
+        logger.info("Token Counting Handler is not enabled.")
+        return None
+    
+    # Initialize the Token Counting Handler
+    tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo").encode  # Update the model name as needed
+    token_counter = TokenCountingHandler(tokenizer=tokenizer, verbose=True)
+
+    # Initialize Callback Manager and add Token Counting Handler
+    callback_manager = CallbackManager([token_counter])
+    
+    logger.info("Token Counting Handler and Callback Manager have been initialized.")
+    
+    return callback_manager
