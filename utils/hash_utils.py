@@ -42,7 +42,7 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         deleted_document_ids (List[str]): List of document ids that are deleted in local but present in vector store.
     """
     last_hashes, original_file_names, document_ids = vs.get_document_infos()
-    original_file_count = Counter(original_file_names)
+    deleted_document_ids = set(document_ids)
     
     changed_documents = []
     deleted_document_ids = []
@@ -58,24 +58,10 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         elif current_hash not in last_hashes:
             changed_documents.append(doc)
 
-        # Mark as processed (for deletion check later)
-        if file_path in original_file_count:
-            original_file_count[file_path] -= 1
-            if original_file_count[file_path] == 0:
-                del original_file_count[file_path]
-
-    # Identify documents that are deleted locally but still present in the vector store.
-    for remaining_file in original_file_count.keys():
-        # Find all indices where this remaining_file appears in original_file_names.
-        indices_of_remaining_file = [
-            index for index, file_name in enumerate(original_file_names) if file_name == remaining_file
-        ]
+        # remove from deleted set
+        deleted_document_ids.remove(doc.id_)
         
-        # Retrieve the document IDs corresponding to these indices.
-        corresponding_document_ids = [document_ids[index] for index in indices_of_remaining_file]
-        
-        # Extend the list of deleted_document_ids with these IDs.
-        deleted_document_ids.extend(corresponding_document_ids)
+    deleted_document_ids = list(deleted_document_ids)
 
     logger.info(f"Found {len(changed_documents)} changed documents.")
     logger.info(f"Found {len(deleted_document_ids)} locally deleted documents still present in vector store.")

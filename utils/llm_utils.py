@@ -127,7 +127,7 @@ def update_database(
 
     # Step 3: get changed document ids using the hash of the documents available in the vector store index item metadata
     pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
-    changed_documents, deleted_document_ids = check_for_changes(documents)
+    changed_documents, deleted_document_ids = check_for_changes(documents, pinecone_vs)
 
     # Step 4: Update the index with the changed documents
     pinecone_vs.update_vectorindex(changed_documents)
