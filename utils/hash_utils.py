@@ -1,9 +1,12 @@
+from collections import Counter
 import hashlib
 import logging
 from pathlib import Path
-from typing import Dict, Sequence
+from typing import Dict, Sequence, List, Tuple
 
 from llama_index.schema import Document
+
+from vectorstores.base import BaseVS
 
 logger = logging.getLogger(__name__)
 
@@ -25,66 +28,42 @@ def get_md5(file_path: Path) -> str:
     return hasher.hexdigest()
 
 
-def load_last_hashes(hash_file: Path) -> Dict[str, str]:
+def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequence[Document], List[str]]:
     """
-    Load the last known hashes from a file.
+    Check for file changes based on their hashes.
 
     Parameters:
-        hash_file (Path): The path to the hash file.
+        documents (Sequence[Document]): List of documents to check for changes.
+        vs (BaseVS): The vector store to check for changes in.
 
     Returns:
-        Dict[str, str]: A dictionary mapping file paths to their MD5 hashes.
+        changed_documents (Sequence[Document]): List of documents that have changed.
+
+        deleted_document_ids (List[str]): List of document ids that are deleted in local but present in vector store.
     """
-    if hash_file.exists():
-        with open(hash_file, 'r') as f:
-            return {line.split()[0]: line.split()[1] for line in f.readlines()}
-    return {}
-
-
-def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None:
-    """
-    Save the current hashes to a file.
-
-    Parameters:
-        current_hashes (Dict[str, str]): A dictionary mapping file paths to their MD5 hashes.
-        hash_file (Path): The path to the hash file.
-    """
-    with open(hash_file, 'w') as f:
-        for file, hash in current_hashes.items():
-            f.write(f"{file} {hash}\n")
-
-
-# TODO: check md5 hashes from vector store index metadata instead of a local txt file (3)
-def check_for_changes(documents: Sequence[Document], hash_file: Path = Path("file_hashes.txt")) -> Sequence[Document]:
-    """
-    Check for file changes based on their MD5 hashes.
-
-    Parameters:
-        documents (List[Document]): List of documents to check for changes.
-        hash_file (Path): The path to the hash file.
-
-    Returns:
-        List[Document]: List of documents that have changed.
-    """
-    last_hashes = load_last_hashes(hash_file)
-    current_hashes = {}
-    changed_files = []
-
-    markdown_files = [Path(doc.metadata["original_file_path"]) for doc in documents]
-
-    for file in markdown_files:
-        current_hash = get_md5(file)
-        current_hashes[str(file)] = current_hash
-        if str(file) not in last_hashes or last_hashes[str(file)] != current_hash:
-            changed_files.append(file)
-
-    logger.info(f"Found {len(changed_files)} changed files.")
-
-    save_current_hashes(current_hashes, hash_file)
-
+    last_hashes, original_file_names, document_ids = vs.get_document_infos()
+    deleted_document_ids = set(document_ids)
+    
     changed_documents = []
-    for doc in documents:
-        if Path(doc.metadata["original_file_path"]) in changed_files:
-            changed_documents.append(doc)
+    deleted_document_ids = []
 
-    return changed_documents
+    for doc in documents:
+        file_path = str(Path(doc.metadata["original_file_path"]))
+        current_hash = get_md5(Path(file_path))
+
+        # Add
+        if file_path not in original_file_names:
+            changed_documents.append(doc)
+        # Update
+        elif current_hash not in last_hashes:
+            changed_documents.append(doc)
+        else:
+            # remove from deleted set
+            deleted_document_ids.remove(doc.id_)
+        
+    deleted_document_ids = list(deleted_document_ids)
+
+    logger.info(f"Found {len(changed_documents)} changed documents.")
+    logger.info(f"Found {len(deleted_document_ids)} locally deleted documents still present in vector store.")
+
+    return changed_documents, deleted_document_ids

@@ -15,6 +15,7 @@ from llama_index.text_splitter import TokenTextSplitter
 
 from utils.constants import (
     PINECONE_INDEX_NAME,
+    DEFAULT_RELATIVE_DOCS_PATH,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CONTEXT_WINDOW,
@@ -37,43 +38,6 @@ from .multimarkdown_reader import MultiMarkdownReader
 from .templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
-
-
-def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[str], read_as_single_doc: bool = True):
-    """
-    Update the index with the changed markdown files.
-
-    This function first deletes all the old documents associated with the changed files
-    from the index and then inserts the updated documents.
-
-    Parameters:
-        index (Type[BaseIndex]): The LlamaIndex object to be updated.
-        files (List[str]): List of markdown files that have changed.
-        read_as_single_doc (bool): If True, read each markdown as a single document.
-
-    Returns:
-        None
-    """
-    # get all doc_id, filename pairs in the index
-
-    filepath_to_doc_id = {}
-    for doc_id, vector_object in index.ref_doc_info.items():
-        vector_object: RefDocInfo
-        filepath_to_doc_id[vector_object.metadata.get('original_file_path')] = doc_id
-
-    # Loop through each file in the list of changed files
-    for file in files:
-        # Delete old documents related to the current file from the index
-        if str(file) in filepath_to_doc_id:
-            doc_id = filepath_to_doc_id[str(file)]
-            index.delete_ref_doc(doc_id, delete_from_docstore=True)
-
-    # Initialize a MultiMarkdownReader object
-    updated_documents = MultiMarkdownReader(read_as_single_doc=read_as_single_doc).load_data_from_folder_or_files(files=files)
-
-    # Insert the new documents into the index
-    for updated_document in updated_documents:
-        index.insert(updated_document)
 
 
 def initialize_database(
@@ -103,7 +67,7 @@ def initialize_database(
 
     # Step 1: Clone or pull the git repository to get the latest markdown files
     if relative_docs_path is None:
-        relative_docs_path = Path("docs")  # TODO: read from utils/constants.py
+        relative_docs_path = Path(DEFAULT_RELATIVE_DOCS_PATH)
     clone_or_pull_repository(git_repo_url, git_repo_path)
     docs_path = git_repo_path / relative_docs_path
 
@@ -152,7 +116,7 @@ def update_database(
 
     # Step 1: Clone or pull the git repository to get the latest markdown files
     if relative_docs_path is None:
-        relative_docs_path = Path("docs")  # TODO: read from utils/constants.py
+        relative_docs_path = Path(DEFAULT_RELATIVE_DOCS_PATH)
     clone_or_pull_repository(git_repo_url, git_repo_path)
     docs_path = git_repo_path / relative_docs_path
 
@@ -163,10 +127,11 @@ def update_database(
 
     # Step 3: get changed document ids using the hash of the documents available in the vector store index item metadata
     pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
-    changed_documents = check_for_changes(documents)
+    changed_documents, deleted_document_ids = check_for_changes(documents, pinecone_vs)
 
     # Step 4: Update the index with the changed documents
     pinecone_vs.update_vectorindex(changed_documents)
+    pinecone_vs.delete_documents_by_id(deleted_document_ids)
 
 
 def initialize_service_context(callback_manager: CallbackManager) -> ServiceContext:
@@ -314,7 +279,6 @@ def calculate_total_cost(token_counter, model_name="gpt-3.5-turbo"):
     total_cost = prompt_cost + completion_cost
 
     return total_cost
-
 
 
 def log_total_cost(token_counter):

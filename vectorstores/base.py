@@ -3,6 +3,7 @@ from typing import Sequence
 from llama_index import StorageContext, VectorStoreIndex
 from llama_index.schema import Document
 from llama_index.vector_stores.types import BasePydanticVectorStore
+from llama_index.storage.docstore.types import RefDocInfo
 
 
 class BaseVS:
@@ -32,7 +33,7 @@ class BaseVS:
 
     def update_vectorindex(self, documents: Sequence[Document]):
         for document in documents:
-            self.vectorindex.delete(document.id_)
+            self.delete_documents_by_id([document.id_])
             self.vectorindex.insert(document)
 
     def overwrite_vectorindex(self, documents: Sequence[Document]):
@@ -42,6 +43,46 @@ class BaseVS:
         # create index, which will insert documents/vectors to vector store
         _ = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
 
+    def delete_documents_by_id(self, document_ids: Sequence[str]):
+        """
+        Delete documents from vector store by their ids.
+
+        Parameters:
+            document_ids (Sequence[str]): List of document ids to delete.
+
+        Returns:
+            None
+        """
+        # Check if there are any document IDs to delete.
+        if not document_ids:
+            return
+
+        # Proceed with deletion.
+        for document_id in document_ids:
+            self.vectorindex.delete_ref_doc(document_id, delete_from_docstore=True)
+
+    def get_document_infos(self) -> tuple[list[str], list[str], list[str]]:
+        """
+        Get hashes, original file names, and document ids of all documents in vector store.
+
+        Returns:
+            List[str]: hashes,
+            List[str]: original_file_names,
+            List[str]: document_ids
+        """
+        hashes, original_file_names, document_ids = [], [], []
+        # Retrieve a dict mapping of documents and their nodes+metadata
+        for doc_id, vector_object in self.vectorindex.ref_doc_info():
+            vector_object: RefDocInfo
+            md5_hash = vector_object.metadata.get('md5_hash')
+            original_file_name = vector_object.metadata.get('original_file_path')
+
+            hashes.append(md5_hash)
+            original_file_names.append(original_file_name)
+            document_ids.append(doc_id)
+
+        return hashes, original_file_names, document_ids
+    
     def initialize_vectorindex(self):
         """
         Create a new vector store index.
