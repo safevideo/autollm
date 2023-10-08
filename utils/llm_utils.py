@@ -127,10 +127,11 @@ def update_database(
 
     # Step 3: get changed document ids using the hash of the documents available in the vector store index item metadata
     pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
-    changed_documents = check_for_changes(documents)
+    changed_documents, deleted_document_ids = check_for_changes(documents)
 
     # Step 4: Update the index with the changed documents
     pinecone_vs.update_vectorindex(changed_documents)
+    pinecone_vs.delete_documents_by_id(deleted_document_ids)
 
 
 def initialize_service_context(callback_manager: CallbackManager) -> ServiceContext:

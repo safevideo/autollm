@@ -37,8 +37,9 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         vs (BaseVS): The vector store to check for changes in.
 
     Returns:
-        Sequence[Document]: List of documents that have changed.
-        List[str]: List of document ids that are deleted in local but present in vector store.
+        changed_documents (Sequence[Document]): List of documents that have changed.
+
+        deleted_document_ids (List[str]): List of document ids that are deleted in local but present in vector store.
     """
     last_hashes, original_file_names, document_ids = vs.get_document_infos()
     original_file_count = Counter(original_file_names)

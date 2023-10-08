@@ -53,6 +53,11 @@ class BaseVS:
         Returns:
             None
         """
+        # Check if there are any document IDs to delete.
+        if not document_ids:
+            return
+
+        # Proceed with deletion.
         for document_id in document_ids:
             self.vectorindex.delete_ref_doc(document_id, delete_from_docstore=True)
 
