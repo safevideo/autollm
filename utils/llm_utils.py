@@ -15,6 +15,7 @@ from llama_index.text_splitter import TokenTextSplitter
 
 from utils.constants import (
     PINECONE_INDEX_NAME,
+    DEFAULT_RELATIVE_DOCS_PATH,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CONTEXT_WINDOW,
@@ -66,7 +67,7 @@ def initialize_database(
 
     # Step 1: Clone or pull the git repository to get the latest markdown files
     if relative_docs_path is None:
-        relative_docs_path = Path("docs")  # TODO: read from utils/constants.py
+        relative_docs_path = Path(DEFAULT_RELATIVE_DOCS_PATH)
     clone_or_pull_repository(git_repo_url, git_repo_path)
     docs_path = git_repo_path / relative_docs_path
 
@@ -115,7 +116,7 @@ def update_database(
 
     # Step 1: Clone or pull the git repository to get the latest markdown files
     if relative_docs_path is None:
-        relative_docs_path = Path("docs")  # TODO: read from utils/constants.py
+        relative_docs_path = Path(DEFAULT_RELATIVE_DOCS_PATH)
     clone_or_pull_repository(git_repo_url, git_repo_path)
     docs_path = git_repo_path / relative_docs_path
 
