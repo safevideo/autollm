@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 
 from llama_index.schema import Document
 
+from .hash_utils import get_md5
 from .markdown_reader import MarkdownReader
 
 logger = logging.getLogger(__name__)
@@ -49,9 +50,9 @@ class MultiMarkdownReader(MarkdownReader):
         if extra_info is None:
             extra_info = {}
 
-        # TODO: include file md5 hash in extra_info
         relative_file_path = str(file)
         extra_info["original_file_path"] = relative_file_path
+        extra_info["md5_hash"] = get_md5(file)
 
         if self.read_as_single_doc:
             # Reading entire markdown as a single document

@@ -61,7 +61,7 @@ class BaseVS:
         # Retrieve a dict mapping of documents and their nodes+metadata
         for doc_id, vector_object in self.vectorindex.ref_doc_info():
             vector_object: RefDocInfo
-            hash = vector_object.get_document_hash(self, doc_id)
+            hash = vector_object.metadata.get('md5_hash')
             original_file_name = vector_object.metadata.get('original_file_path')
 
             hashes.append(hash)
@@ -69,7 +69,6 @@ class BaseVS:
             document_ids.append(doc_id)
 
         return hashes, original_file_names, document_ids
-
     
     def initialize_vectorindex(self):
         """
