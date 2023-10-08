@@ -32,7 +32,7 @@ class BaseVS:
 
     def update_vectorindex(self, documents: Sequence[Document]):
         for document in documents:
-            self.vectorindex.delete(document.id_)
+            self.vectorindex.delete_ref_doc(document.id_, delete_from_docstore=True)
             self.vectorindex.insert(document)
 
     def overwrite_vectorindex(self, documents: Sequence[Document]):
