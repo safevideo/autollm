@@ -42,6 +42,11 @@ class BaseVS:
         # create index, which will insert documents/vectors to vector store
         _ = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
 
+    def delete_documents_by_id(self, document_ids: Sequence[str]):
+        # Delete from vector store
+        for document_id in document_ids:
+            self.vectorindex.delete_ref_doc(document_id, delete_from_docstore=True)
+
     def initialize_vectorindex(self):
         """
         Create a new vector store index.
