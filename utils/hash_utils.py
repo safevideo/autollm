@@ -50,8 +50,11 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         file_path = str(Path(doc.metadata["original_file_path"]))
         current_hash = get_md5(Path(file_path))
 
-        # Add or Update
-        if file_path not in original_file_names or last_hashes[original_file_names.index(file_path)] != current_hash:
+        # Add
+        if file_path not in original_file_names:
+            changed_documents.append(doc)
+        # Update
+        elif current_hash != last_hashes[original_file_names.index(file_path)]:
             changed_documents.append(doc)
 
         # Mark as processed (for deletion check later)
