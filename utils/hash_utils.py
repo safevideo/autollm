@@ -1,9 +1,12 @@
-import logging
 import hashlib
+import logging
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, Sequence
+
+from llama_index.schema import Document
 
 logger = logging.getLogger(__name__)
+
 
 def get_md5(file_path: Path) -> str:
     """
@@ -21,6 +24,7 @@ def get_md5(file_path: Path) -> str:
             hasher.update(chunk)
     return hasher.hexdigest()
 
+
 def load_last_hashes(hash_file: Path) -> Dict[str, str]:
     """
     Load the last known hashes from a file.
@@ -36,6 +40,7 @@ def load_last_hashes(hash_file: Path) -> Dict[str, str]:
             return {line.split()[0]: line.split()[1] for line in f.readlines()}
     return {}
 
+
 def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None:
     """
     Save the current hashes to a file.
@@ -48,20 +53,24 @@ def save_current_hashes(current_hashes: Dict[str, str], hash_file: Path) -> None
         for file, hash in current_hashes.items():
             f.write(f"{file} {hash}\n")
 
-def check_for_changes(markdown_files: List[Path], hash_file: Path = Path("file_hashes.txt")) -> List[Path]:
+
+# TODO: check md5 hashes from vector store index metadata instead of a local txt file (3)
+def check_for_changes(documents: Sequence[Document], hash_file: Path = Path("file_hashes.txt")) -> Sequence[Document]:
     """
     Check for file changes based on their MD5 hashes.
 
     Parameters:
-        markdown_files (List[Path]): List of markdown files to check.
+        documents (List[Document]): List of documents to check for changes.
         hash_file (Path): The path to the hash file.
 
     Returns:
-        List[Path]: List of changed files.
+        List[Document]: List of documents that have changed.
     """
     last_hashes = load_last_hashes(hash_file)
     current_hashes = {}
     changed_files = []
+
+    markdown_files = [Path(doc.metadata["original_file_path"]) for doc in documents]
 
     for file in markdown_files:
         current_hash = get_md5(file)
@@ -72,4 +81,10 @@ def check_for_changes(markdown_files: List[Path], hash_file: Path = Path("file_h
     logger.info(f"Found {len(changed_files)} changed files.")
 
     save_current_hashes(current_hashes, hash_file)
-    return changed_files
+
+    changed_documents = []
+    for doc in documents:
+        if Path(doc.metadata["original_file_path"]) in changed_files:
+            changed_documents.append(doc)
+
+    return changed_documents
