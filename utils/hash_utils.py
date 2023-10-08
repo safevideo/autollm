@@ -57,9 +57,9 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         # Update
         elif current_hash not in last_hashes:
             changed_documents.append(doc)
-
-        # remove from deleted set
-        deleted_document_ids.remove(doc.id_)
+        else:
+            # remove from deleted set
+            deleted_document_ids.remove(doc.id_)
         
     deleted_document_ids = list(deleted_document_ids)
 
