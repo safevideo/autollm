@@ -1,3 +1,4 @@
+from collections import Counter
 import hashlib
 import logging
 from pathlib import Path
@@ -27,57 +28,52 @@ def get_md5(file_path: Path) -> str:
     return hasher.hexdigest()
 
 
-# TODO: check md5 hashes from vector store index metadata instead of a local txt file (3)
 def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequence[Document], List[str]]:
     """
     Check for file changes based on their hashes.
 
     Parameters:
-        documents (List[Document]): List of documents to check for changes.
+        documents (Sequence[Document]): List of documents to check for changes.
         vs (BaseVS): The vector store to check for changes in.
-    
-    Returns:
-        List[Document]: List of documents that have changed.
 
-        List[str]: List of document ids that are deleted in local but present in vectore store.
+    Returns:
+        Sequence[Document]: List of documents that have changed.
+        List[str]: List of document ids that are deleted in local but present in vector store.
     """
     last_hashes, original_file_names, document_ids = vs.get_document_infos()
-    current_hashes = {}
-    changed_files = []
+    original_file_count = Counter(original_file_names)
+    
+    changed_documents = []
     deleted_document_ids = []
 
-    markdown_files = [Path(doc.metadata["original_file_path"]) for doc in documents]
-
-    for file in markdown_files:
-        current_hash = get_md5(file)
-        current_hashes[str(file)] = current_hash
-        # Add
-        if str(file) not in last_hashes:
-            changed_files.append(file)
-        # Update
-        elif last_hashes[str(file)] != current_hash:
-            changed_files.append(file)
-        # Remove (file was deleted)
-        elif str(file) in last_hashes:
-            deleted_document_ids.append(file)
-
-    logger.info(f"Found {len(changed_files)} changed files.")
-    logger.info(f"Found {len(deleted_document_ids)} deleted documents.")
-
-    changed_documents = []
     for doc in documents:
-        if Path(doc.metadata["original_file_path"]) in changed_files:
+        file_path = str(Path(doc.metadata["original_file_path"]))
+        current_hash = get_md5(Path(file_path))
+
+        # Add or Update
+        if file_path not in original_file_names or last_hashes[original_file_names.index(file_path)] != current_hash:
             changed_documents.append(doc)
 
+        # Mark as processed (for deletion check later)
+        if file_path in original_file_count:
+            original_file_count[file_path] -= 1
+            if original_file_count[file_path] == 0:
+                del original_file_count[file_path]
+
+    # Identify documents that are deleted locally but still present in the vector store.
+    for remaining_file in original_file_count.keys():
+        # Find all indices where this remaining_file appears in original_file_names.
+        indices_of_remaining_file = [
+            index for index, file_name in enumerate(original_file_names) if file_name == remaining_file
+        ]
+        
+        # Retrieve the document IDs corresponding to these indices.
+        corresponding_document_ids = [document_ids[index] for index in indices_of_remaining_file]
+        
+        # Extend the list of deleted_document_ids with these IDs.
+        deleted_document_ids.extend(corresponding_document_ids)
+
+    logger.info(f"Found {len(changed_documents)} changed documents.")
+    logger.info(f"Found {len(deleted_document_ids)} locally deleted documents still present in vector store.")
+
     return changed_documents, deleted_document_ids
-
-
-def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequence[Document], List[str]]:
-    """
-    Check for file changes based on their hashes.
-
-    Returns:
-        List[Document]: List of documents that have changed.
-
-        List[str]: List of document ids that are deleted in local but present in vectore store.
-    """
