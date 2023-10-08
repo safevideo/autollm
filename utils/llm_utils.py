@@ -39,43 +39,6 @@ from .templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 logger = logging.getLogger(__name__)
 
 
-def update_index_for_changed_files(index: Type[VectorStoreIndex], files: List[str], read_as_single_doc: bool = True):
-    """
-    Update the index with the changed markdown files.
-
-    This function first deletes all the old documents associated with the changed files
-    from the index and then inserts the updated documents.
-
-    Parameters:
-        index (Type[BaseIndex]): The LlamaIndex object to be updated.
-        files (List[str]): List of markdown files that have changed.
-        read_as_single_doc (bool): If True, read each markdown as a single document.
-
-    Returns:
-        None
-    """
-    # get all doc_id, filename pairs in the index
-
-    filepath_to_doc_id = {}
-    for doc_id, vector_object in index.ref_doc_info.items():
-        vector_object: RefDocInfo
-        filepath_to_doc_id[vector_object.metadata.get('original_file_path')] = doc_id
-
-    # Loop through each file in the list of changed files
-    for file in files:
-        # Delete old documents related to the current file from the index
-        if str(file) in filepath_to_doc_id:
-            doc_id = filepath_to_doc_id[str(file)]
-            index.delete_ref_doc(doc_id, delete_from_docstore=True)
-
-    # Initialize a MultiMarkdownReader object
-    updated_documents = MultiMarkdownReader(read_as_single_doc=read_as_single_doc).load_data_from_folder_or_files(files=files)
-
-    # Insert the new documents into the index
-    for updated_document in updated_documents:
-        index.insert(updated_document)
-
-
 def initialize_database(
         git_repo_url: str,
         git_repo_path: Path,
@@ -314,7 +277,6 @@ def calculate_total_cost(token_counter, model_name="gpt-3.5-turbo"):
     total_cost = prompt_cost + completion_cost
 
     return total_cost
-
 
 
 def log_total_cost(token_counter):
