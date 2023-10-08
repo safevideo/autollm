@@ -55,7 +55,7 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         if file_path not in original_file_names:
             changed_documents.append(doc)
         # Update
-        elif current_hash != last_hashes[original_file_names.index(file_path)]:
+        elif current_hash not in last_hashes:
             changed_documents.append(doc)
 
         # Mark as processed (for deletion check later)
