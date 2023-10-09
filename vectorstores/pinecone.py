@@ -6,6 +6,9 @@ from .base import BaseVS
 
 
 class PineconeVS(BaseVS):
+    """
+    Pinecone vector store.
+    """
     def __init__(self, index_name: str, dimension: int = 1536, metric: str = 'euclidean', pod_type: str = "p1"):
         self._index_name = index_name
         self._dimension = dimension

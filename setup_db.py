@@ -1,11 +1,7 @@
 from pathlib import Path
 import logging
 
-from utils import(
-    env_utils,
-    git_utils,
-    llm_utils
-)
+from utils import env_utils, git_utils, llm_utils
 from utils.constants import DEFAULT_VECTORE_STORE_TYPE
 
 # Initialize logging

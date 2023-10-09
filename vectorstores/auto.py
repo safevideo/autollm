@@ -1,5 +1,7 @@
 from typing import Any
 
+# Mapping of vector store types to their respective class names.
+# This is used for dynamically importing the correct VectorStore class based on the type.
 VECTOR_STORE_TYPE_TO_CLASS_NAME = {
     "pinecone": "PineconeVS",
     "qdrant": "QdrantVS",
@@ -17,13 +19,16 @@ def import_vector_store_class(vector_store_type: str, class_name: str):
             Name of the vector store class (example: "PineconeVS")
 
     Returns:
-        class_: class with given name
+        The imported VectorStore class.
     """
     module = __import__(f"vectorstores.{vector_store_type}", fromlist=[class_name])
     class_ = getattr(module, class_name)
     return class_
 
 class AutoVectorStore:
+    """
+    A class for dynamically initializing a Vector Store based on the type and additional parameters.
+    """
     @staticmethod
     def create(vector_store_type: str, **kwargs: Any):
         """

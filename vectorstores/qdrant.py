@@ -4,6 +4,9 @@ from utils.env_utils import read_env_variable, validate_environment_variables
 from .base import BaseVS
 
 class QdrantVS(BaseVS):
+    """
+    Qdrant vector store.
+    """
     def __init__(self, index_name: str, size: int = 1536, distance: str = "EUCLID"):
         self._index_name = index_name
         self._size = size
