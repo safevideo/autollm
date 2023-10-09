@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import Union, List
+
 from llama_index import VectorStoreIndex
 from llama_index.storage.storage_context import StorageContext
 
@@ -5,8 +8,9 @@ from .base import BaseVS
 from utils.markdown_processing import process_and_get_documents
 
 class InMemoryVectorStore(BaseVS):
-    def __init__(self, use_async: bool = False, show_progress: bool = False):
-        self._use_async = use_async
+    def __init__(self, path_or_files: Union[Path, List[Path]], read_as_single_doc: bool = True, show_progress: bool = True):
+        self._path_or_files = path_or_files
+        self._read_as_single_doc = read_as_single_doc
         self._show_progress = show_progress
         super().__init__()
 
@@ -20,7 +24,7 @@ class InMemoryVectorStore(BaseVS):
         """
         Create a new vector store index.
         """
-        documents = process_and_get_documents(path_or_files="README.md", read_as_single_doc=True)
+        documents = process_and_get_documents(path_or_files=self._path_or_files, read_as_single_doc=self._read_as_single_doc)
         self._vectorstore = VectorStoreIndex.from_documents(
             documents=documents,
             show_progress=self._show_progress
@@ -30,7 +34,6 @@ class InMemoryVectorStore(BaseVS):
         """
         Connect to an existing vector store index. Sets self._vectorstore.
         """
-        # For in-memory vector stores, "connecting" doesn't make sense as there is no external
-        # resource to connect to. In this context, you might just want to "use" the existing vector index.
-        self._vectorstore = self.vectorindex
+        # For in-memory, the initialization and connection can be the same.
+        self.initialize_vectorindex()
 
