@@ -53,6 +53,7 @@ class QdrantVS(BaseVS):
         # Create index
         self._client.create_collection(
             self._collection_name,
+            # TODO: Figure out how to set these parameters
             vectors_config={
                 "dimension": self._dimension,
                 "distance": self._metric
