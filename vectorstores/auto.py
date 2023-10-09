@@ -18,7 +18,7 @@ def import_vector_store_class(vector_store_type: str, class_name: str):
     Returns:
         class_: class with given name
     """
-    module = __import__(f"your_module_path.{vector_store_type}", fromlist=[class_name])
+    module = __import__(f"vectorstores.{vector_store_type}", fromlist=[class_name])
     class_ = getattr(module, class_name)
     return class_
 
