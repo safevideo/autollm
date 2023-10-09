@@ -1,13 +1,14 @@
 from llama_index.vector_stores.qdrant import QdrantVectorStore
+
 from utils.env_utils import read_env_variable, validate_environment_variables
 from .base import BaseVS
 
 class QdrantVS(BaseVS):
-    def __init__(self, collection_name: str):
+    def __init__(self, collection_name: str, size: int = 1536, distance: str = "EUCLID"):
         self._collection_name = collection_name
+        self._size = size
+        self._distance = distance
         self._client = None
-        self._url = None
-        self._api_key = None
         super().__init__()
 
     def _validate_requirements(self):
@@ -27,37 +28,37 @@ class QdrantVS(BaseVS):
         """
         Initialize the Qdrant client if not already initialized.
         """
-        import qdrant_client
+        from qdrant_client import QdrantClient
 
         # If client already initialized, return
         if self._client is not None:
             return
         
         # Read environment variables for Qdrant initialization
-        self._url = read_env_variable("QDRANT_URL")
-        self._api_key = read_env_variable("QDRANT_API_KEY")
+        url = read_env_variable("QDRANT_URL")
+        api_key = read_env_variable("QDRANT_API_KEY")
         
-        self._client = qdrant_client.QdrantClient(
+        self._client = QdrantClient(
             url=self._url, 
-            api_key=self._api_key, 
-            **self._client_kwargs
+            api_key=self._api_key
         )
 
     def initialize_vectorindex(self):
         """
         Create a new vector store index.
         """
+        from qdrant_client.models import Distance, VectorParams
+
         # Initialize client
         self._initialize_client()
-        
+
+        # Convert string distance measure to Distance Enum equals to Distance.EUCLID
+        distance = Distance[self._distance]
+
         # Create index
-        self._client.create_collection(
-            self._collection_name,
-            # TODO: Figure out how to set these parameters
-            vectors_config={
-                "dimension": self._dimension,
-                "distance": self._metric
-            }
+        self._client.recreate_collection(
+            collection_name=self._collection_name,
+            vectors_config=VectorParams(size=self._size, distance=distance)
         )
 
     def connect_vectorstore(self):
