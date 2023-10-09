@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Union, List
 
 from llama_index import VectorStoreIndex
-from llama_index.storage.storage_context import StorageContext
 
 from .base import BaseVS
 from utils.markdown_processing import process_and_get_documents

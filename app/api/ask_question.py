@@ -3,9 +3,9 @@ import logging
 from fastapi import APIRouter
 
 from utils import llm_utils
-from utils.constants import PINECONE_INDEX_NAME
-from vectorstores import \
-    PineconeVS  # TODO: utilize vector store factory for generic use
+from utils.constants import DEFAULT_INDEX_NAME, DEFAULT_VECTORE_STORE_TYPE
+
+from vectorstores import auto
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -19,9 +19,9 @@ llm_utils.initialize_service_context(callback_manager=callback_manager)
 text_qa_template = llm_utils.create_text_qa_template()
 
 # Initialize the query engine
-pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
-pinecone_vs.connect_vectorstore()
-query_engine = pinecone_vs.vectorindex.as_query_engine(text_qa_template=text_qa_template)
+vector_store = auto.AutoVectorStore().create(DEFAULT_VECTORE_STORE_TYPE, index_name=DEFAULT_INDEX_NAME)
+vector_store.connect_vectorstore()
+query_engine = vector_store.vectorindex.as_query_engine(text_qa_template=text_qa_template)
 
 
 @router.get("/ask_question")

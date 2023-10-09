@@ -6,6 +6,7 @@ from utils import(
     git_utils,
     llm_utils
 )
+from utils.constants import DEFAULT_VECTORE_STORE_TYPE
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -18,6 +19,7 @@ def setup_database(read_as_single_doc: bool = True) -> None:
     
     This function should be executed once to populate the vector database with initial documents.
     It clones or pulls a Git repository to access the latest markdown files, then initializes the database.
+    The function uses a vector store defined by the `vector_store_type` environment variable.
     
     Parameters:
         read_as_single_doc (bool): Whether to treat each markdown file as a single document. Default is True.
@@ -29,13 +31,21 @@ def setup_database(read_as_single_doc: bool = True) -> None:
     git_repo_url = env_utils.read_env_variable("GIT_REPO_URL", "https://github.com/ultralytics/ultralytics.git")
     git_repo_path = Path(env_utils.read_env_variable("GIT_REPO_PATH", "./ultralytics"))
     relative_docs_path = env_utils.read_env_variable("DOCS_PATH").lstrip('/') # Path to get the documents from (default is 'docs')
+    vector_store_type = env_utils.read_env_variable("VECTOR_STORE_TYPE", DEFAULT_VECTORE_STORE_TYPE)
 
     # Clone or pull the git repository to get the latest markdown files
     git_utils.clone_or_pull_repository(git_repo_url, git_repo_path)
 
     # Setup the database
     logger.info("Starting database setup.")
-    llm_utils.initialize_database(git_repo_url, git_repo_path, read_as_single_doc=read_as_single_doc, relative_docs_path=relative_docs_path)
+
+    llm_utils.initialize_database(
+        git_repo_url, git_repo_path,
+        read_as_single_doc=read_as_single_doc,
+        relative_docs_path=relative_docs_path,
+        vectore_store_type=vector_store_type
+    )
+
     logger.info("Database setup completed successfully.")
 
 

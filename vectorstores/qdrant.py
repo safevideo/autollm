@@ -4,8 +4,8 @@ from utils.env_utils import read_env_variable, validate_environment_variables
 from .base import BaseVS
 
 class QdrantVS(BaseVS):
-    def __init__(self, collection_name: str, size: int = 1536, distance: str = "EUCLID"):
-        self._collection_name = collection_name
+    def __init__(self, index_name: str, size: int = 1536, distance: str = "EUCLID"):
+        self._index_name = index_name
         self._size = size
         self._distance = distance
         self._client = None
@@ -39,8 +39,8 @@ class QdrantVS(BaseVS):
         api_key = read_env_variable("QDRANT_API_KEY")
         
         self._client = QdrantClient(
-            url=self._url, 
-            api_key=self._api_key
+            url=url, 
+            api_key=api_key
         )
 
     def initialize_vectorindex(self):
@@ -57,7 +57,7 @@ class QdrantVS(BaseVS):
 
         # Create index
         self._client.recreate_collection(
-            collection_name=self._collection_name,
+            collection_name=self._index_name,
             vectors_config=VectorParams(size=self._size, distance=distance)
         )
 
@@ -70,6 +70,6 @@ class QdrantVS(BaseVS):
 
         # Construct vector store
         self._vectorstore = QdrantVectorStore(
-            collection_name=self._collection_name,
+            collection_name=self._index_name,
             client=self._client
         )

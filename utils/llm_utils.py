@@ -1,20 +1,20 @@
 # Desc: Utility functions for llama index.
 import logging
 from pathlib import Path
-from typing import List, Type, Union
+from typing import Union
 import tiktoken
 
-from llama_index import (ServiceContext, VectorStoreIndex, set_global_service_context)
+from llama_index import (ServiceContext, set_global_service_context)
 from llama_index.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index.llms import Anyscale, OpenAI, PaLM
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
-from llama_index.storage.docstore.types import RefDocInfo
 from llama_index.text_splitter import TokenTextSplitter
 
 from utils.constants import (
-    PINECONE_INDEX_NAME,
+    DEFAULT_INDEX_NAME,
+    DEFAULT_VECTORE_STORE_TYPE,
     DEFAULT_RELATIVE_DOCS_PATH,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
@@ -27,37 +27,38 @@ from utils.constants import (
     DEFAULT_ENABLE_TOKEN_COUNTING,
     MODEL_COST,
 )
-from vectorstores import \
-    PineconeVS  # TODO: utilize vector store factory for generic use
+
+from vectorstores.auto import AutoVectorStore
 
 from .env_utils import read_env_variable
 from .git_utils import clone_or_pull_repository
 from .hash_utils import check_for_changes
 from .markdown_processing import process_and_get_documents
-from .multimarkdown_reader import MultiMarkdownReader
 from .templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
 
 
 def initialize_database(
-        git_repo_url: str,
-        git_repo_path: Path,
-        read_as_single_doc: bool = True,
-        relative_docs_path: Path = None
+    git_repo_url: str,
+    git_repo_path: Path,
+    read_as_single_doc: bool = True,
+    relative_docs_path: Path = None,
+    vectore_store_type: str = DEFAULT_VECTORE_STORE_TYPE
 ) -> None:
     """
     Initialize the database with documents from the specified directory path.
 
     This function initializes the database by reading the document data from a
     given directory path and storing it in a vector database. The function
-    uses Pinecone to manage the vector database.
+    uses a vector store defined by the `vectore_store_type` parameter.
 
     Parameters:
         git_repo_url (str): URL of the git repository to clone or pull.
         git_repo_path (Path): Local path to clone the git repository.
         read_as_single_doc (bool): If True, read each markdown as a single document.
         relative_docs_path (Path): Relative path to the directory containing markdown files.
+        vectore_store_type (str): Type of vector store to use ('qdrant', 'pinecone', etc.).
 
     Returns:
         None
@@ -79,14 +80,14 @@ def initialize_database(
     logger.info("Initializing vector store")
 
     # Step 3: Connect to the existing vector store database
-    pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
-    pinecone_vs.initialize_vectorindex()
-    pinecone_vs.connect_vectorstore()
+    vector_store = AutoVectorStore.create(vector_store_type=vectore_store_type, collection_name=DEFAULT_INDEX_NAME)
+    vector_store.initialize_vectorindex()
+    vector_store.connect_vectorstore()
     
     logger.info("Updating vector store with documents")
 
     # Step 4: Update the index with the documents
-    pinecone_vs.overwrite_vectorindex(documents)
+    vector_store.overwrite_vectorindex(documents)
 
     logger.info("Vector database successfully initialized.")
 
@@ -95,7 +96,8 @@ def update_database(
     git_repo_url: str,
     git_repo_path: Path,
     read_as_single_doc: bool = True,
-    relative_docs_path: Path = None
+    relative_docs_path: Path = None,
+    vectore_store_type: str = DEFAULT_VECTORE_STORE_TYPE
 ) -> None:
     """
     Updates the vector database by performing the following tasks:
@@ -109,6 +111,7 @@ def update_database(
         git_repo_path (Path): Local path to clone the git repository.
         read_as_single_doc (bool): If True, read each markdown as a single document.
         relative_docs_path (Path): Relative path to the directory containing markdown files.
+        vectore_store_type (str): Type of vector store to use ('qdrant', 'pinecone', etc.).
 
     Returns:
         None
@@ -127,12 +130,12 @@ def update_database(
     documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
 
     # Step 3: get changed document ids using the hash of the documents available in the vector store index item metadata
-    pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
-    changed_documents, deleted_document_ids = check_for_changes(documents, pinecone_vs)
+    vector_store = AutoVectorStore.create(vector_store_type=vectore_store_type, index_name=DEFAULT_INDEX_NAME)
+    changed_documents, deleted_document_ids = check_for_changes(documents, vector_store)
 
     # Step 4: Update the index with the changed documents
-    pinecone_vs.update_vectorindex(changed_documents)
-    pinecone_vs.delete_documents_by_id(deleted_document_ids)
+    vector_store.update_vectorindex(changed_documents)
+    vector_store.delete_documents_by_id(deleted_document_ids)
 
 
 def initialize_service_context(callback_manager: CallbackManager) -> ServiceContext:
