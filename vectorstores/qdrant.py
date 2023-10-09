@@ -22,7 +22,7 @@ class QdrantVS(BaseVS):
         try:
             import qdrant_client
         except ImportError:
-            raise ImportError("`qdrant-client` package not found, please run `pip install qdrant-client`")
+            raise ImportError("`qdrant-client` package not found, please run `pip install qdrant-client==1.5.4`")
 
     def _initialize_client(self):
         """
