@@ -6,7 +6,7 @@ from llama_index import VectorStoreIndex
 from .base import BaseVS
 from utils.markdown_processing import process_and_get_documents
 
-class InMemoryVectorStore(BaseVS):
+class InMemoryVS(BaseVS):
     def __init__(self, path_or_files: Union[Path, List[Path]], read_as_single_doc: bool = True, show_progress: bool = True):
         self._path_or_files = path_or_files
         self._read_as_single_doc = read_as_single_doc

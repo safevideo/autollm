@@ -3,6 +3,7 @@ from typing import Any
 VECTOR_STORE_TYPE_TO_CLASS_NAME = {
     "pinecone": "PineconeVS",
     "qdrant": "QdrantVS",
+    "inmemory": "InMemoryVS"
 }
 
 def import_vector_store_class(vector_store_type: str, class_name: str):
@@ -11,7 +12,7 @@ def import_vector_store_class(vector_store_type: str, class_name: str):
 
     Args:
         vector_store_type: str
-            Type of vector store ("pinecone", "qdrant")
+            Type of vector store ("pinecone", "qdrant", "inmemory")
         class_name: str
             Name of the vector store class (example: "PineconeVS")
 
