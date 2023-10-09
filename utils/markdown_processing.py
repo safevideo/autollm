@@ -31,8 +31,13 @@ def process_and_get_documents(
     """
     multi_markdown_reader = MultiMarkdownReader(read_as_single_doc=read_as_single_doc)
     
+    # If path_or_files is a Path, check if it is a folder or a file.
     if isinstance(path_or_files, Path):
-        documents = multi_markdown_reader.load_data_from_folder_or_files(folder_path=path_or_files, extra_info=extra_info)
+        if path_or_files.is_dir():
+            documents = multi_markdown_reader.load_data_from_folder_or_files(folder_path=path_or_files, extra_info=extra_info)
+        elif path_or_files.is_file():
+            documents = multi_markdown_reader.load_data_from_folder_or_files(files=[path_or_files], extra_info=extra_info)
+    # If path_or_files is a list of Paths, read all files.
     elif isinstance(path_or_files, list):
         documents = multi_markdown_reader.load_data_from_folder_or_files(files=path_or_files, extra_info=extra_info)
     else:
