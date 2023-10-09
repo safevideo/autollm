@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def setup_database(index_name: str = "quickstart", read_as_single_doc: bool = True) -> None:
+def setup_database(read_as_single_doc: bool = True) -> None:
     """
     Perform a one-time setup to initialize the vector database with documents.
     
@@ -20,7 +20,6 @@ def setup_database(index_name: str = "quickstart", read_as_single_doc: bool = Tr
     It clones or pulls a Git repository to access the latest markdown files, then initializes the database.
     
     Parameters:
-        index_name (str): The name of the Pinecone index to use. Default is 'quickstart'.
         read_as_single_doc (bool): Whether to treat each markdown file as a single document. Default is True.
     """
     required_env_variables = ["DOCS_PATH"]
@@ -29,15 +28,14 @@ def setup_database(index_name: str = "quickstart", read_as_single_doc: bool = Tr
     # Get environment variables
     git_repo_url = env_utils.read_env_variable("GIT_REPO_URL", "https://github.com/ultralytics/ultralytics.git")
     git_repo_path = Path(env_utils.read_env_variable("GIT_REPO_PATH", "./ultralytics"))
-    docs_path = env_utils.read_env_variable("DOCS_PATH").lstrip('/') # Remove leading slash if present
-    full_path = git_repo_path.joinpath(docs_path)   # Concatenate paths
+    relative_docs_path = env_utils.read_env_variable("DOCS_PATH").lstrip('/') # Path to get the documents from (default is 'docs')
 
     # Clone or pull the git repository to get the latest markdown files
     git_utils.clone_or_pull_repository(git_repo_url, git_repo_path)
 
     # Setup the database
     logger.info("Starting database setup.")
-    llm_utils.initialize_database(index_name, full_path, read_as_single_doc=read_as_single_doc)
+    llm_utils.initialize_database(git_repo_url, git_repo_path, read_as_single_doc=read_as_single_doc, relative_docs_path=relative_docs_path)
     logger.info("Database setup completed successfully.")
 
 
