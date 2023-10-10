@@ -24,7 +24,7 @@ class PineconeVS(BaseVS):
         try:
             import pinecone
         except ImportError:
-            raise ImportError("pip install pinecone to use this feature")
+            raise ImportError("`pinecone` package not found, please run `pip install pinecone-client==2.2.4`")
 
     def initialize_vectorindex(self):
         """

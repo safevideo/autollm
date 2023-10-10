@@ -81,7 +81,8 @@ def initialize_database(
     # Step 3: Connect to the existing vector store database
     pinecone_vs = PineconeVS(index_name=PINECONE_INDEX_NAME)  # TODO: utilize vector store factory for generic use
     pinecone_vs.initialize_vectorindex()
-
+    pinecone_vs.connect_vectorstore()
+    
     logger.info("Updating vector store with documents")
 
     # Step 4: Update the index with the documents
