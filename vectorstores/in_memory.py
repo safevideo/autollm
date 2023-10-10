@@ -24,6 +24,7 @@ class InMemoryVectorStore(BaseVS):
         """
         Create a new vector store index.
         """
+        # TODO: Add support for other file formats. (pdf, docx, etc.)
         documents = process_and_get_documents(path_or_files=self._path_or_files, read_as_single_doc=self._read_as_single_doc)
         self._vectorstore = VectorStoreIndex.from_documents(
             documents=documents,
