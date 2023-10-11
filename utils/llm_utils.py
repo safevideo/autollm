@@ -1,6 +1,5 @@
 # Desc: Utility functions for llama index.
 import logging
-from pathlib import Path
 from typing import Union, Sequence
 import tiktoken
 
@@ -15,7 +14,6 @@ from llama_index.text_splitter import TokenTextSplitter
 from utils.constants import (
     DEFAULT_INDEX_NAME,
     DEFAULT_VECTORE_STORE_TYPE,
-    DEFAULT_RELATIVE_DOCS_PATH,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CONTEXT_WINDOW,
@@ -31,9 +29,7 @@ from utils.constants import (
 from vectorstores.auto import AutoVectorStore
 
 from .env_utils import read_env_variable
-from .git_utils import clone_or_pull_repository
 from .hash_utils import check_for_changes
-from .markdown_processing import process_and_get_documents
 from .templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
