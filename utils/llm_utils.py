@@ -1,6 +1,6 @@
 # Desc: Utility functions for llama index.
 import logging
-from typing import Union, Sequence
+from typing import Union, Sequence, Optional
 import tiktoken
 
 from llama_index import (ServiceContext, set_global_service_context, Document)
@@ -98,23 +98,38 @@ def update_database(
     logger.info("Vector database successfully updated.")
 
 
-def initialize_service_context(callback_manager: CallbackManager) -> ServiceContext:
+def initialize_service_context(
+        llm_backend: str = DEFAULT_LLM_BACKEND,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        openai_model_name: Optional[str] = DEFAULT_OPENAI_MODEL_NAME,
+        palm_model_name: Optional[str] = DEFAULT_PALM_MODEL_NAME,
+        anyscale_model_name: Optional[str] = DEFAULT_ANYSCALE_MODEL_NAME,
+        chunk_size: int = DEFAULT_CHUNK_SIZE,
+        chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+        context_window: int = DEFAULT_CONTEXT_WINDOW,
+        callback_manager: CallbackManager = None
+) -> ServiceContext:
     """
     Initialize and configures the service context utility container for LlamaIndex
     index and query classes, setting as the global default.
 
     Parameters:
+        chunk_size (int): Size of the chunks to split the text into, in number of tokens.
+        chunk_overlap (int): Number of tokens to overlap between chunks.
+        context_window (int): Number of tokens to include in the context window.
         callback_manager (CallbackManager): Callback Manager to be included in the service context.
 
     Returns:
         None
     """
-    chunk_size = int(read_env_variable("CHUNK_SIZE", DEFAULT_CHUNK_SIZE))
-    chunk_overlap = int(read_env_variable("CHUNK_OVERLAP", DEFAULT_CHUNK_OVERLAP))
-    context_window = int(read_env_variable("CONTEXT_WINDOW", DEFAULT_CONTEXT_WINDOW))
-
-    # Initialize LLM based on the backend selection from environment variables
-    llm = initialize_llm()  # Default is OpenAI
+    # Initialize LLM based on the backend selection, default is OpenAI
+    llm = initialize_llm(
+        llm_backend=llm_backend,
+        max_tokens=max_tokens,
+        openai_model_name=openai_model_name,
+        palm_model_name=palm_model_name,
+        anyscale_model_name=anyscale_model_name
+    )
 
     node_parser = SimpleNodeParser.from_defaults(
         text_splitter=TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
@@ -164,15 +179,25 @@ def create_text_qa_template(
     return ChatPromptTemplate(chat_text_qa_msgs)
 
 
-def initialize_llm() -> Union[OpenAI, PaLM, Anyscale]:
-    """Initializes the language model based on the backend selection, returning the initialized LLM object."""
-    llm_backend = read_env_variable("LLM_BACKEND", DEFAULT_LLM_BACKEND)
-    max_tokens = int(read_env_variable("MAX_TOKENS", DEFAULT_MAX_TOKENS))
-
-    openai_model_name = read_env_variable("OPENAI_MODEL_NAME", DEFAULT_OPENAI_MODEL_NAME)
-    palm_model_name = read_env_variable("PALM_MODEL_NAME", DEFAULT_PALM_MODEL_NAME)
-    anyscale_model_name = read_env_variable("ANYSCALE_MODEL_NAME", DEFAULT_ANYSCALE_MODEL_NAME)
-
+def initialize_llm(
+        llm_backend: str = DEFAULT_LLM_BACKEND,
+        max_tokens: int = DEFAULT_MAX_TOKENS,
+        openai_model_name: Optional[str] = DEFAULT_OPENAI_MODEL_NAME,
+        palm_model_name: Optional[str] = DEFAULT_PALM_MODEL_NAME,
+        anyscale_model_name: Optional[str] = DEFAULT_ANYSCALE_MODEL_NAME
+) -> Union[OpenAI, PaLM, Anyscale]:
+    """
+    Initializes the language model based on the backend selection, returning the initialized LLM object.
+    
+    Parameters:
+        llm_backend (str): The LLM backend to use (e.g., 'OPENAI', 'PALM', 'ANYSCALE'). Defaults to OPENAI.
+        max_tokens (int): The maximum number of tokens to use for the LLM.
+        openai_model_name (Optional[str]): The name of the OpenAI model to use.
+        palm_model_name (Optional[str]): The name of the PaLM model to use.
+        anyscale_model_name (Optional[str]): The name of the Anyscale model to use.
+    Returns:
+        llm (Union[OpenAI, PaLM, Anyscale]): Initialized LLM object.
+    """
     if llm_backend == "OPENAI":
         return OpenAI(temperature=0.1, model=openai_model_name, max_tokens=max_tokens)
     elif llm_backend == "PALM":
@@ -183,7 +208,8 @@ def initialize_llm() -> Union[OpenAI, PaLM, Anyscale]:
         raise ValueError(f"Invalid LLM_BACKEND: {llm_backend}")
 
 
-def initialize_token_counting():
+# TODO: Don't read from environment variables.
+def initialize_token_counting(encoding_model: str = "gpt-3.5-turbo"):
     """
     Initializes the Token Counting Handler for tracking token usage.
     
@@ -197,7 +223,7 @@ def initialize_token_counting():
         return None
     
     # Initialize the Token Counting Handler
-    token_counter = generate_token_counter()
+    token_counter = generate_token_counter(encoding_model=encoding_model)
 
     # Initialize Callback Manager and add Token Counting Handler
     callback_manager = CallbackManager([token_counter])
@@ -205,15 +231,18 @@ def initialize_token_counting():
     return token_counter, callback_manager
 
 
-def generate_token_counter():
+def generate_token_counter(encoding_model: str = "gpt-3.5-turbo"):
     """
     Generates a Token Counting Handler for tracking token usage.
-    
+
+    Parameters:
+        encoding_model (str): The name of the encoding model to use.
+
     Returns:
         token_counter (TokenCountingHandler): Initialized Token Counting Handler.
     """
     # Initialize the Token Counting Handler
-    tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo").encode  # Update the model name as needed
+    tokenizer = tiktoken.encoding_for_model(encoding_model).encode  # Update the model name as needed
     token_counter = TokenCountingHandler(tokenizer=tokenizer, verbose=True)
     
     return token_counter
@@ -245,6 +274,7 @@ def calculate_total_cost(token_counter, model_name="gpt-3.5-turbo"):
     return total_cost
 
 
+# TODO: Delete this function.
 def log_total_cost(token_counter):
     """
     Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment variables.
