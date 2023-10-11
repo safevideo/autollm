@@ -1,10 +1,10 @@
 # Desc: Utility functions for llama index.
 import logging
 from pathlib import Path
-from typing import Union
+from typing import Union, Sequence
 import tiktoken
 
-from llama_index import (ServiceContext, set_global_service_context)
+from llama_index import (ServiceContext, set_global_service_context, Document)
 from llama_index.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index.llms import Anyscale, OpenAI, PaLM
@@ -40,102 +40,66 @@ logger = logging.getLogger(__name__)
 
 
 def initialize_database(
-    git_repo_url: str,
-    git_repo_path: Path,
-    read_as_single_doc: bool = True,
-    relative_docs_path: Path = None,
+    documents: Sequence[Document],
     vectore_store_type: str = DEFAULT_VECTORE_STORE_TYPE
 ) -> None:
     """
-    Initialize the database with documents from the specified directory path.
-
-    This function initializes the database by reading the document data from a
-    given directory path and storing it in a vector database. The function
-    uses a vector store defined by the `vectore_store_type` parameter.
+    Initializes the vector database for the first time from given documents.
 
     Parameters:
-        git_repo_url (str): URL of the git repository to clone or pull.
-        git_repo_path (Path): Local path to clone the git repository.
-        read_as_single_doc (bool): If True, read each markdown as a single document.
-        relative_docs_path (Path): Relative path to the directory containing markdown files.
+        documents (Sequence[Document]): List of documents to initialize the vector store with.
         vectore_store_type (str): Type of vector store to use ('qdrant', 'pinecone', etc.).
 
     Returns:
         None
     """
-
-    logger.info("Getting repo files for initialize_database")
-
-    # Step 1: Clone or pull the git repository to get the latest markdown files
-    if relative_docs_path is None:
-        relative_docs_path = Path(DEFAULT_RELATIVE_DOCS_PATH)
-    clone_or_pull_repository(git_repo_url, git_repo_path)
-    docs_path = git_repo_path / relative_docs_path
-
-    logger.info("Processing repo files to get documents")
-
-    # Step 2: Process the markdown files and get the documents
-    documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
-
     logger.info("Initializing vector store")
 
-    # Step 3: Connect to the existing vector store database
+    # Connect to the existing vector store database
     vector_store = AutoVectorStore.create(vector_store_type=vectore_store_type, collection_name=DEFAULT_INDEX_NAME)
     vector_store.initialize_vectorindex()
     vector_store.connect_vectorstore()
     
     logger.info("Updating vector store with documents")
 
-    # Step 4: Update the index with the documents
+    # Update the index with the documents
     vector_store.overwrite_vectorindex(documents)
 
     logger.info("Vector database successfully initialized.")
 
 
 def update_database(
-    git_repo_url: str,
-    git_repo_path: Path,
-    read_as_single_doc: bool = True,
-    relative_docs_path: Path = None,
-    vectore_store_type: str = DEFAULT_VECTORE_STORE_TYPE
+    documents: Sequence[Document],
+    vectore_store_type: str
 ) -> None:
     """
-    Updates the vector database by performing the following tasks:
-    1. Clone or pull the git repository to get the latest markdown files
-    2. Process the markdown files and get the documents
-    3. Get changed document ids using the hash of the documents available in the vector store index item metadata
-    4. Update the index with the changed documents
+    Update the vector database to synchronize it with the provided list of documents.
+
+    This function performs the following actions:
+    1. Updates or adds new documents in the vector database that match the input list.
+    2. Removes any documents from the vector database that are not present in the input list.
 
     Parameters:
-        git_repo_url (str): URL of the git repository to clone or pull.
-        git_repo_path (Path): Local path to clone the git repository.
-        read_as_single_doc (bool): If True, read each markdown as a single document.
-        relative_docs_path (Path): Relative path to the directory containing markdown files.
-        vectore_store_type (str): Type of vector store to use ('qdrant', 'pinecone', etc.).
+        documents (Sequence[Document]): Complete set of documents that should exist in the vector database after the update.
+        vectore_store_type (str): Specifies the type of vector store to use (e.g., 'qdrant', 'pinecone'). Defaults to DEFAULT_VECTORE_STORE_TYPE.
 
     Returns:
         None
+
+    Note:
+        Ensure that the 'documents' list includes all documents that should remain in the database, as any missing items will be deleted.
     """
-    logger.info("Getting repo files for update_database")
+    logger.info("Updating vector store")
 
-    # Step 1: Clone or pull the git repository to get the latest markdown files
-    if relative_docs_path is None:
-        relative_docs_path = Path(DEFAULT_RELATIVE_DOCS_PATH)
-    clone_or_pull_repository(git_repo_url, git_repo_path)
-    docs_path = git_repo_path / relative_docs_path
-
-    logger.info("Processing repo files to get documents")
-
-    # Step 2: Process the markdown files and get the documents
-    documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
-
-    # Step 3: get changed document ids using the hash of the documents available in the vector store index item metadata
+    # Get changed document ids using the hash of the documents available in the vector store index item metadata
     vector_store = AutoVectorStore.create(vector_store_type=vectore_store_type, index_name=DEFAULT_INDEX_NAME)
     changed_documents, deleted_document_ids = check_for_changes(documents, vector_store)
 
-    # Step 4: Update the index with the changed documents
+    # Update the index with the changed documents
     vector_store.update_vectorindex(changed_documents)
     vector_store.delete_documents_by_id(deleted_document_ids)
+
+    logger.info("Vector database successfully updated.")
 
 
 def initialize_service_context(callback_manager: CallbackManager) -> ServiceContext:
