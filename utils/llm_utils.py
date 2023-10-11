@@ -208,7 +208,7 @@ def initialize_llm(
         raise ValueError(f"Invalid LLM_BACKEND: {llm_backend}")
 
 
-# TODO: Don't read from environment variables.
+# TODO: Don't read from environment variables?
 def initialize_token_counting(encoding_model: str = "gpt-3.5-turbo"):
     """
     Initializes the Token Counting Handler for tracking token usage.
@@ -274,7 +274,7 @@ def calculate_total_cost(token_counter, model_name="gpt-3.5-turbo"):
     return total_cost
 
 
-# TODO: Delete this function.
+# TODO: Delete this function?
 def log_total_cost(token_counter):
     """
     Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment variables.
