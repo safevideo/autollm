@@ -7,6 +7,9 @@ from llama_index.storage.docstore.types import RefDocInfo
 
 
 class BaseVS:
+    """
+    Base class for vector stores.
+    """
     def __init__(self):
         self._vectorstore: BasePydanticVectorStore = None
 
@@ -14,12 +17,24 @@ class BaseVS:
 
     @property
     def vectorstore(self) -> BasePydanticVectorStore:
+        """
+        Get the vector store.
+
+        Returns:
+            BasePydanticVectorStore: Vector store.
+        """
         if self._vectorstore is None:
             raise ValueError("Vector store not connected. Please connect first using connect_vectorstore().")
         return self._vectorstore
 
     @property
     def vectorindex(self) -> VectorStoreIndex:
+        """
+        Create a vector store index from the vector store.
+
+        Returns:
+            VectorStoreIndex: Vector store index.
+        """
         # Create storage context
         storage_context = StorageContext.from_defaults(vector_store=self.vectorstore)
         # Create index
@@ -32,11 +47,29 @@ class BaseVS:
         raise NotImplementedError
 
     def update_vectorindex(self, documents: Sequence[Document]):
+        """
+        Update the vector store index with new documents.
+
+        Parameters:
+            documents (Sequence[Document]): List of documents to update.
+
+        Returns:
+            None
+        """
         for document in documents:
             self.delete_documents_by_id([document.id_])
             self.vectorindex.insert(document)
 
     def overwrite_vectorindex(self, documents: Sequence[Document]):
+        """
+        Overwrite the vector store index with new documents.
+
+        Parameters:
+            documents (Sequence[Document]): List of documents to overwrite.
+
+        Returns:
+            None
+        """
         # Create storage context
         storage_context = StorageContext.from_defaults(vector_store=self.vectorstore)
 

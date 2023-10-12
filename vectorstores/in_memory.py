@@ -2,12 +2,14 @@ from pathlib import Path
 from typing import Union, List
 
 from llama_index import VectorStoreIndex
-from llama_index.storage.storage_context import StorageContext
 
 from .base import BaseVS
 from utils.markdown_processing import process_and_get_documents
 
-class InMemoryVectorStore(BaseVS):
+class InMemoryVS(BaseVS):
+    """
+    In-memory vector store. Loads all documents into memory.
+    """
     def __init__(self, path_or_files: Union[Path, List[Path]], read_as_single_doc: bool = True, show_progress: bool = True):
         self._path_or_files = path_or_files
         self._read_as_single_doc = read_as_single_doc
@@ -24,7 +26,6 @@ class InMemoryVectorStore(BaseVS):
         """
         Create a new vector store index.
         """
-        # TODO: Add support for other file formats. (pdf, docx, etc.)
         documents = process_and_get_documents(path_or_files=self._path_or_files, read_as_single_doc=self._read_as_single_doc)
         self._vectorstore = VectorStoreIndex.from_documents(
             documents=documents,

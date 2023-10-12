@@ -1,8 +1,7 @@
-from collections import Counter
 import hashlib
 import logging
 from pathlib import Path
-from typing import Dict, Sequence, List, Tuple
+from typing import Sequence, List, Tuple
 
 from llama_index.schema import Document
 
