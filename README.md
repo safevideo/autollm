@@ -6,9 +6,17 @@
 
 ## Introduction
 
-![QuickLLM Logo](logo.png)
+Welcome to AutoLLM, the foundational package for building large language model applications. Designed for extensibility and high performance, AutoLLM serves as a base package for more specialized applications in querying, document processing, and more.
 
-Welcome to QuickLLM, the foundational package for building large language model applications. Designed for extensibility and high performance, QuickLLM serves as a base package for more specialized applications in querying, document processing, and more.
+______________________________________________________________________
+
+## Installation
+
+AutoLLM is available as a Python package for Python>=3.8 environments. Install it using pip:
+
+```bash
+pip install autollm
+```
 
 ______________________________________________________________________
 
@@ -32,25 +40,6 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### TODO: Add screenshots/gif or not?
-
-## Screenshots
-
-![Query Example](query_example.png)
-![Response Example](response_example.png)
-
-______________________________________________________________________
-
-## Installation
-
-QuickLLM is available as a Python package for Python>=3.8 environments. Install it using pip:
-
-```bash
-pip install quickllm
-```
-
-______________________________________________________________________
-
 ### TODO: Add code examples from AutoVectorstore, AutoLLM, AutoQueryEngine.
 
 ## Code Examples
@@ -58,7 +47,7 @@ ______________________________________________________________________
 QuickLLM is designed to be easy to use. Here's a simple example of how to make a query:
 
 ```python
-from quickllm import QueryEngine
+from autollm import QueryEngine
 
 # Initialize the query engine
 engine = QueryEngine()
@@ -74,15 +63,6 @@ ______________________________________________________________________
 
 **Q: Can I use this for commercial projects?**
 A: Yes, QuickLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
-
-**Q: How do I contribute?**
-A: Please see the [Contributing Guidelines](LINK_TO_CONTRIBUTING_GUIDELINES).
-
-______________________________________________________________________
-
-## Contributing
-
-We welcome contributions to QuickLLM! Please see our [Contributing Guidelines](LINK_TO_CONTRIBUTING_GUIDELINES) for more details.
 
 ______________________________________________________________________
 
@@ -104,12 +84,9 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
 ______________________________________________________________________
 
-### TODO: Add testimonials or not?
+## Contributing
 
-## Testimonials
-
-> "QuickLLM transformed the way we search through our document base. It's fast, accurate, and a joy to use!"
-> — John Doe, CEO of Ultralytics (hopefully :)
+We welcome contributions to QuickLLM! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
 
 ______________________________________________________________________
 
