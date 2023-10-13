@@ -10,6 +10,7 @@ from vectorstores import auto
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+# TODO: create qa_pipeline 13-25 lines
 token_counter, callback_manager = llm_utils.initialize_token_counting()
 
 # Initialize the service context

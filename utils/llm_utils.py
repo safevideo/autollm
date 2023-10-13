@@ -97,6 +97,7 @@ def update_database(
 
     logger.info("Vector database successfully updated.")
 
+#TODO: servise context dondur, golabal set etme, applikasyonda query engine service_context parametresinde ver dondurdugunu
 
 def initialize_service_context(
         llm_backend: str = DEFAULT_LLM_BACKEND,
@@ -178,7 +179,7 @@ def create_text_qa_template(
 
     return ChatPromptTemplate(chat_text_qa_msgs)
 
-
+# TODO: auto_llm.py oluştur 8 tane model eklesem hepsini parametre olarak vermemeliyim. AutoVectore store gibi, base class olmayacak.
 def initialize_llm(
         llm_backend: str = DEFAULT_LLM_BACKEND,
         max_tokens: int = DEFAULT_MAX_TOKENS,
