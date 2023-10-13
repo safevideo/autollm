@@ -33,6 +33,7 @@ Welcome to QuickLLM, the foundational package for building large language model 
 
 ---
 
+### TODO: Add screenshots/gif or not?
 ## Screenshots
 
 ![Query Example](query_example.png)
@@ -49,7 +50,7 @@ pip install quickllm
 ```
 ---
 
-# TODO: Add code examples from AutoVectorstore, AutoLLM, AutoQueryEngine.
+### TODO: Add code examples from AutoVectorstore, AutoLLM, AutoQueryEngine.
 ## Code Examples
 
 QuickLLM is designed to be easy to use. Here's a simple example of how to make a query:
@@ -70,7 +71,8 @@ print(response)
 ## FAQ
 
 **Q: Can I use this for commercial projects?**  
-A: No, QuickLLM is licensed under Creative Commons NonCommercial (CC NC), making it unsuitable for commercial use.
+A: Yes, QuickLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
+
 
 **Q: How do I contribute?**  
 A: Please see the [Contributing Guidelines](LINK_TO_CONTRIBUTING_GUIDELINES).
@@ -99,7 +101,7 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
 
 ---
-
+### TODO: Add testimonials or not?
 ## Testimonials
 
 > "QuickLLM transformed the way we search through our document base. It's fast, accurate, and a joy to use!"  
@@ -109,7 +111,7 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
 ## License
 
-QuickLLM is available under the [Creative Commons NonCommercial (CC NC) License](LICENSE.txt).
+QuickLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE.txt).
 
 ---
 
