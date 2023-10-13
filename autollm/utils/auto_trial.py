@@ -1,12 +1,10 @@
 from llama_index import ServiceContext
-from llama_index.indices import (RESPONSE_TYPE, BaseQueryEngine, QueryBundle,
-                                 QueryType)
+from llama_index.indices import (RESPONSE_TYPE, QueryType)
 from vectorstores.auto_vector_store import AutoVectorStore
 
 from .llm_utils import (create_text_qa_template, initialize_token_counting,
                         log_total_cost)
 
-# Assuming initialize_token_counting and log_total_cost are imported from your llm_utils
 
 class AutoServiceContext(ServiceContext):
     """AutoServiceContext for initializing service context and optionally token counting."""
@@ -15,6 +13,7 @@ class AutoServiceContext(ServiceContext):
         self._token_counter, self.callback_manager = None, None
         if enable_cost_logging:
             self._token_counter, self.callback_manager = initialize_token_counting()
+
 
 class QAQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
@@ -28,6 +27,7 @@ class QAQueryEngine:
             self._token_counter.reset_counts()
         return self.query_engine.query(str_or_query_bundle)
 
+
 class AutoQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
     def from_defaults(self, vector_store, service_context: AutoServiceContext, qa_teamplet, **kwargs):
@@ -39,9 +39,6 @@ class AutoQueryEngine:
         return QAQueryEngine(self.query_engine)
 
 
-
-# Usage Example
-# Initialize AutoServiceContext
 service_context = AutoServiceContext.from_defaults(enable_cost_logging=True)
 
 # Initialize vector store (this could be your AutoVectorStore for example)

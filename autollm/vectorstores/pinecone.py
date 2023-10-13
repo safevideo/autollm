@@ -1,6 +1,6 @@
 from llama_index.vector_stores import PineconeVectorStore
 
-from utils.env_utils import read_env_variable, validate_environment_variables
+from autollm.utils.env_utils import read_env_variable, validate_environment_variables
 
 from .base import BaseVS
 
