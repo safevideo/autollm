@@ -2,14 +2,13 @@ from typing import Sequence
 
 from llama_index import StorageContext, VectorStoreIndex
 from llama_index.schema import Document
-from llama_index.vector_stores.types import BasePydanticVectorStore
 from llama_index.storage.docstore.types import RefDocInfo
+from llama_index.vector_stores.types import BasePydanticVectorStore
 
 
 class BaseVS:
-    """
-    Base class for vector stores.
-    """
+    """Base class for vector stores."""
+
     def __init__(self):
         self._vectorstore: BasePydanticVectorStore = None
 
@@ -24,7 +23,7 @@ class BaseVS:
             BasePydanticVectorStore: Vector store.
         """
         if self._vectorstore is None:
-            raise ValueError("Vector store not connected. Please connect first using connect_vectorstore().")
+            raise ValueError('Vector store not connected. Please connect first using connect_vectorstore().')
         return self._vectorstore
 
     @property
@@ -38,12 +37,11 @@ class BaseVS:
         # Create storage context
         storage_context = StorageContext.from_defaults(vector_store=self.vectorstore)
         # Create index
-        return VectorStoreIndex.from_vector_store(vector_store=self.vectorstore, storage_context=storage_context)
+        return VectorStoreIndex.from_vector_store(
+            vector_store=self.vectorstore, storage_context=storage_context)
 
     def _validate_requirements(self):
-        """
-        Validate all required env variables are present, and all required packages are installed.
-        """
+        """Validate all required env variables are present, and all required packages are installed."""
         raise NotImplementedError
 
     def update_vectorindex(self, documents: Sequence[Document]):
@@ -115,15 +113,15 @@ class BaseVS:
             document_ids.append(doc_id)
 
         return hashes, original_file_names, document_ids
-    
+
     def initialize_vectorindex(self):
-        """
-        Create a new vector store index.
-        """
+        """Create a new vector store index."""
         raise NotImplementedError
 
     def connect_vectorstore(self):
         """
-        Connect to an existing vector store index. Sets self._vectorstore.
+        Connect to an existing vector store index.
+
+        Sets self._vectorstore.
         """
         raise NotImplementedError

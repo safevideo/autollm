@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import List, Sequence, Tuple
 
 from llama_index.schema import Document
-from vectorstores.base import BaseVS
+
+from autollm.vectorstores.base import BaseVS
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +21,8 @@ def get_md5(file_path: Path) -> str:
         str: The MD5 hash of the file.
     """
     hasher = hashlib.md5()
-    with open(file_path, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b''):
             hasher.update(chunk)
     return hasher.hexdigest()
 
@@ -41,12 +42,12 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
     """
     last_hashes, original_file_names, document_ids = vs.get_document_infos()
     deleted_document_ids = set(document_ids)
-    
+
     changed_documents = []
     deleted_document_ids = []
 
     for doc in documents:
-        file_path = str(Path(doc.metadata["original_file_path"]))
+        file_path = str(Path(doc.metadata['original_file_path']))
         current_hash = get_md5(Path(file_path))
 
         # Add
@@ -58,10 +59,10 @@ def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequen
         else:
             # remove from deleted set
             deleted_document_ids.remove(doc.id_)
-        
+
     deleted_document_ids = list(deleted_document_ids)
 
-    logger.info(f"Found {len(changed_documents)} changed documents.")
-    logger.info(f"Found {len(deleted_document_ids)} locally deleted documents still present in vector store.")
+    logger.info(f'Found {len(changed_documents)} changed documents.')
+    logger.info(f'Found {len(deleted_document_ids)} locally deleted documents still present in vector store.')
 
     return changed_documents, deleted_document_ids
