@@ -30,7 +30,7 @@ class AutoVectorStore:
     A class for dynamically initializing a Vector Store based on the type and additional parameters.
     """
     @staticmethod
-    def create(vector_store_type: str, **kwargs: Any):
+    def from_vector_store_type(vector_store_type: str, **kwargs: Any):
         """
         Initializes a Vector Store based on the type and additional parameters.
 
@@ -46,10 +46,10 @@ class AutoVectorStore:
             ValueError: If the given {vector_store_type} is not supported
         """
         try:
-            class_name = VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME[vector_store_type]
+            vector_store_class_name = VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME[vector_store_type]
         except KeyError:
             raise ValueError(f"Invalid store_type: {vector_store_type}. Supported types are {list(VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME.keys())}")
 
-        VectorStoreClass = import_vector_store_class(vector_store_type, class_name)
+        VectorStore = import_vector_store_class(vector_store_type, vector_store_class_name)
         
-        return VectorStoreClass(**kwargs)
+        return VectorStore(**kwargs)
