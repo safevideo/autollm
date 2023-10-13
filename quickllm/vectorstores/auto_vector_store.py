@@ -2,7 +2,7 @@ from typing import Any
 
 # Mapping of vector store types to their respective class names.
 # This is used for dynamically importing the correct VectorStore class based on the type.
-VECTOR_STORE_TYPE_TO_CLASS_NAME = {
+VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME = {
     "pinecone": "PineconeVS",
     "qdrant": "QdrantVS",
     "inmemory": "InMemoryVS"
@@ -46,9 +46,9 @@ class AutoVectorStore:
             ValueError: If the given {vector_store_type} is not supported
         """
         try:
-            class_name = VECTOR_STORE_TYPE_TO_CLASS_NAME[vector_store_type]
+            class_name = VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME[vector_store_type]
         except KeyError:
-            raise ValueError(f"Invalid store_type: {vector_store_type}. Supported types are {list(VECTOR_STORE_TYPE_TO_CLASS_NAME.keys())}")
+            raise ValueError(f"Invalid store_type: {vector_store_type}. Supported types are {list(VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME.keys())}")
 
         VectorStoreClass = import_vector_store_class(vector_store_type, class_name)
         
