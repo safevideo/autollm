@@ -1,7 +1,10 @@
 from llama_index import ServiceContext
-from llama_index.indices import BaseQueryEngine, QueryType, RESPONSE_TYPE, QueryBundle
-from .llm_utils import initialize_token_counting, log_total_cost, create_text_qa_template
+from llama_index.indices import (RESPONSE_TYPE, BaseQueryEngine, QueryBundle,
+                                 QueryType)
 from vectorstores.auto_vector_store import AutoVectorStore
+
+from .llm_utils import (create_text_qa_template, initialize_token_counting,
+                        log_total_cost)
 
 # Assuming initialize_token_counting and log_total_cost are imported from your llm_utils
 
@@ -13,22 +16,29 @@ class AutoServiceContext(ServiceContext):
         if enable_cost_logging:
             self._token_counter, self.callback_manager = initialize_token_counting()
 
-class AutoQueryEngine(BaseQueryEngine):
+class QAQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
     def __init__(self, vector_store, service_context: AutoServiceContext, **kwargs):
         super().__init__(callback_manager=service_context.callback_manager, **kwargs)
         self._token_counter = service_context._token_counter
-        self.vector_store = vector_store
 
     def query(self, str_or_query_bundle: QueryType) -> RESPONSE_TYPE:
         if self._token_counter:
             log_total_cost(token_counter=self._token_counter)
             self._token_counter.reset_counts()
-        with self.callback_manager.as_trace("query"):
-            if isinstance(str_or_query_bundle, str):
-                str_or_query_bundle = QueryBundle(str_or_query_bundle)
-            response = self._query(str_or_query_bundle)
-            return response
+        return self.query_engine.query(str_or_query_bundle)
+
+class AutoQueryEngine:
+    """AutoQueryEngine for query execution and optionally logging the query cost."""
+    def from_defaults(self, vector_store, service_context: AutoServiceContext, qa_teamplet, **kwargs):
+        super().__init__(callback_manager=service_context.callback_manager, **kwargs)
+        self._token_counter = service_context._token_counter
+
+        self.query_engine = vector_store.avectorindex.s_query_engine(qa_teamplet, service_context)
+
+        return QAQueryEngine(self.query_engine)
+
+
 
 # Usage Example
 # Initialize AutoServiceContext

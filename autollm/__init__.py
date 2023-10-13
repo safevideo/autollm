@@ -8,5 +8,6 @@ __version__ = "0.0.1"
 __author__ = "safevideo"
 __license__ = "AGPL-3.0"
 
-from quickllm.vectorstores import auto
+from autollm.vectorstores import auto
+
 from .vectorstores import some_vector_function

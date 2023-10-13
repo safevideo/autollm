@@ -24,7 +24,7 @@ def get_version():
 
 
 setuptools.setup(
-    name="quickllm",
+    name="autollm",
     version=get_version(),
     author="safevideo",
     author_email="support@safevideo.ai",

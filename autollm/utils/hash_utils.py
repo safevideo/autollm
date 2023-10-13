@@ -1,10 +1,9 @@
 import hashlib
 import logging
 from pathlib import Path
-from typing import Sequence, List, Tuple
+from typing import List, Sequence, Tuple
 
 from llama_index.schema import Document
-
 from vectorstores.base import BaseVS
 
 logger = logging.getLogger(__name__)

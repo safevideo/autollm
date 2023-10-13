@@ -1,8 +1,10 @@
 import logging
-from git import Repo
 from pathlib import Path
 
+from git import Repo
+
 logger = logging.getLogger(__name__)
+
 
 def clone_or_pull_repository(git_url: str, local_path: Path) -> None:
     """

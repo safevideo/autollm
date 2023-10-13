@@ -1,5 +1,5 @@
 
-# QuickLLM
+# AutoLLM
 
 ## Base Package for Large Language Model Applications
 
