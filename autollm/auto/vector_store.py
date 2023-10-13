@@ -1,5 +1,7 @@
 from typing import Any
 
+from autollm.vectorstores.base import BaseVS
+
 # Mapping of vector store types to their respective class names.
 # This is used for dynamically importing the correct VectorStore class based on the type.
 VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME = {
@@ -22,7 +24,7 @@ def import_vector_store_class(vector_store_type: str, class_name: str):
     Returns:
         The imported VectorStore class.
     """
-    module = __import__(f'vectorstores.{vector_store_type}', fromlist=[class_name])
+    module = __import__(f'autollm.vectorstores.{vector_store_type}', fromlist=[class_name])
     class_ = getattr(module, class_name)
     return class_
 
@@ -31,7 +33,7 @@ class AutoVectorStore:
     """A class for dynamically initializing a Vector Store based on the type and additional parameters."""
 
     @staticmethod
-    def from_vector_store_type(vector_store_type: str, **kwargs: Any):
+    def from_defaults(vector_store_type: str, **kwargs: Any) -> BaseVS:
         """
         Initializes a Vector Store based on the type and additional parameters.
 

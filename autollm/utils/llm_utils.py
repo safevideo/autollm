@@ -7,28 +7,22 @@ from llama_index import Document, ServiceContext, set_global_service_context
 from llama_index.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index.llms import Anyscale, OpenAI, PaLM
-from llama_index.node_parser import SimpleNodeParser
 from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
-from llama_index.text_splitter import TokenTextSplitter
 
+from autollm.auto.vector_store import AutoVectorStore
 from autollm.utils.constants import (
-    DEFAULT_ANYSCALE_MODEL_NAME,
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CONTEXT_WINDOW,
     DEFAULT_ENABLE_TOKEN_COUNTING,
     DEFAULT_INDEX_NAME,
-    DEFAULT_LLM_BACKEND,
     DEFAULT_MAX_TOKENS,
-    DEFAULT_OPENAI_MODEL_NAME,
-    DEFAULT_PALM_MODEL_NAME,
     DEFAULT_VECTORE_STORE_TYPE,
     MODEL_COST,
 )
 from autollm.utils.env_utils import read_env_variable
 from autollm.utils.hash_utils import check_for_changes
 from autollm.utils.templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
-from autollm.vectorstores.auto import AutoVectorStore
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +42,7 @@ def initialize_database(
     logger.info('Initializing vector store')
 
     # Connect to the existing vector store database
-    vector_store = AutoVectorStore.create(
+    vector_store = AutoVectorStore.from_defaults(
         vector_store_type=vectore_store_type, collection_name=DEFAULT_INDEX_NAME)
     vector_store.initialize_vectorindex()
     vector_store.connect_vectorstore()
@@ -82,7 +76,8 @@ def update_database(documents: Sequence[Document], vectore_store_type: str) -> N
     logger.info('Updating vector store')
 
     # Get changed document ids using the hash of the documents available in the vector store index item metadata
-    vector_store = AutoVectorStore.create(vector_store_type=vectore_store_type, index_name=DEFAULT_INDEX_NAME)
+    vector_store = AutoVectorStore.from_defaults(
+        vector_store_type=vectore_store_type, index_name=DEFAULT_INDEX_NAME)
     changed_documents, deleted_document_ids = check_for_changes(documents, vector_store)
 
     # Update the index with the changed documents
@@ -92,115 +87,26 @@ def update_database(documents: Sequence[Document], vectore_store_type: str) -> N
     logger.info('Vector database successfully updated.')
 
 
-# TODO: service context dondur, golabal set etme, applikasyonda query engine service_context parametresinde ver dondurdugunu
-
-
-def initialize_service_context(
-        llm_backend: str = DEFAULT_LLM_BACKEND,
-        max_tokens: int = DEFAULT_MAX_TOKENS,
-        openai_model_name: Optional[str] = DEFAULT_OPENAI_MODEL_NAME,
-        palm_model_name: Optional[str] = DEFAULT_PALM_MODEL_NAME,
-        anyscale_model_name: Optional[str] = DEFAULT_ANYSCALE_MODEL_NAME,
-        chunk_size: int = DEFAULT_CHUNK_SIZE,
-        chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
-        context_window: int = DEFAULT_CONTEXT_WINDOW,
-        callback_manager: CallbackManager = None) -> ServiceContext:
-    """
-    Initialize and configures the service context utility container for LlamaIndex index and query classes,
-    setting as the global default.
-
-    Parameters:
-        chunk_size (int): Size of the chunks to split the text into, in number of tokens.
-        chunk_overlap (int): Number of tokens to overlap between chunks.
-        context_window (int): Number of tokens to include in the context window.
-        callback_manager (CallbackManager): Callback Manager to be included in the service context.
-
-    Returns:
-        None
-    """
-    # Initialize LLM based on the backend selection, default is OpenAI
-    llm = initialize_llm(
-        llm_backend=llm_backend,
-        max_tokens=max_tokens,
-        openai_model_name=openai_model_name,
-        palm_model_name=palm_model_name,
-        anyscale_model_name=anyscale_model_name)
-
-    node_parser = SimpleNodeParser.from_defaults(
-        text_splitter=TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap))
-
-    # TODO: add system prompt and query prompt template directly to service context instead of qa_template
-    embed_model = OpenAIEmbedding()  # text-embedding-ada-002 by default
-    service_context = ServiceContext.from_defaults(
-        llm=llm,
-        embed_model=embed_model,
-        node_parser=node_parser,
-        callback_manager=callback_manager,
-        context_window=context_window,
-        num_output=256)
-
-    set_global_service_context(service_context)
-    logger.info('Service context initialized successfully.')
-
-
-def create_text_qa_template(
-        system_prompt: str = SYSTEM_PROMPT,
-        query_prompt_template: str = QUERY_PROMPT_TEMPLATE) -> ChatPromptTemplate:
+# TODO: update docstring
+def set_default_prompt_template() -> ChatPromptTemplate:
     """
     Create a Text QA Template for the query engine.
-
-    Parameters:
-        system_prompt (str): The system prompt string.
-        query_prompt_template (str): The query prompt template string.
 
     Returns:
         ChatPromptTemplate: The initialized Text QA Template.
     """
 
-    chat_text_qa_msgs = [
-        ChatMessage(
-            role=MessageRole.SYSTEM,
-            content=system_prompt,
-        ),
+    chat_text_msgs = [
         ChatMessage(
             role=MessageRole.USER,
-            content=query_prompt_template,
+            content=QUERY_PROMPT_TEMPLATE,
         ),
     ]
 
-    return ChatPromptTemplate(chat_text_qa_msgs)
+    return SYSTEM_PROMPT, ChatPromptTemplate(chat_text_msgs)
 
 
-# TODO: convert to AutoLLM inside auto_llm.py. models should be created by parameters. No base class as AutoVectorStore
-def initialize_llm(
-        llm_backend: str = DEFAULT_LLM_BACKEND,
-        max_tokens: int = DEFAULT_MAX_TOKENS,
-        openai_model_name: Optional[str] = DEFAULT_OPENAI_MODEL_NAME,
-        palm_model_name: Optional[str] = DEFAULT_PALM_MODEL_NAME,
-        anyscale_model_name: Optional[str] = DEFAULT_ANYSCALE_MODEL_NAME) -> Union[OpenAI, PaLM, Anyscale]:
-    """
-    Initializes the language model based on the backend selection, returning the initialized LLM object.
-
-    Parameters:
-        llm_backend (str): The LLM backend to use (e.g., 'OPENAI', 'PALM', 'ANYSCALE'). Defaults to OPENAI.
-        max_tokens (int): The maximum number of tokens to use for the LLM.
-        openai_model_name (Optional[str]): The name of the OpenAI model to use.
-        palm_model_name (Optional[str]): The name of the PaLM model to use.
-        anyscale_model_name (Optional[str]): The name of the Anyscale model to use.
-    Returns:
-        llm (Union[OpenAI, PaLM, Anyscale]): Initialized LLM object.
-    """
-    if llm_backend == 'OPENAI':
-        return OpenAI(temperature=0.1, model=openai_model_name, max_tokens=max_tokens)
-    elif llm_backend == 'PALM':
-        return PaLM(model_name=palm_model_name, num_output=max_tokens)
-    elif llm_backend == 'ANYSCALE':
-        return Anyscale(model=anyscale_model_name, max_tokens=max_tokens)
-    else:
-        raise ValueError(f'Invalid LLM_BACKEND: {llm_backend}')
-
-
-# TODO: Don't read from environment variables?
+# TODO: move to cost_calculation.py, remove env variables, add llm_class_name input, update docstring
 def initialize_token_counting(encoding_model: str = 'gpt-3.5-turbo'):
     """
     Initializes the Token Counting Handler for tracking token usage.
@@ -241,7 +147,7 @@ def generate_token_counter(encoding_model: str = 'gpt-3.5-turbo'):
     return token_counter
 
 
-def calculate_total_cost(token_counter, model_name='gpt-3.5-turbo'):
+def calculate_total_cost(token_counter: TokenCountingHandler, model_name='gpt-3.5-turbo'):
     """
     Calculate the total cost based on the token usage and model.
 
@@ -270,7 +176,7 @@ def calculate_total_cost(token_counter, model_name='gpt-3.5-turbo'):
 
 
 # TODO: Delete this function?
-def log_total_cost(token_counter):
+def log_total_cost(token_counter: TokenCountingHandler):
     """
     Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment
     variables.

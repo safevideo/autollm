@@ -8,6 +8,8 @@ __version__ = '0.0.1'
 __author__ = 'safevideo'
 __license__ = 'AGPL-3.0'
 
-from autollm.vectorstores import auto
+from autollm.auto.llm import AutoLLM
+from autollm.auto.service_context import AutoServiceContext
+from autollm.auto.vector_store import AutoVectorStore
 
-__all__ = ['auto']
+__all__ = ['AutoLLM', 'AutoServiceContext', 'AutoVectorStore']

@@ -3,8 +3,8 @@ from llama_index.indices.query.base import BaseQueryEngine
 from llama_index.indices.query.schema import QueryType
 from llama_index.response.schema import RESPONSE_TYPE
 
+from autollm.auto.vector_store import AutoVectorStore
 from autollm.utils.llm_utils import create_text_qa_template, initialize_token_counting, log_total_cost
-from autollm.vectorstores.auto import AutoVectorStore
 from autollm.vectorstores.base import BaseVS
 
 
@@ -21,7 +21,7 @@ class AutoServiceContext(ServiceContext):
 class QueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
 
-    def __init__(self, query_engine: BaseQueryEngine, service_context: AutoServiceContext, **kwargs):
+    def __init__(self, query_engine: BaseQueryEngine, service_context: ServiceContext, **kwargs):
         super().__init__(callback_manager=service_context.callback_manager, **kwargs)
         self._token_counter = service_context._token_counter
         self._query_engine = query_engine
@@ -36,7 +36,7 @@ class QueryEngine:
 class AutoQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
 
-    def from_defaults(self, vector_store: BaseVS, service_context: AutoServiceContext, qa_teamplet, **kwargs):
+    def from_defaults(self, vector_store: BaseVS, service_context: ServiceContext, qa_teamplet, **kwargs):
         super().__init__(callback_manager=service_context.callback_manager, **kwargs)
         self._token_counter = service_context._token_counter
 

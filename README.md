@@ -22,21 +22,34 @@ ______________________________________________________________________
 
 ## Features
 
-- **Automated LLM Integrations**: Seamlessly integrate with leading large language models.
+### AutoLLM (Supports all llama-index LLMs + AWS Bedrock LLMs)
 
-  - OpenAI GPT3.5 and GPT4
-  - Google PALM
-  - Anyscale LLAMA2
+```python
+from autollm import AutoLLM
+from llama_index.llms.base import LLM
 
-- **Automated VectorDB Integrations**: Quickly connect to vector databases without the manual hassle.
+# Dynamically initialize a llama_index llm instance
+llm = AutoLLM(llm_class_name="OpenAI", model="gpt4")
+llm = AutoLLM(llm_class_name="PaLM", model="models/text-bison-001")
+llm = AutoLLM(llm_class_name="Bedrock", model_id="anthropic.claude-v2")
+```
 
-  - Pinecone
-  - Qdrant
+### AutoVectorStore (Supports ...)
 
-- **Utility Functions**: Additional utility functions to aid in data manipulation, query optimization, and more.
+```python
+```
 
-  - Query Cost Estimation
-  - And more!
+### AutoQueryEngine (Easy integration with any LLM + VectorStore + Query Template)
+
+```python
+```
+
+### Automated Cost Calculation (Supports OpenAI)
+
+```bash
+completion cost: ...
+... cost: ...
+```
 
 ______________________________________________________________________
 
