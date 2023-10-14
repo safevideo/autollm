@@ -6,10 +6,10 @@ from autollm.auto.vector_store import AutoVectorStore
 
 
 def test_auto_vector_store():
-    vector_store = AutoVectorStore.from_defaults(vector_store_type="in_memory", mock_initialization=True)
+    vector_store = AutoVectorStore.from_defaults(vector_store_type="in_memory")
 
-    vector_store.connect_vectorstore()
     vector_store.initialize_vectorindex()
+    vector_store.connect_vectorstore()
 
     query_engine = vector_store.vectorstore.as_query_engine()
 

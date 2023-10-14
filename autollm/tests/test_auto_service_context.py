@@ -6,7 +6,7 @@ from autollm.auto.service_context import AutoServiceContext
 def test_auto_service_context():
     document = Document.example()
 
-    service_context = AutoServiceContext.from_defaults()
+    service_context = AutoServiceContext.from_defaults(enable_cost_calculator=True)
 
     index = VectorStoreIndex.from_documents(documents=[document], service_context=service_context)
 

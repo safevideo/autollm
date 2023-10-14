@@ -54,8 +54,8 @@ class AutoServiceContext:
         else:
             raise ValueError(f'Invalid system_prompt type: {type(query_wrapper_prompt)}')
 
+        callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
         if enable_cost_calculator:
-            callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
             model = 'gpt-3.5-turbo'  # TODO: automatically fetch model name from llm
             callback_manager.add_handler(CostCalculatingHandler(model=model, verbose=True))
 

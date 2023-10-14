@@ -9,7 +9,8 @@ from llama_index.vector_stores.types import BasePydanticVectorStore
 class BaseVS:
     """Base class for vector stores."""
 
-    def __init__(self):
+    def __init__(self, in_memory: bool = False):
+        self._in_memory = in_memory
         self._vectorstore: Union[BasePydanticVectorStore, VectorStoreIndex] = None
 
         self._validate_requirements()
@@ -37,6 +38,8 @@ class BaseVS:
         # Create storage context
         storage_context = StorageContext.from_defaults(vector_store=self.vectorstore)
         # Create index
+        if self._in_memory:
+            return self.vectorstore
         return VectorStoreIndex.from_vector_store(
             vector_store=self.vectorstore, storage_context=storage_context)
 
