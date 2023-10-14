@@ -30,7 +30,7 @@ class AutoServiceContext:
         enable_token_counting is True, tracks the number of tokens used by the LLM for each query.
 
         Parameters:
-            llm (LLMType): The LLM to use for the query engine. Defaults to gp3-5-turbo.
+            llm (LLM): The LLM to use for the query engine. Defaults to gp3-5-turbo.
             embed_model (BaseEmbedding): The embedding model to use for the query engine.
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
@@ -56,7 +56,7 @@ class AutoServiceContext:
 
         callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
         if enable_cost_calculator:
-            model = 'gpt-3.5-turbo'  # TODO: automatically fetch model name from llm
+            model = llm.metadata.model_name if not "default" else "gpt-3.5-turbo"
             callback_manager.add_handler(CostCalculatingHandler(model=model, verbose=True))
 
         if embed_model is None:

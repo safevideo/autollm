@@ -10,12 +10,23 @@ from autollm.vectorstores.base import BaseVS
 class AutoQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
 
-    @staticmethod  # TODO: update docstring
+    @staticmethod
     def from_instances(vector_store: BaseVS, service_context: ServiceContext, **kwargs) -> BaseQueryEngine:
+        """
+        Create an AutoQueryEngine from a vector store and a service context.
+
+        Parameters:
+            vector_store: Vector store instance.
+            service_context: Service context instance.
+            **kwargs: Keyword arguments for the query engine.
+
+        Returns:
+            An AutoQueryEngine instance.
+        """
 
         return vector_store.vectorindex.as_query_engine(service_context=service_context, **kwargs)
 
-    @staticmethod  # TODO: update docstring
+    @staticmethod
     def from_parameters(
             system_prompt: str = None,
             query_wrapper_prompt: str = None,
@@ -24,6 +35,21 @@ class AutoQueryEngine:
             vector_store_params: dict = {"vector_store_type": "in_memory"},
             service_context_params: dict = None,
             query_engine_params: dict = None) -> BaseQueryEngine:
+        """
+        Create an AutoQueryEngine from parameters.
+
+        Parameters:
+            system_prompt (str): The system prompt to use for the query engine.
+            query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
+            enable_cost_calculator (bool): Flag to enable cost calculator logging.
+            llm_params (dict): Parameters for the LLM.
+            vector_store_params (dict): Parameters for the vector store.
+            service_context_params (dict): Parameters for the service context.
+            query_engine_params (dict): Parameters for the query engine.
+
+        Returns:
+            An AutoQueryEngine instance.
+        """
 
         llm_params = {} if llm_params is None else llm_params
         vector_store_params = {} if vector_store_params is None else vector_store_params

@@ -7,7 +7,7 @@ from autollm.utils.git_utils import clone_or_pull_repository
 from autollm.utils.markdown_processing import process_and_get_documents
 
 
-# TODO: Use SimpleDirectoryReader and configure its file_extractor argument
+# TODO: Use SimpleDirectoryReader and configure its file_extractor argument to use MultiMarkdownReader for md files
 def github_document_provider(
         git_repo_url: str,
         local_repo_path: Path,
