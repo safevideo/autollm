@@ -1,7 +1,3 @@
-from pathlib import Path
-
-from llama_index import Document, ServiceContext
-
 from autollm.auto.vector_store import AutoVectorStore
 
 
