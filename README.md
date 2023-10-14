@@ -93,13 +93,13 @@ vector_store = AutoVectorStore.from_defaults(
 ```python
 ```
 
-### Automated Cost Calculation (Supports OpenAI)
+### Automated Cost Calculation (Supports any OpenAI, Cohere, Anthropic and Llama2 model)
 
-```bash
-Embedding Token Usage: 4
-LLM Prompt Token Usage: 1289
-LLM Completion Token Usage: 73
-Total cost for this query: {total_cost} USD
+```
+Embedding Token Usage: 7
+LLM Prompt Token Usage: 1482
+LLM Completion Token Usage: 47
+LLM Total Token Cost: $0.002317
 ```
 
 ______________________________________________________________________
