@@ -1,12 +1,12 @@
 # AutoLLM
 
-## Base Package for Large Language Model Applications
+## Elevate Your Large Language Model Applications
 
 ## [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/) ![Version 0.0.1](https://img.shields.io/badge/version-0.0.1-blue) ![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)
 
 ## Introduction
 
-Welcome to AutoLLM, the foundational package for building large language model applications. Designed for extensibility and high performance, AutoLLM serves as a base package for more specialized applications in querying, document processing, and more.
+Welcome to AutoLLM, the definitive toolkit for deploying, managing, and scaling Large Language Model (LLM) applications. Built for high performance and maximum flexibility, AutoLLM provides seamless integration with multiple LLM providers, vector databases, and service contexts.
 
 ______________________________________________________________________
 
@@ -67,6 +67,8 @@ llm = AutoLLM(model="anthropic.claude-v2")
 
 ### AutoVectorStore (Supports following VectorDBs: Pinecone, Qdrant, InMemory)
 
+Instantly initialize a VectorDB instance with same API
+
 ```python
 from autollm import AutoVectorStore
 
@@ -88,12 +90,44 @@ vector_store = AutoVectorStore.from_defaults(
 )
 ```
 
-### AutoQueryEngine (Easy integration with any LLM + VectorStore + Query Template)
+### AutoQueryEngine (Creates a query engine pipeline in a single line of code)
+
+Create robust query engine pipelines with automatic cost logging. Supports fine-grained control for advanced use-cases.
+
+#### Basic Usage:
 
 ```python
+from autollm import AutoQueryEngine
+
+# Initialize a query engine with existing vector store and service context
+query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
+
+# Initialize a query engine with default parameters
+query_engine = AutoQueryEngine.from_parameters()
+```
+
+#### Advanced Usage:
+
+For fine-grained control, you can initialize the `AutoQueryEngine` by explicitly passing parameters for the LLM, Vector Store, and Service Context.
+
+```python
+from autollm import AutoQueryEngine
+
+# Initialize the query engine with explicit parameters
+query_engine = AutoQueryEngine.from_parameters(
+    system_prompt="Your System Prompt",
+    query_wrapper_prompt="Your Query Wrapper Prompt",
+    enable_cost_calculation=True,
+    llm_params={"model": "gpt-3.5-turbo"},
+    vector_store_params={"vector_store_type": "qdrant", "index_name": "quickstart"},
+    service_context_params={"chunk_size": 1024},
+    query_engine_params={"similarity_top_k": 10},
+)
 ```
 
 ### Automated Cost Calculation (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
+
+Keep track of your LLM token usage and costs in real-time.
 
 ```python
 from autollm import AutoServiceContext
