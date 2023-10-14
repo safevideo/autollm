@@ -140,7 +140,7 @@ class CostCalculatingHandler(TokenCountingHandler):
                 ))
             if self._verbose:
                 print(
-                    "LLM Total Token Cost: "
+                    "LLM Total Token Cost: $"
                     f"{self.llm_token_costs[-1].total_token_cost}",
                     flush=True,
                 )
