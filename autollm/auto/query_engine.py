@@ -29,10 +29,10 @@ class QueryEngine(BaseQueryEngine):
 class AutoQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
 
-    def from_defaults(self, vector_store: BaseVS, service_context: ServiceContext, qa_teamplet, **kwargs):
+    def from_defaults(self, vector_store: BaseVS, service_context: ServiceContext, **kwargs):
         super().__init__(callback_manager=service_context.callback_manager, **kwargs)
         self._token_counter = service_context._token_counter
 
-        self.query_engine = vector_store.vectorindex.as_query_engine(qa_teamplet, service_context)
+        self.query_engine = vector_store.vectorindex.as_query_engine(service_context=service_context)
 
         return QueryEngine(self.query_engine)
