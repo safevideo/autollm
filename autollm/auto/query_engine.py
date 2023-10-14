@@ -4,7 +4,6 @@ from llama_index.indices.query.schema import QueryType
 from llama_index.response.schema import RESPONSE_TYPE
 
 from autollm.auto.service_context import ServiceContext
-from autollm.auto.vector_store import AutoVectorStore
 from autollm.utils.cost_calculation import log_total_cost
 from autollm.vectorstores.base import BaseVS
 

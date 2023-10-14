@@ -38,7 +38,6 @@ MODEL_COST = {
 }
 
 
-# TODO: add llm_class_name input, update docstring
 def initialize_token_counting(encoding_model: str = 'gpt-3.5-turbo'):
     """
     Initializes the Token Counting Handler for tracking token usage.
