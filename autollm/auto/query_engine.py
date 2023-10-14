@@ -24,7 +24,6 @@ class QueryEngine(BaseQueryEngine):
         response = self._query_engine.query(str_or_query_bundle)
         if self._token_counter:
             log_total_cost(token_counter=self._token_counter)
-            self._token_counter.reset_counts()
         return response
 
 
