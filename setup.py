@@ -6,6 +6,7 @@ import setuptools
 
 DEV_REQUIREMETNS = [
     'pre-commit==3.4.0',
+    'pytest==7.4.2',
 ]
 
 
@@ -36,7 +37,7 @@ setuptools.setup(
     description='Base Package for Large Language Model Applications',
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=["tests"]),
     install_requires=get_requirements(),
     extras_require={'dev': DEV_REQUIREMETNS},
 )
