@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Callable, Dict, List, Optional, cast
 
 from litellm.utils import cost_per_token, token_counter
 from llama_index.callbacks.schema import CBEventType, EventPayload
@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 @dataclass
 class CostCalculatingEvent:
     prompt: str
+    prompt_token_cost: int
     completion: str
     completion_token_cost: int
-    prompt_token_cost: int
     total_token_cost: int = 0
     event_id: str = ""
 
@@ -79,7 +79,7 @@ def get_llm_token_costs(
         prompt=latest_llm_token_count.prompt,
         prompt_token_cost=prompt_tokens_cost_usd_dollar,
         completion=latest_llm_token_count.completion,
-        completion_token_count=completion_tokens_cost_usd_dollar,
+        completion_token_cost=completion_tokens_cost_usd_dollar,
     )
 
 
@@ -87,14 +87,10 @@ class CostCalculatingHandler(TokenCountingHandler):
     """
     Callback handler for counting costs in LLM events. (Embeddings not supported yet)
 
-    Args:
-        tokenizer:
-            Tokenizer to use. Defaults to the global tokenizer
-            (see llama_index.utils.globals_helper).
-        llm:
-            The LLM to use for the query engine.
-        event_starts_to_ignore: List of event types to ignore at the start of a trace.
-        event_ends_to_ignore: List of event types to ignore at the end of a trace.
+    Parameters:
+        model: The model to use for tokenizer to calculate the cost.
+        event_starts_to_ignore: List of event types to ignore at the start of the event.
+        event_ends_to_ignore: List of event types to ignore at the end of the event.
     """
 
     def __init__(
@@ -125,11 +121,7 @@ class CostCalculatingHandler(TokenCountingHandler):
                 payload is not None):
             # token counts
             self.llm_token_counts.append(
-                get_llm_token_counts(
-                    tokenizer=self.tokenizer,
-                    payload=payload,
-                    event_id=event_id,
-                ))
+                get_llm_token_counts(payload=payload, event_id=event_id, model=self.model))
             if self._verbose:
                 print(
                     "LLM Prompt Token Usage: "
@@ -148,10 +140,8 @@ class CostCalculatingHandler(TokenCountingHandler):
                 ))
             if self._verbose:
                 print(
-                    "LLM Prompt Token Cost: "
-                    f"{self.llm_token_costs[-1].prompt_token_cost}\n"
-                    "LLM Completion Token Cost: "
-                    f"{self.llm_token_costs[-1].completion_token_cost}",
+                    "LLM Total Token Cost: "
+                    f"{self.llm_token_costs[-1].total_token_cost}",
                     flush=True,
                 )
 
