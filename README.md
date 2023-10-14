@@ -106,6 +106,14 @@ query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
 query_engine = AutoQueryEngine.from_parameters()
 ```
 
+```python
+# Query the engine
+response = query_engine.query("What is the meaning of life?")
+print(response.response)
+
+>>The meaning of ...
+```
+
 #### Advanced Usage:
 
 For fine-grained control, you can initialize the `AutoQueryEngine` by explicitly passing parameters for the LLM, Vector Store, and Service Context.
