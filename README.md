@@ -60,6 +60,9 @@ from autollm import AutoLLM
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 os.environ["AWS_REGION_NAME"] = ""
+
+# Dynamically initialize a llama_index llm instance with the same AutoLLM api
+llm = AutoLLM(model="anthropic.claude-v2")
 ```
 
 ### AutoVectorStore (Supports following VectorDBs: Pinecone, Qdrant, InMemory)
