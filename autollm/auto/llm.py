@@ -3,7 +3,6 @@ from typing import Any, Dict
 from llama_index.llms import OpenAI
 from llama_index.llms.base import LLM
 
-from autollm.auto.service_context import AutoServiceContext
 from autollm.utils.constants import DEFAULT_LLM_CLASS_NAME, DEFAULT_OPENAI_MODEL
 
 
@@ -61,9 +60,10 @@ def import_langchainlm_with_bedrock(
 
 
 class AutoLLM:
+    """AutoLLM lets you dynamically initialize any LLM based on the llm class name and additional
+    parameters.
     """
-    AutoLLM lets you dynamically initialize any LLM based on the llm class name and additional parameters.
-    """
+
     @staticmethod
     def from_defaults(llm_class_name: str = DEFAULT_LLM_CLASS_NAME, *args, **kwargs) -> LLM:
         """

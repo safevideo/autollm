@@ -1,26 +1,12 @@
 # Desc: Utility functions for llama index.
 import logging
-from typing import Optional, Sequence, Union
+from typing import Sequence
 
-import tiktoken
-from llama_index import Document, ServiceContext, set_global_service_context
-from llama_index.callbacks import CallbackManager, TokenCountingHandler
-from llama_index.embeddings import OpenAIEmbedding
-from llama_index.llms import Anyscale, OpenAI, PaLM
+from llama_index import Document
 from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
 
 from autollm.auto.vector_store import AutoVectorStore
-from autollm.utils.constants import (
-    DEFAULT_CHUNK_OVERLAP,
-    DEFAULT_CHUNK_SIZE,
-    DEFAULT_CONTEXT_WINDOW,
-    DEFAULT_ENABLE_TOKEN_COUNTING,
-    DEFAULT_INDEX_NAME,
-    DEFAULT_MAX_TOKENS,
-    DEFAULT_VECTORE_STORE_TYPE,
-    MODEL_COST,
-)
-from autollm.utils.env_utils import read_env_variable
+from autollm.utils.constants import DEFAULT_INDEX_NAME, DEFAULT_VECTORE_STORE_TYPE
 from autollm.utils.hash_utils import check_for_changes
 from autollm.utils.templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 
@@ -103,90 +89,3 @@ def set_default_prompt_template() -> ChatPromptTemplate:
     ]
 
     return SYSTEM_PROMPT, ChatPromptTemplate(chat_text_msgs)
-
-
-# TODO: move to cost_calculation.py, remove env variables, add llm_class_name input, update docstring
-def initialize_token_counting(encoding_model: str = 'gpt-3.5-turbo'):
-    """
-    Initializes the Token Counting Handler for tracking token usage.
-
-    Returns:
-        token_counter (TokenCountingHandler): Initialized Token Counting Handler.
-        callback_manager (CallbackManager): Callback Manager with Token Counting Handler included.
-    """
-    enable_token_counting = read_env_variable('ENABLE_TOKEN_COUNTING',
-                                              DEFAULT_ENABLE_TOKEN_COUNTING).upper() == 'TRUE'
-    if not enable_token_counting:
-        logger.info('Token Counting Handler is not enabled.')
-        return None
-
-    # Initialize the Token Counting Handler
-    token_counter = generate_token_counter(encoding_model=encoding_model)
-
-    # Initialize Callback Manager and add Token Counting Handler
-    callback_manager = CallbackManager([token_counter])
-
-    return token_counter, callback_manager
-
-
-def generate_token_counter(encoding_model: str = 'gpt-3.5-turbo'):
-    """
-    Generates a Token Counting Handler for tracking token usage.
-
-    Parameters:
-        encoding_model (str): The name of the encoding model to use.
-
-    Returns:
-        token_counter (TokenCountingHandler): Initialized Token Counting Handler.
-    """
-    # Initialize the Token Counting Handler
-    tokenizer = tiktoken.encoding_for_model(encoding_model).encode  # Update the model name as needed
-    token_counter = TokenCountingHandler(tokenizer=tokenizer, verbose=True)
-
-    return token_counter
-
-
-def calculate_total_cost(token_counter: TokenCountingHandler, model_name='gpt-3.5-turbo'):
-    """
-    Calculate the total cost based on the token usage and model.
-
-    Parameters:
-        token_counter (TokenCountingHandler): Token Counting Handler initialized with the tokenizer.
-        model_name (str): The name of the model being used.
-
-    Returns:
-        float: The total cost in USD.
-    """
-    model_cost_info = MODEL_COST.get(model_name, {})
-    if not model_cost_info:
-        raise ValueError(f'Cost information for model {model_name} is not available.')
-
-    prompt_token_count = token_counter.prompt_llm_token_count
-    completion_token_count = token_counter.completion_llm_token_count
-
-    prompt_cost = (prompt_token_count /
-                   model_cost_info['prompt']['unit']) * model_cost_info['prompt']['price']
-    completion_cost = (completion_token_count /
-                       model_cost_info['completion']['unit']) * model_cost_info['completion']['price']
-
-    total_cost = prompt_cost + completion_cost
-
-    return total_cost
-
-
-def log_total_cost(token_counter: TokenCountingHandler):
-    """
-    Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment
-    variables.
-
-    Parameters:
-        token_counter (TokenCountingHandler): Initialized Token Counting Handler.
-    """
-    enable_token_counting = read_env_variable('ENABLE_TOKEN_COUNTING',
-                                              DEFAULT_ENABLE_TOKEN_COUNTING).lower() == 'true'
-
-    if enable_token_counting:
-        total_cost = calculate_total_cost(token_counter)
-        logger.info(f'Total cost for this query: ${total_cost} USD')
-    else:
-        logger.info('Token counting and cost logging are disabled.')

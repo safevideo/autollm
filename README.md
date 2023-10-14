@@ -75,6 +75,7 @@ ______________________________________________________________________
 ## FAQ
 
 **Q: Can I use this for commercial projects?**
+
 A: Yes, QuickLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
 
 ______________________________________________________________________
