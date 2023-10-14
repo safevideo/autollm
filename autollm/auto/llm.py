@@ -1,9 +1,7 @@
 from typing import Any, Dict
 
-from llama_index.llms import OpenAI
+from llama_index.llms import LiteLLM
 from llama_index.llms.base import LLM
-
-from autollm.utils.constants import DEFAULT_LLM_CLASS_NAME, DEFAULT_OPENAI_MODEL
 
 
 def import_llm_class(llm_class_name: str) -> LLM:
@@ -65,28 +63,22 @@ class AutoLLM:
     """
 
     @staticmethod
-    def from_defaults(llm_class_name: str = DEFAULT_LLM_CLASS_NAME, *args, **kwargs) -> LLM:
+    def from_defaults(model, *args, **kwargs) -> LLM:
         """
-        Create any LLM from default parameters.
+        Create any LLM by model name. Check https://docs.litellm.ai/docs/providers for a list of
+        supported models.
 
         If an argument is specified, then use the argument value provided for that
         parameter. If an argument is not specified, then use the default value.
 
         Parameters:
-            llm_class_name (str): Name of the llama_index LLM class to be imported.
+            model: Name of the LLM model to be initialized. Check
+        https://docs.litellm.ai/docs/providers for a list of supported models.
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            LLM: The initialized LLM from default parameters.
+            LLM: The initialized LiteLLM instance for given model name and parameter set.
         """
-        if llm_class_name == 'Bedrock':
-            llm = import_langchainlm_with_bedrock(*args, **kwargs)
-        else:
-            llm_class = import_llm_class(llm_class_name=llm_class_name)
-            if isinstance(llm_class, OpenAI):
-                if 'model' not in kwargs:
-                    kwargs['model'] = DEFAULT_OPENAI_MODEL
-            llm = llm_class(*args, **kwargs)
 
-        return llm
+        return LiteLLM(model=model, *args, **kwargs)
