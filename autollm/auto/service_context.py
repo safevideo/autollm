@@ -35,7 +35,6 @@ class AutoServiceContext:
     def from_defaults(
             llm: LLM,
             embed_model: BaseEmbedding = None,
-            enable_cost_logging: bool = False,
             system_prompt: str = None,
             query_wrapper_prompt: str = None,
             *args,
@@ -47,7 +46,6 @@ class AutoServiceContext:
         Parameters:
             llm (LLM): The LLM to use for the query engine.
             embed_model (BaseEmbedding): The embedding model to use for the query engine.
-            enable_cost_logging (bool): Whether to enable cost logging.
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
             *args: Variable length argument list.
@@ -72,16 +70,14 @@ class AutoServiceContext:
         if embed_model is None:
             embed_model = OpenAIEmbedding()
 
-        if enable_cost_logging:
-            # from your llm_utils module
-            token_counter, callback_manager = initialize_token_counting()
-            if callback_manager:
-                kwargs['callback_manager'] = callback_manager
+        # from your llm_utils module
+        token_counter, callback_manager = initialize_token_counting()
+        if callback_manager:
+            kwargs['callback_manager'] = callback_manager
 
         service_context: ServiceContext = ServiceContext.from_defaults(
             llm=llm, embed_model=embed_model, *args, **kwargs)
 
-        if enable_cost_logging:
-            service_context._token_counter = token_counter
+        service_context._token_counter = token_counter
 
         return service_context
