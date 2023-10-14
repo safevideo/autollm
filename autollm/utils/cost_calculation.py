@@ -97,20 +97,22 @@ def calculate_total_cost(
     if not llm_cost_info or not model_cost_info:
         available_llm_classes = ", ".join(MODEL_COST.keys())
         available_models = ", ".join(llm_cost_info.keys()) if llm_cost_info else "None"
-        raise ValueError(
+        logger.warning(
             f"Cost information for model {model_name} under LLM class {llm_class_name} is not available.\n"
             f"Available LLM classes: {available_llm_classes}\n"
-            f"Available models for LLM class {llm_class_name}: {available_models}")
+            f"Available models for LLM class {llm_class_name}: {available_models}\n"
+            "Disabling cost calculation.")
+        total_cost = '-'
+    else:
+        prompt_token_count = token_counter.prompt_llm_token_count
+        completion_token_count = token_counter.completion_llm_token_count
 
-    prompt_token_count = token_counter.prompt_llm_token_count
-    completion_token_count = token_counter.completion_llm_token_count
+        prompt_cost = (prompt_token_count /
+                       model_cost_info['prompt']['unit']) * model_cost_info['prompt']['price']
+        completion_cost = (completion_token_count /
+                           model_cost_info['completion']['unit']) * model_cost_info['completion']['price']
 
-    prompt_cost = (prompt_token_count /
-                   model_cost_info['prompt']['unit']) * model_cost_info['prompt']['price']
-    completion_cost = (completion_token_count /
-                       model_cost_info['completion']['unit']) * model_cost_info['completion']['price']
-
-    total_cost = prompt_cost + completion_cost
+        total_cost = prompt_cost + completion_cost
 
     return total_cost
 
@@ -123,5 +125,5 @@ def log_total_cost(token_counter: TokenCountingHandler):
         token_counter (TokenCountingHandler): Initialized Token Counting Handler.
     """
     total_cost = calculate_total_cost(token_counter)
-    logger.info(f'Total cost for this query: ${total_cost} USD')
+    logger.info(f'Total cost for this query: {total_cost} USD')
     token_counter.reset()
