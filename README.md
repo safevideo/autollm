@@ -98,9 +98,7 @@ vector_store = AutoVectorStore.from_defaults(
 ```python
 from autollm import AutoServiceContext
 
-service_context = AutoServiceContext(
-    enable_cost_calculation=True, cost_calculator_verbose=True
-)
+service_context = AutoServiceContext(enable_cost_calculation=True)
 
 # Example calculation verbose output
 """

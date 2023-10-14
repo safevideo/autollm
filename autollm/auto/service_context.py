@@ -23,8 +23,7 @@ class AutoServiceContext:
             embed_model: BaseEmbedding = None,
             system_prompt: str = None,
             query_wrapper_prompt: str = None,
-            enable_cost_calculator: bool = True,
-            cost_calculator_verbose: bool = True,
+            enable_cost_calculator: bool = False,
             **kwargs) -> ServiceContext:
         """
         Create a ServiceContext with default parameters with extended enable_token_counting functionality. If
@@ -58,7 +57,7 @@ class AutoServiceContext:
         if enable_cost_calculator:
             callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
             model = 'gpt-3.5-turbo'  # TODO: automatically fetch model name from llm
-            callback_manager.add_handler(CostCalculatingHandler(model=model, verbose=cost_calculator_verbose))
+            callback_manager.add_handler(CostCalculatingHandler(model=model, verbose=True))
 
         if embed_model is None:
             embed_model = OpenAIEmbedding()
