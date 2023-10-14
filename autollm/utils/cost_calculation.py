@@ -124,4 +124,3 @@ def log_total_cost(token_counter: TokenCountingHandler):
     """
     total_cost = calculate_total_cost(token_counter)
     logger.info(f'Total cost for this query: ${total_cost} USD')
-    token_counter.reset()

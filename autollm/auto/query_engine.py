@@ -29,7 +29,7 @@ class QueryEngine:
     def query(self, str_or_query_bundle: QueryType) -> RESPONSE_TYPE:
         if self._token_counter:
             log_total_cost(token_counter=self._token_counter)
-            self._token_counter.reset_counts()
+            self._token_counter.reset()
         return self._query_engine.query(str_or_query_bundle)
 
 
