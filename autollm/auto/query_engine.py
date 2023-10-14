@@ -13,15 +13,17 @@ class AutoQueryEngine:
     @staticmethod  # TODO: update docstring
     def from_instances(vector_store: BaseVS, service_context: ServiceContext, **kwargs) -> BaseQueryEngine:
 
-        return vector_store.vectorindex.as_query_engine(service_context=service_context)
+        return vector_store.vectorindex.as_query_engine(service_context=service_context, **kwargs)
 
     @staticmethod  # TODO: update docstring
     def from_parameters(
-            llm_params: dict,
-            vector_store_params: dict,
-            system_prompt: str,
-            query_wrapper_prompt: str,
-            service_context_params: dict = None) -> BaseQueryEngine:
+            system_prompt: str = None,
+            query_wrapper_prompt: str = None,
+            cost_calculator_verbose: bool = True,
+            llm_params: dict = None,
+            vector_store_params: dict = None,
+            service_context_params: dict = None,
+            query_engine_params: dict = None) -> BaseQueryEngine:
 
         llm = AutoLLM.from_defaults(**llm_params)
         vector_store = AutoVectorStore.from_defaults(**vector_store_params)
@@ -29,6 +31,8 @@ class AutoQueryEngine:
             llm=llm,
             system_prompt=system_prompt,
             query_wrapper_prompt=query_wrapper_prompt,
+            cost_calculator_verbose=cost_calculator_verbose,
             **service_context_params)
 
-        return vector_store.vectorindex.as_query_engine(service_context=service_context)
+        return vector_store.vectorindex.as_query_engine(
+            service_context=service_context, **query_engine_params)
