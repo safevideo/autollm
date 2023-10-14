@@ -87,15 +87,14 @@ def update_database(documents: Sequence[Document], vectore_store_type: str) -> N
     logger.info('Vector database successfully updated.')
 
 
-# TODO: update docstring
 def set_default_prompt_template() -> ChatPromptTemplate:
     """
-    Create a Text QA Template for the query engine.
+    Sets the default prompt template for the query engine.
 
     Returns:
-        ChatPromptTemplate: The initialized Text QA Template.
+        SystemPrompt (str): The default system prompt for the query engine.
+        ChatPromptTemplate: The default prompt template for the query engine.
     """
-
     chat_text_msgs = [
         ChatMessage(
             role=MessageRole.USER,
@@ -175,7 +174,6 @@ def calculate_total_cost(token_counter: TokenCountingHandler, model_name='gpt-3.
     return total_cost
 
 
-# TODO: Delete this function?
 def log_total_cost(token_counter: TokenCountingHandler):
     """
     Logs the total cost based on token usage if ENABLE_TOKEN_COUNTING is set to True in the environment

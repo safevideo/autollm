@@ -7,15 +7,15 @@ from autollm.auto.service_context import AutoServiceContext
 from autollm.utils.constants import DEFAULT_LLM_CLASS_NAME, DEFAULT_OPENAI_MODEL
 
 
-# TODO: update docstring
-def import_llm_class(llm_class_name: str):
+def import_llm_class(llm_class_name: str) -> LLM:
     """
-    Imports a predefined vector store class by class name.
+    Imports a predefined llm class by class name from llama_index.
 
-    Args:
+    Parameters:
+        llm_class_name (str): Name of the llama_index LLM class to be imported.
 
     Returns:
-        The imported VectorStore class.
+        LLM: Initialized LLM class.
     """
     module = __import__("llama_index.llms", fromlist=[llm_class_name])
     class_ = getattr(module, llm_class_name)
@@ -60,21 +60,25 @@ def import_langchainlm_with_bedrock(
             **kwargs))
 
 
-# TODO: update docstring
 class AutoLLM:
-
+    """
+    AutoLLM lets you dynamically initialize any LLM based on the llm class name and additional parameters.
+    """
     @staticmethod
     def from_defaults(llm_class_name: str = DEFAULT_LLM_CLASS_NAME, *args, **kwargs) -> LLM:
         """
-        Create an LLM from defaults. If enable_cost_logging is True, initializes the token counter.
+        Create any LLM from default parameters.
+
+        If an argument is specified, then use the argument value provided for that
+        parameter. If an argument is not specified, then use the default value.
 
         Parameters:
-            llm_class_name (str): Name of the llama_index LLM class to be initialized.
-            enable_cost_logging (bool): Flag to enable cost logging.
-            *args, **kwargs: Arguments for the llama_index.LLM class.
+            llm_class_name (str): Name of the llama_index LLM class to be imported.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            LLM: Initialized LLM with token_counter attached.
+            LLM: The initialized LLM from default parameters.
         """
         if llm_class_name == 'Bedrock':
             llm = import_langchainlm_with_bedrock(*args, **kwargs)

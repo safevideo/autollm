@@ -11,13 +11,12 @@ from autollm.utils.llm_utils import initialize_token_counting, set_default_promp
 logger = logging.getLogger(__name__)
 
 
-# TODO: update docstring
 class ServiceContext(LlamaServiceContext):
     """
     ServiceContext extends the functionality of LlamaIndex's ServiceContext to include token counting.
 
     This class is initialized with an optional token_counter and all the parameters required for LlamaIndex's
-    ServiceContext.
+    ServiceContext. If token_counter is provided, it is used to count the number of tokens used by the LLM.
     """
 
     def __init__(self, *args, **kwargs):
@@ -25,30 +24,35 @@ class ServiceContext(LlamaServiceContext):
         super().__init__(*args, **kwargs)
 
 
-# TODO: update docstring
 class AutoServiceContext:
-
+    """
+    AutoServiceContext extends the functionality of LlamaIndex's ServiceContext to include token counting.
+    """
     @staticmethod
     def from_defaults(
             llm: LLM,
             embed_model: BaseEmbedding = None,
-            enable_cost_logging: bool = False,
+            enable_token_counting: bool = False,
             system_prompt: str = None,
             query_wrapper_prompt: str = None,
             *args,
             **kwargs) -> ServiceContext:
         """
-        Create an AutoServiceContext from defaults. If enable_cost_logging is True, initializes the token
-        counter.
+        Create a ServiceContext with default parameters with extended enable_token_counting functionality.
+        If enable_token_counting is True, tracks the number of tokens used by the LLM for each query.
 
         Parameters:
-            enable_cost_logging (bool): Flag to enable cost logging.
-            *args, **kwargs: Arguments for the llama_index.ServiceContext class.
+            llm (LLM): The LLM to use for the query engine.
+            embed_model (BaseEmbedding): The embedding model to use for the query engine.
+            enable_token_counting (bool): Whether to track the number of tokens used by the LLM for each query.
+            system_prompt (str): The system prompt to use for the query engine.
+            query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            ServiceContext: Initialized service context with token_counter attached.
+            ServiceContext: The initialized ServiceContext from default parameters with extra token counting functionality.
         """
-
         if not system_prompt or not query_wrapper_prompt:
             logger.info('System prompt and query wrapper prompt not provided. Using default prompts.')
             system_prompt, query_wrapper_prompt = set_default_prompt_template()
@@ -65,7 +69,7 @@ class AutoServiceContext:
         if embed_model is None:
             embed_model = OpenAIEmbedding()
 
-        if enable_cost_logging:
+        if enable_token_counting:
             # from your llm_utils module
             token_counter, callback_manager = initialize_token_counting()
             if callback_manager:
@@ -74,11 +78,7 @@ class AutoServiceContext:
         service_context: ServiceContext = ServiceContext.from_defaults(
             llm=llm, embed_model=embed_model, *args, **kwargs)
 
-        if enable_cost_logging:
+        if enable_token_counting:
             service_context._token_counter = token_counter
 
         return service_context
-
-
-# The idea is to use it like this:
-# service_context = AutoServiceContext.from_defaults(enable_cost_logging=True, llm=AutoLLM.from_defaults())
