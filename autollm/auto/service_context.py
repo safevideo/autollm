@@ -3,7 +3,6 @@ import logging
 from llama_index import OpenAIEmbedding, ServiceContext
 from llama_index.callbacks import CallbackManager
 from llama_index.embeddings.base import BaseEmbedding
-from llama_index.llms.base import LLM
 from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
 
 from autollm.callbacks.cost_calculating import CostCalculatingHandler
@@ -19,7 +18,6 @@ class AutoServiceContext:
 
     @staticmethod
     def from_defaults(
-            llm: LLM,
             embed_model: BaseEmbedding = None,
             system_prompt: str = None,
             query_wrapper_prompt: str = None,
@@ -62,6 +60,10 @@ class AutoServiceContext:
             embed_model = OpenAIEmbedding()
 
         service_context = ServiceContext.from_defaults(
-            llm=llm, embed_model=embed_model, callback_manager=callback_manager, **kwargs)
+            embed_model=embed_model,
+            system_prompt=system_prompt,
+            query_wrapper_prompt=query_wrapper_prompt,
+            callback_manager=callback_manager,
+            **kwargs)
 
         return service_context

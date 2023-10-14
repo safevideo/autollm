@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 
 from litellm.utils import cost_per_token, token_counter
 from llama_index.callbacks.schema import CBEventType, EventPayload
