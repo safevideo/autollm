@@ -13,7 +13,7 @@ The document information is below.
 ---------------------
 {context_str}
 ---------------------
-Using the document information and not prior knowledge,
+Using the document information and mostly relying on it,
 answer the query.
 Query: {query_str}
 Answer:

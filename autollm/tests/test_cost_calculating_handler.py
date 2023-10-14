@@ -17,7 +17,7 @@ def test_cost_calculating_handler():
 
     response = query_engine.query("What is the meaning of life?")
     # Check if the response is not None
-    assert response is not None
+    assert response.response is not None
 
     # Check if the total token cost is greater than 0
     assert cost_calculater.total_llm_token_cost > 0

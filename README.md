@@ -93,13 +93,22 @@ vector_store = AutoVectorStore.from_defaults(
 ```python
 ```
 
-### Automated Cost Calculation (Supports any OpenAI, Cohere, Anthropic and Llama2 model)
+### Automated Cost Calculation (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
 
-```
+```python
+from autollm import AutoServiceContext
+
+service_context = AutoServiceContext(
+    enable_cost_calculation=True, cost_calculator_verbose=True
+)
+
+# Example calculation verbose output
+"""
 Embedding Token Usage: 7
 LLM Prompt Token Usage: 1482
 LLM Completion Token Usage: 47
 LLM Total Token Cost: $0.002317
+"""
 ```
 
 ______________________________________________________________________

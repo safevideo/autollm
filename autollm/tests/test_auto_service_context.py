@@ -15,7 +15,7 @@ def test_auto_service_context():
     response = query_engine.query("What is the meaning of life?")
 
     # Check if the response is not None
-    assert response is not None
+    assert response.response is not None
 
     # Check if the total token cost is greater than 0
     cost_caltulator = service_context.callback_manager.handlers[0]
