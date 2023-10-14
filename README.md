@@ -103,17 +103,22 @@ from autollm import AutoQueryEngine
 vector_store = AutoVectorStore.from_defaults(
     vector_store_type="in_memory", input_files="path/to/documents"
 )
-service_context = AutoServiceContext.from_defaults(enable_cost_calculation=True)
+service_context = AutoServiceContext.from_defaults(enable_cost_calculator=True)
 query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
+```
 
+```python
 # Initialize a query engine with default parameters
 query_engine = AutoQueryEngine.from_parameters()
 
 # Ask a question
-response = query_engine.query("What is the meaning of life?")
-print(response.response)
+response = query_engine.query("Why is SafeVideo open sourcing this project?")
 
->>The meaning of ...
+print(response.response)
+```
+
+```
+>> Because they are cool!
 ```
 
 #### Advanced Usage:
@@ -122,6 +127,7 @@ For fine-grained control, you can initialize the `AutoQueryEngine` by explicitly
 
 ```python
 from autollm import AutoQueryEngine
+
 # Initialize the query engine with explicit parameters
 query_engine = AutoQueryEngine.from_parameters(
     system_prompt="Your System Prompt",
@@ -133,9 +139,11 @@ query_engine = AutoQueryEngine.from_parameters(
     query_engine_params={"similarity_top_k": 10},
 )
 
-response = query_engine.query("What is the meaning of life?")
+response = query_engine.query("Why is SafeVideo awesome?")
+
 print(response.response)
->>The meaning of ...
+
+>> Because they make it safe to watch videos online!
 ```
 
 ### Automated Cost Calculation (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
