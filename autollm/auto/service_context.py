@@ -1,29 +1,15 @@
 import logging
 
-from llama_index import OpenAIEmbedding
-from llama_index import ServiceContext as LlamaServiceContext
-from llama_index.callbacks import TokenCountingHandler
+from llama_index import OpenAIEmbedding, ServiceContext
+from llama_index.callbacks import CallbackManager
 from llama_index.embeddings.base import BaseEmbedding
 from llama_index.llms.base import LLM
 from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
 
-from autollm.utils.cost_calculation import initialize_token_counting
+from autollm.callbacks.cost_calculating import CostCalculatingHandler
 from autollm.utils.llm_utils import set_default_prompt_template
 
 logger = logging.getLogger(__name__)
-
-
-class ServiceContext(LlamaServiceContext):
-    """
-    ServiceContext extends the functionality of LlamaIndex's ServiceContext to include token counting.
-
-    This class is initialized with an optional token_counter and all the parameters required for LlamaIndex's
-    ServiceContext. If token_counter is provided, it is used to count the number of tokens used by the LLM.
-    """
-
-    def __init__(self, *args, **kwargs):
-        self._token_counter: TokenCountingHandler = None
-        super().__init__(*args, **kwargs)
 
 
 class AutoServiceContext:
@@ -37,7 +23,7 @@ class AutoServiceContext:
             embed_model: BaseEmbedding = None,
             system_prompt: str = None,
             query_wrapper_prompt: str = None,
-            *args,
+            cost_calculator_verbose: bool = True,
             **kwargs) -> ServiceContext:
         """
         Create a ServiceContext with default parameters with extended enable_token_counting functionality. If
@@ -48,6 +34,7 @@ class AutoServiceContext:
             embed_model (BaseEmbedding): The embedding model to use for the query engine.
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
+            cost_calculator_verbose (bool): Flag to enable cost calculator logging.
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
@@ -67,17 +54,14 @@ class AutoServiceContext:
         else:
             raise ValueError(f'Invalid system_prompt type: {type(query_wrapper_prompt)}')
 
+        callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
+        model = 'gpt-3.5-turbo'  # TODO: automatically fetch model name from llm
+        callback_manager.add_handler(CostCalculatingHandler(model=model, verbose=cost_calculator_verbose))
+
         if embed_model is None:
             embed_model = OpenAIEmbedding()
 
-        # from your llm_utils module
-        token_counter, callback_manager = initialize_token_counting()
-        if callback_manager:
-            kwargs['callback_manager'] = callback_manager
-
-        service_context: ServiceContext = ServiceContext.from_defaults(
-            llm=llm, embed_model=embed_model, *args, **kwargs)
-
-        service_context._token_counter = token_counter
+        service_context = ServiceContext.from_defaults(
+            llm=llm, embed_model=embed_model, callback_manager=callback_manager, **kwargs)
 
         return service_context
