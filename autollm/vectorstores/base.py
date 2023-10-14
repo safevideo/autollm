@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Union
 
 from llama_index import StorageContext, VectorStoreIndex
 from llama_index.schema import Document
@@ -10,17 +10,17 @@ class BaseVS:
     """Base class for vector stores."""
 
     def __init__(self):
-        self._vectorstore: BasePydanticVectorStore = None
+        self._vectorstore: Union[BasePydanticVectorStore, VectorStoreIndex] = None
 
         self._validate_requirements()
 
     @property
-    def vectorstore(self) -> BasePydanticVectorStore:
+    def vectorstore(self) -> Union[BasePydanticVectorStore, VectorStoreIndex]:
         """
         Get the vector store.
 
         Returns:
-            BasePydanticVectorStore: Vector store.
+            Union[BasePydanticVectorStore, VectorStoreIndex]: Vector store.
         """
         if self._vectorstore is None:
             raise ValueError('Vector store not connected. Please connect first using connect_vectorstore().')

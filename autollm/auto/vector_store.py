@@ -7,7 +7,7 @@ from autollm.vectorstores.base import BaseVS
 VECTOR_STORE_TYPE_TO_VECTOR_CLASS_NAME = {
     'pinecone': 'PineconeVS',
     'qdrant': 'QdrantVS',
-    'inmemory': 'InMemoryVS'
+    'in_memory': 'InMemoryVS'
 }
 
 

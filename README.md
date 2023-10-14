@@ -84,7 +84,7 @@ vector_store = AutoVectorStore.from_defaults(
 )
 
 vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="inmemory", path_or_files="path/to/documents"
+    vector_store_type="in_memory", path_or_files="path/to/documents"
 )
 ```
 
@@ -125,11 +125,11 @@ ______________________________________________________________________
 
 Our roadmap outlines upcoming features and integrations aimed at making QuickLLM the most extensible and powerful base package for large language model applications.
 
-- [ ] **Bedrok Integrations**:
+- ~~\[x\] **Bedrok Integrations**:~~
 
-  - [ ] Claude2 support
-  - [ ] Cohere support
-  - [ ] LLAMA2 support
+  - ~~\[x\] Claude2 support~~
+  - ~~\[x\] Cohere support~~
+  - ~~\[x\] LLAMA2 support~~
 
 - [ ] **VectorDB Integrations**:
 
