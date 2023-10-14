@@ -22,16 +22,44 @@ ______________________________________________________________________
 
 ## Features
 
-### AutoLLM (Supports all llama-index LLMs + AWS Bedrock LLMs)
+### AutoLLM (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
+
+- Microsoft Azure - OpenAI example:
 
 ```python
 from autollm import AutoLLM
-from llama_index.llms.base import LLM
 
-# Dynamically initialize a llama_index llm instance
-llm = AutoLLM(llm_class_name="OpenAI", model="gpt4")
-llm = AutoLLM(llm_class_name="PaLM", model="models/text-bison-001")
-llm = AutoLLM(llm_class_name="Bedrock", model_id="anthropic.claude-v2")
+## set ENV variables
+os.environ["AZURE_API_KEY"] = ""
+os.environ["AZURE_API_BASE"] = ""
+os.environ["AZURE_API_VERSION"] = ""
+
+# Dynamically initialize a llama_index llm instance with the same AutoLLM api
+llm = AutoLLM(model="azure/<your_deployment_name>")
+```
+
+- Google - VertexAI example:
+
+```python
+from autollm import AutoLLM
+
+## set ENV variables
+os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
+os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+
+# Dynamically initialize a llama_index llm instance with the same AutoLLM api
+llm = AutoLLM(model="text-bison@001")
+```
+
+- AWS Bedrock - Claude v2 example:
+
+```python
+from autollm import AutoLLM
+
+## set ENV variables
+os.environ["AWS_ACCESS_KEY_ID"] = ""
+os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+os.environ["AWS_REGION_NAME"] = ""
 ```
 
 ### AutoVectorStore (Supports following VectorDBs: Pinecone, Qdrant, InMemory)
