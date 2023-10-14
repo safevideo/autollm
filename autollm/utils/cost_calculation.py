@@ -11,29 +11,29 @@ from llama_index.callbacks import CallbackManager, TokenCountingHandler
 
 logger = logging.getLogger(__name__)
 
-# TODO: handle key error (for unsupported models)
-# TODO: cost_calculation.py ayri module olusturulabilir: llm_class_name > model > prompt/completion > price/unit
 MODEL_COST = {
-    'gpt-3.5-turbo': {
-        'prompt': {
-            'price': 0.0015,
-            'unit': 1000
+    'OpenAI': {
+        'gpt-3.5-turbo': {
+            'prompt': {
+                'price': 0.0015,
+                'unit': 1000
+            },
+            'completion': {
+                'price': 0.002,
+                'unit': 1000
+            }
         },
-        'completion': {
-            'price': 0.002,
-            'unit': 1000
+        'gpt-4': {
+            'prompt': {
+                'price': 0.03,
+                'unit': 1000
+            },
+            'completion': {
+                'price': 0.06,
+                'unit': 1000
+            }
         }
-    },
-    'gpt-4': {
-        'prompt': {
-            'price': 0.03,
-            'unit': 1000
-        },
-        'completion': {
-            'price': 0.06,
-            'unit': 1000
-        }
-    },
+    }
     # TODO: add more models (aws bedrock: https://aws.amazon.com/tr/bedrock/pricing/, anyscale: https://docs.endpoints.anyscale.com/pricing/#pricing, palm: https://cloud.google.com/vertex-ai/docs/generative-ai/pricing, azure-openai: https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/)
 }
 
@@ -76,20 +76,31 @@ def generate_token_counter(encoding_model: str = 'gpt-3.5-turbo'):
     return token_counter
 
 
-def calculate_total_cost(token_counter: TokenCountingHandler, model_name='gpt-3.5-turbo'):
+def calculate_total_cost(
+        token_counter: TokenCountingHandler, llm_class_name: str, model_name: str = 'gpt-3.5-turbo'):
     """
     Calculate the total cost based on the model and token usage for both the prompt and completion.
 
     Parameters:
         token_counter (TokenCountingHandler): Token Counting Handler initialized with the tokenizer.
+        llm_class_name (str): The class name of the Language Learning Model being used.
         model_name (str): The name of the model being used.
 
     Returns:
         total_cost (float): The total cost of the query in USD, based on the token usage and model.
     """
-    model_cost_info = MODEL_COST.get(model_name, {})
-    if not model_cost_info:
-        raise ValueError(f'Cost information for model {model_name} is not available.')
+    # Access cost information for the given LLM class and model
+    llm_cost_info = MODEL_COST.get(llm_class_name)
+    model_cost_info = llm_cost_info.get(model_name) if llm_cost_info else None
+
+    # Raise error if cost information is not available
+    if not llm_cost_info or not model_cost_info:
+        available_llm_classes = ", ".join(MODEL_COST.keys())
+        available_models = ", ".join(llm_cost_info.keys()) if llm_cost_info else "None"
+        raise ValueError(
+            f"Cost information for model {model_name} under LLM class {llm_class_name} is not available.\n"
+            f"Available LLM classes: {available_llm_classes}\n"
+            f"Available models for LLM class {llm_class_name}: {available_models}")
 
     prompt_token_count = token_counter.prompt_llm_token_count
     completion_token_count = token_counter.completion_llm_token_count
