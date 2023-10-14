@@ -34,9 +34,27 @@ llm = AutoLLM(llm_class_name="PaLM", model="models/text-bison-001")
 llm = AutoLLM(llm_class_name="Bedrock", model_id="anthropic.claude-v2")
 ```
 
-### AutoVectorStore (Supports ...)
+### AutoVectorStore (Supports following VectorDBs: Pinecone, Qdrant, InMemory)
 
 ```python
+from autollm import AutoVectorStore
+
+# Dynamically initialize a VectorDB instance
+vector_store = AutoVectorStore.from_defaults(
+    vector_store_type="qdrant", index_name="quickstart", size=1536, distance="EUCLID"
+)
+
+vector_store = AutoVectorStore.from_defaults(
+    vector_store_type="pinecone",
+    index_name="quickstart",
+    dimension=1536,
+    metric_type="euclidean",
+    pod_type="p1",
+)
+
+vector_store = AutoVectorStore.from_defaults(
+    vector_store_type="inmemory", path_or_files="path/to/documents"
+)
 ```
 
 ### AutoQueryEngine (Easy integration with any LLM + VectorStore + Query Template)
@@ -47,27 +65,10 @@ llm = AutoLLM(llm_class_name="Bedrock", model_id="anthropic.claude-v2")
 ### Automated Cost Calculation (Supports OpenAI)
 
 ```bash
-completion cost: ...
-... cost: ...
-```
-
-______________________________________________________________________
-
-### TODO: Add code examples from AutoVectorstore, AutoLLM, AutoQueryEngine.
-
-## Code Examples
-
-QuickLLM is designed to be easy to use. Here's a simple example of how to make a query:
-
-```python
-from autollm import QueryEngine
-
-# Initialize the query engine
-engine = QueryEngine()
-
-# Making a query
-response = engine.query("What is AI?")
-print(response)
+Embedding Token Usage: 4
+LLM Prompt Token Usage: 1289
+LLM Completion Token Usage: 73
+Total cost for this query: {total_cost} USD
 ```
 
 ______________________________________________________________________
