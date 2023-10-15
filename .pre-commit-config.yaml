@@ -16,6 +16,8 @@ repos:
       # - id: check-yaml
       - id: detect-private-key
       - id: detect-aws-credentials
+        args:
+          - --allow-missing-credentials
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.15.0
