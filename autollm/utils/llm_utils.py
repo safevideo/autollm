@@ -27,7 +27,7 @@ def initialize_database(
     """
     logger.info('Initializing vector store')
 
-    # Connect to the existing vector store database
+    # Create a new index and connect to it
     vector_store = AutoVectorStore.from_defaults(
         vector_store_type=vectore_store_type, collection_name=DEFAULT_INDEX_NAME)
     vector_store.initialize_vectorindex()
