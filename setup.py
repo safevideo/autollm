@@ -34,10 +34,11 @@ setuptools.setup(
     author='safevideo',
     author_email='support@safevideo.ai',
     license='AGPL-3.0',
-    description='Base Package for Large Language Model Applications',
+    description="Ship RAG based LLM Web API's, in seconds.",
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
     packages=setuptools.find_packages(exclude=["tests"]),
     install_requires=get_requirements(),
     extras_require={'dev': DEV_REQUIREMETNS},
+    python_requires='>=3.8',
 )

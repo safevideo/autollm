@@ -1,0 +1,70 @@
+name: Continuous Integration
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '**.ipynb'
+
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '**.ipynb'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.8, 3.9, '3.10', '3.11']
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Restore Ubuntu cache
+        uses: actions/cache@v3
+        if: matrix.operating-system == 'ubuntu-latest'
+        with:
+          path: ~/.cache/pip
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/setup.py')}}
+          restore-keys: ${{ matrix.os }}-${{ matrix.python-version }}-
+
+      - name: Restore MacOS cache
+        uses: actions/cache@v3
+        if: matrix.operating-system == 'macos-latest'
+        with:
+          path: ~/Library/Caches/pip
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/setup.py')}}
+          restore-keys: ${{ matrix.os }}-${{ matrix.python-version }}-
+
+      - name: Restore Windows cache
+        uses: actions/cache@v3
+        if: matrix.operating-system == 'windows-latest'
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/setup.py')}}
+          restore-keys: ${{ matrix.os }}-${{ matrix.python-version }}-
+
+      - name: Update pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install local package with dev dependencies
+        run: >
+          pip install -e .[dev]
+
+      - name: Check styling with pre-commit
+        run: |
+          pre-commit install
+          pre-commit run --all-files
+
+      - name: Run tests
+        run: pytest
