@@ -16,8 +16,8 @@ def find_dotenv_file(start_path: Path) -> Path:
 
 
 # Find and load .env file
-dotenv_path = find_dotenv_file(Path(__file__).parent)
-load_dotenv(dotenv_path)
+# dotenv_path = find_dotenv_file(Path(__file__).parent)
+# load_dotenv(dotenv_path)
 
 
 def read_env_variable(variable_name: str, default_value: str = None) -> str:
