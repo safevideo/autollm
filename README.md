@@ -1,12 +1,17 @@
 # AutoLLM
 
-## Elevate Your Large Language Model Applications
+## Ship retrieval augmented generation based Large Language Model Web API's, in seconds
 
 ## [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/) ![Version 0.0.1](https://img.shields.io/badge/version-0.0.1-blue) ![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)
 
-## Introduction
+## Why AutoLLM?
 
-Welcome to AutoLLM, the definitive toolkit for deploying, managing, and scaling Large Language Model (LLM) applications. Built for high performance and maximum flexibility, AutoLLM provides seamless integration with multiple LLM providers, vector databases, and service contexts.
+| Project    | 80+ LLM integration | 80+ LLM's with the same API | 20+ VectorDB integration | 20+ VectorDB's with the same API | Cost calculation for 80+ LLM's | 1-line query engine creation | 1-line FastAPI app creation |
+| ---------- | ------------------- | --------------------------- | ------------------------ | -------------------------------- | ------------------------------ | ---------------------------- | --------------------------- |
+| AutoLLM    | ✔️                  | ✔️                          | ✔️                       | ✔️                               | ✔️                             | ✔️                           | ✔️                          |
+| LangChain  | ✔️                  | ❌                           | ✔️                       | ❌                                | ❌                              | ❌                            | ✔️                          |
+| LlamaIndex | ✔️                  | ❌                           | ✔️                       | ❌                                | ❌                              | ❌                            | ❌                           |
+| LiteLLM    | ✔️                  | ✔️                          | ❌                        | ❌                                | ✔️                             | ✔️                           | ❌                           |
 
 ______________________________________________________________________
 
@@ -65,7 +70,7 @@ os.environ["AWS_REGION_NAME"] = ""
 llm = AutoLLM(model="anthropic.claude-v2")
 ```
 
-### AutoVectorStore (Supports following VectorDBs: Pinecone, Qdrant, InMemory)
+### AutoVectorStore (Supported VectorDBs: Pinecone, Qdrant, InMemory)
 
 Instantly initialize a VectorDB instance with same API
 
