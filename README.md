@@ -112,7 +112,7 @@ query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
 query_engine = AutoQueryEngine.from_parameters()
 
 # Ask a question
-response = query_engine.query("Why is SafeVideo open sourcing this project?")
+response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
 
 print(response.response)
 ```
@@ -139,11 +139,11 @@ query_engine = AutoQueryEngine.from_parameters(
     query_engine_params={"similarity_top_k": 10},
 )
 
-response = query_engine.query("Why is SafeVideo awesome?")
+response = query_engine.query("Why is SafeVideo AI awesome?")
 
 print(response.response)
 
->> Because they make it safe to watch videos online!
+>> Because they redefine the movie experience by AI!
 ```
 
 ### Automated Cost Calculation (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
@@ -189,6 +189,15 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
   - [ ] Chroma support
   - [ ] Weviate support
   - [ ] LanceDB support
+
+- [ ] **Pipelines**:
+
+  - [ ] In memory PDF QA pipeline
+  - [ ] DB-based documentation QA pipeline
+
+- [ ] **FastAPI Integration**:
+
+  - [ ] FastAPI integration for Pipelines
 
 ______________________________________________________________________
 
