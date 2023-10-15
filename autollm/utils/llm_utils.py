@@ -1,12 +1,7 @@
 import logging
-from typing import Sequence
 
-from llama_index import Document
 from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
 
-from autollm.auto.vector_store import AutoVectorStore
-from autollm.utils.constants import DEFAULT_INDEX_NAME, DEFAULT_VECTORE_STORE_TYPE
-from autollm.utils.hash_utils import check_for_changes
 from autollm.utils.templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)

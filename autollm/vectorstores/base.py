@@ -1,4 +1,4 @@
-from typing import Sequence, Union
+from typing import List, Sequence, Union
 
 from llama_index import StorageContext, VectorStoreIndex
 from llama_index.schema import Document
@@ -95,7 +95,7 @@ class BaseVS:
         for document_id in document_ids:
             self.vectorindex.delete_ref_doc(document_id, delete_from_docstore=True)
 
-    def get_document_infos(self) -> tuple[list[str], list[str], list[str]]:
+    def get_document_infos(self) -> tuple[List[str], List[str], List[str]]:
         """
         Get hashes, original file names, and document ids of all documents in vector store.
 
