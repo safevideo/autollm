@@ -171,6 +171,39 @@ LLM Total Token Cost: $0.002317
 """
 ```
 
+### Document Providers (Powerful Github and Local Solutions)
+
+Unlock the potential of your content with AutoLLM's robust document providers. Seamlessly pull, process, and analyze documents from GitHub repositories or local directories.
+
+#### GitHub Document Provider
+
+Fetch up-to-date documents directly from your GitHub repositories—ideal for real-time data pipelines and collaborative projects.
+
+```python
+from autollm.utils.document_providers import github_document_provider
+
+git_repo_url = "https://github.com/safevideo.git"
+local_repo_path = Path("/safevideo/")
+# Specify where to find the documents in the repo
+relative_docs_path = Path("docs/")
+
+# Fetch and process documents
+documents = github_document_provider(git_repo_url, local_repo_path, relative_docs_path)
+```
+
+#### Local Document Provider
+
+Process documents from local directories—ideal for offline data pipelines and local development.
+
+```python
+from autollm.utils.document_providers import local_document_provider
+
+input_dir = "/local/documents/path"
+
+# Read files as documents from local directory
+documents = local_document_provider(input_dir=input_dir)
+```
+
 ______________________________________________________________________
 
 ## FAQ
@@ -204,6 +237,12 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 - \[\] **Tests**:
 
   - [ ] Add unit tests for online vectorDB integrations
+
+- [ ] **Additional Document Providers**:
+
+  - [ ] Amazon S3-based document provider
+  - [ ] FTP-based document provider
+  - [ ] Google Drive-based document provider
 
 ______________________________________________________________________
 
