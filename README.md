@@ -210,13 +210,13 @@ ______________________________________________________________________
 
 **Q: Can I use this for commercial projects?**
 
-A: Yes, QuickLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
+A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
 
 ______________________________________________________________________
 
 ## Roadmap
 
-Our roadmap outlines upcoming features and integrations aimed at making QuickLLM the most extensible and powerful base package for large language model applications.
+Our roadmap outlines upcoming features and integrations aimed at making AutoLLM the most extensible and powerful base package for large language model applications.
 
 - [ ] **VectorDB Integrations**:
 
@@ -248,13 +248,13 @@ ______________________________________________________________________
 
 ## Contributing
 
-We welcome contributions to QuickLLM! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+We welcome contributions to AutoLLM! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
 
 ______________________________________________________________________
 
 ## License
 
-QuickLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE.txt).
+AutoLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE.txt).
 
 ______________________________________________________________________
 
@@ -262,7 +262,7 @@ ______________________________________________________________________
 
 For more information, support, or questions, please contact:
 
-- **Email**: [support@safevideo.ai](mailto:support@quickllm.com)
+- **Email**: [support@safevideo.ai](mailto:support@safevideo.ai)
 - **Website**: [SafeVideo](https://safevideo.ai/)
 - **LinkedIn**: [SafeVideo AI](https://www.linkedin.com/company/safevideo/)
 
