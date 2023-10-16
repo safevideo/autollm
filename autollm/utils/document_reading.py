@@ -1,7 +1,7 @@
 import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Sequence
 
+from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
 
 from autollm.utils.multimarkdown_reader import MultiMarkdownReader
@@ -9,42 +9,42 @@ from autollm.utils.multimarkdown_reader import MultiMarkdownReader
 logger = logging.getLogger(__name__)
 
 
-# TODO: add all files supports beside md, use SimpleDirReader
 def read_files_as_documents(
-        path_or_files: Union[Path, List[Path]],
-        read_as_single_doc: bool = False,
-        extra_info: Optional[Dict] = None) -> List[Document]:
+        input_dir: Optional[str] = None,
+        input_files: Optional[List] = None,
+        filename_as_id: bool = True,
+        recursive: bool = True,
+        read_as_single_doc: bool = True,
+        *args,
+        **kwargs) -> Sequence[Document]:
     """
-    Process markdown files to extract documents.
-
-    This function can operate in two modes:
-    1. By default (`read_as_single_doc=False`), it extracts "header-documents," where each markdown header defines a new Document.
-    2. If `read_as_single_doc=True`, it treats each markdown file as a single Document.
+    Process markdown files to extract documents using SimpleDirectoryReader.
 
     Parameters:
-        path_or_files (Union[Path, List[Path]]): Path to the folder or list of file paths containing markdown files.
-        read_as_single_doc (bool): Flag to read the entire markdown file as a single Document.
-        extra_info (Optional[Dict]): Additional metadata to include.
+        input_dir (str): Path to the directory containing the markdown files.
+        input_files (List): List of file paths.
+        filename_as_id (bool): Whether to use the filename as the document id.
+        recursive (bool): Whether to recursively search for files in the input directory.
+        read_as_single_doc (bool): If True, read each markdown as a single document.
 
     Returns:
-        list: List of processed Documents.
+        documents (Sequence[Document]): A sequence of Document objects.
     """
-    multi_markdown_reader = MultiMarkdownReader(read_as_single_doc=read_as_single_doc)
+    # Configure file_extractor to use MultiMarkdownReader for md files
+    file_extractor = {".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc)}
 
-    # If path_or_files is a Path, check if it is a folder or a file.
-    if isinstance(path_or_files, Path):
-        if path_or_files.is_dir():
-            documents = multi_markdown_reader.load_data_from_folder_or_files(
-                folder_path=path_or_files, extra_info=extra_info)
-        elif path_or_files.is_file():
-            documents = multi_markdown_reader.load_data_from_folder_or_files(
-                files=[path_or_files], extra_info=extra_info)
-    # If path_or_files is a list of Paths, read all files.
-    elif isinstance(path_or_files, list):
-        documents = multi_markdown_reader.load_data_from_folder_or_files(
-            files=path_or_files, extra_info=extra_info)
-    else:
-        raise ValueError('Invalid input: path_or_files must be either a Path or a List[Path].')
+    # Initialize SimpleDirectoryReader
+    reader = SimpleDirectoryReader(
+        file_extractor=file_extractor,
+        input_dir=input_dir,
+        input_files=input_files,
+        filename_as_id=filename_as_id,
+        recursive=recursive,
+        *args,
+        **kwargs)
+
+    # Read and process the documents
+    documents = reader.load_data()
 
     logger.info(f"Found {len(documents)} {'header-documents' if not read_as_single_doc else 'documents'}.")
     return documents

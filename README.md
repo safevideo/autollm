@@ -201,6 +201,10 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
   - [ ] FastAPI integration for Pipelines
 
+- \[\] **Tests**:
+
+  - [ ] Add unit tests for online vectorDB integrations
+
 ______________________________________________________________________
 
 ## Contributing

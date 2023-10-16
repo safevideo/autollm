@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -6,23 +5,6 @@ from llama_index.schema import Document
 
 from autollm.utils.hash_utils import get_md5
 from autollm.utils.markdown_reader import MarkdownReader
-
-logger = logging.getLogger(__name__)
-
-
-def get_markdown_files(base_path: Path) -> List[Path]:
-    """
-    Get all markdown files in a given path.
-
-    Parameters:
-        base_path (Path): Base directory to search for markdown files.
-
-    Returns:
-        List[Path]: List of Paths to all markdown files.
-    """
-    markdown_files = list(base_path.rglob('*.md'))
-    logger.info(f'Found {len(markdown_files)} markdown files.')
-    return markdown_files
 
 
 class MultiMarkdownReader(MarkdownReader):
@@ -54,6 +36,7 @@ class MultiMarkdownReader(MarkdownReader):
             extra_info = {}
 
         relative_file_path = str(file)
+        # TODO: check if this is still necessary after llama_index refresh method entegration
         extra_info['original_file_path'] = relative_file_path
         extra_info['md5_hash'] = get_md5(file)
 
@@ -72,35 +55,3 @@ class MultiMarkdownReader(MarkdownReader):
         else:
             # Call parent's load_data method for section-based reading
             return super().load_data(file, extra_info, content)
-
-    def load_data_from_folder_or_files(
-        self,
-        folder_path: Path = None,
-        files: Optional[List[Path]] = None,
-        extra_info: Optional[Dict] = None,
-    ) -> List[Document]:
-        """
-        Parse all markdown files in a given folder or list of files and return a list of Documents.
-
-        Parameters:
-            folder_path (Path): Path to the folder containing markdown files.
-            files (Optional[List[Path]]): List of markdown files.
-            extra_info (Optional[Dict]): Additional metadata to include.
-
-        Returns:
-            List[Document]: List of Documents.
-        """
-        all_documents = []
-
-        # Gather all markdown files in the folder and its subfolders
-        if files:
-            all_files = files
-        else:
-            all_files = get_markdown_files(folder_path)
-
-        for file_path in all_files:
-            # Use the overridden load_data method
-            documents = self.load_data(file_path, extra_info)
-            all_documents.extend(documents)
-
-        return all_documents
