@@ -1,21 +1,42 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 
-from .api import ask_question, health_check
-from .docs import description, openapi_url, tags_metadata, terms_of_service, title, version
+from autollm.app.docs import description, openapi_url, tags_metadata, terms_of_service, title, version
+from autollm.app.utils import load_config_and_initialize_engines
 
 logging.basicConfig(level=logging.INFO)
 
-app = FastAPI(
-    title=title,
-    description=description,
-    version=version,
-    openapi_url=openapi_url,
-    terms_of_service=terms_of_service,
-    openapi_tags=tags_metadata,
-)
 
-# Include the API routes
-app.include_router(ask_question.router, tags=["ask"])
-app.include_router(health_check.router, tags=["health"])
+# Function to create the FastAPI web app
+def create_web_app(config_file_path: str, env_file_path: str = None):
+    app = FastAPI(
+        title=title,
+        description=description,
+        version=version,
+        openapi_url=openapi_url,
+        terms_of_service=terms_of_service,
+        openapi_tags=tags_metadata,
+    )
+
+    query_engines = load_config_and_initialize_engines(config_file_path, env_file_path)
+
+    @app.post("/query")
+    async def query(
+            task: str = Query(..., description="Task to execute"),
+            user_query: str = Query(..., description="User's query")):
+        if task not in query_engines:
+            raise HTTPException(status_code=400, detail="Invalid task name")
+
+        # Use the appropriate query engine for the task
+        query_engine = query_engines[task]
+        response = query_engine.query(user_query)
+
+        return response
+
+    return app
+
+
+# For demonstration, let's assume we have a config.yaml with task configurations and an optional .env file
+# This function call would typically be in your main application file
+# app = create_web_app("path/to/config.yaml", "path/to/.env")
