@@ -183,17 +183,12 @@ ______________________________________________________________________
 
 Our roadmap outlines upcoming features and integrations aimed at making QuickLLM the most extensible and powerful base package for large language model applications.
 
-- ~~\[x\] **Bedrok Integrations**:~~
-
-  - ~~\[x\] Claude2 support~~
-  - ~~\[x\] Cohere support~~
-  - ~~\[x\] LLAMA2 support~~
-
 - [ ] **VectorDB Integrations**:
 
-  - [ ] Chroma support
-  - [ ] Weviate support
-  - [ ] LanceDB support
+  - [ ] Decouple DB index operations from vector store classes
+  - [ ] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
+  - [ ] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
+  - [ ] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
 
 - [ ] **Pipelines**:
 
