@@ -6,6 +6,7 @@ from llama_index.storage.docstore.types import RefDocInfo
 from llama_index.vector_stores.types import BasePydanticVectorStore
 
 
+# TODO: we need to create separate update_vectorindex, overwrite_vectorindex, delete_documents_by_id functions and use the original llama_index classes for Vector Stores instead of BaseVS
 class BaseVS:
     """Base class for vector stores."""
 
