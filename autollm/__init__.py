@@ -1,4 +1,4 @@
-"""QuickLLM: A Base Package for Large Language Model Applications.
+"""AutoLLM: A Base Package for Large Language Model Applications.
 
 This package provides automated integrations with leading large language models
 and vector databases, along with various utility functions.
@@ -11,6 +11,6 @@ __license__ = 'AGPL-3.0'
 from autollm.auto.llm import AutoLLM
 from autollm.auto.query_engine import AutoQueryEngine
 from autollm.auto.service_context import AutoServiceContext
-from autollm.auto.vector_store import AutoVectorStore
+from autollm.auto.vector_store_index import AutoVectorStoreIndex
 
-__all__ = ['AutoLLM', 'AutoServiceContext', 'AutoVectorStore', 'AutoQueryEngine']
+__all__ = ['AutoLLM', 'AutoServiceContext', 'AutoVectorStoreIndex', 'AutoQueryEngine']

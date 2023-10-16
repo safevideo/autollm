@@ -5,8 +5,6 @@ from typing import List, Sequence, Tuple
 
 from llama_index.schema import Document
 
-from autollm.vectorstores.base import BaseVS
-
 logger = logging.getLogger(__name__)
 
 
@@ -27,13 +25,14 @@ def get_md5(file_path: Path) -> str:
     return hasher.hexdigest()
 
 
-def check_for_changes(documents: Sequence[Document], vs: BaseVS) -> Tuple[Sequence[Document], List[str]]:
+# TODO: add vs type
+def check_for_changes(documents: Sequence[Document], vs) -> Tuple[Sequence[Document], List[str]]:
     """
     Check for file changes based on their hashes.
 
     Parameters:
         documents (Sequence[Document]): List of documents to check for changes.
-        vs (BaseVS): The vector store to check for changes in.
+        vs: The vector store to check for changes in.
 
     Returns:
         changed_documents (Sequence[Document]): List of documents that have changed.

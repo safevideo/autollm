@@ -70,29 +70,26 @@ os.environ["AWS_REGION_NAME"] = ""
 llm = AutoLLM(model="anthropic.claude-v2")
 ```
 
-### AutoVectorStore (Supported VectorDBs: Pinecone, Qdrant, InMemory)
+### AutoVectorStoreIndex (Supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support))
 
-Instantly initialize a VectorDB instance with same API
+Dynamically initialize a VectorStoreIndex instance from 20+ VectorDB options with the same AutoVectorStoreIndex api
 
 ```python
-from autollm import AutoVectorStore
+from autollm import AutoVectorStoreIndex
 
-# Dynamically initialize a VectorDB instance
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="qdrant", index_name="quickstart", size=1536, distance="EUCLID"
+# Dynamically initialize a VectorStoreIndex instance with the same AutoVectorStoreIndex api
+vector_store_index = AutoVectorStoreIndex.from_defaults(
+    vector_store_type="QdrantVectorStore", client=qdrant_client.QdrantClient(
+    uri="http://<host>:<port>"
+    api_key="<qdrant-api-key>",
+), collection_name="quickstart"
 )
 
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="pinecone",
-    index_name="quickstart",
-    dimension=1536,
-    metric_type="euclidean",
-    pod_type="p1",
-)
+vector_store_index = AutoVectorStoreIndex.from_defaults(vector_store_type="PineconeVectorStore", pinecone_index=pinecone.Index("quickstart"))
 
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="in_memory", path_or_files="path/to/documents"
-)
+
+vector_store_index = AutoVectorStoreIndex.from_defaults(
+        vector_store_type="VectorStoreIndex", documents=documents)
 ```
 
 ### AutoQueryEngine (Creates a query engine pipeline in a single line of code)
@@ -104,9 +101,9 @@ Create robust query engine pipelines with automatic cost logging. Supports fine-
 ```python
 from autollm import AutoQueryEngine
 
-# Initialize a query engine with existing vector store and service context
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="in_memory", input_files="path/to/documents"
+# Initialize a query engine with existing vector store index and service context
+vector_store_index = AutoVectorStoreIndex.from_defaults(
+    vector_store_type="VectorStoreIndex", documents=documents
 )
 service_context = AutoServiceContext.from_defaults(enable_cost_calculator=True)
 query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
@@ -139,7 +136,10 @@ query_engine = AutoQueryEngine.from_parameters(
     query_wrapper_prompt="Your Query Wrapper Prompt",
     enable_cost_calculator=True,
     llm_params={"model": "gpt-3.5-turbo"},
-    vector_store_params={"vector_store_type": "qdrant", "index_name": "quickstart"},
+    vector_store_params={"vector_store_type": "QdrantVectorStore", "client": qdrant_client.QdrantClient(
+    url="http://<host>:<port>"
+    api_key="<qdrant-api-key>",
+), "collection_name": "quickstart"},
     service_context_params={"chunk_size": 1024},
     query_engine_params={"similarity_top_k": 10},
 )
@@ -147,7 +147,9 @@ query_engine = AutoQueryEngine.from_parameters(
 response = query_engine.query("Why is SafeVideo AI awesome?")
 
 print(response.response)
+```
 
+```
 >> Because they redefine the movie experience by AI!
 ```
 
@@ -169,6 +171,39 @@ LLM Total Token Cost: $0.002317
 """
 ```
 
+### Document Providers (Powerful Github and Local Solutions)
+
+Unlock the potential of your content with AutoLLM's robust document providers. Seamlessly pull, process, and analyze documents from GitHub repositories or local directories.
+
+#### GitHub Document Provider
+
+Fetch up-to-date documents directly from your GitHub repositories—ideal for real-time data pipelines and collaborative projects.
+
+```python
+from autollm.utils.document_providers import github_document_provider
+
+git_repo_url = "https://github.com/safevideo.git"
+local_repo_path = Path("/safevideo/")
+# Specify where to find the documents in the repo
+relative_docs_path = Path("docs/")
+
+# Fetch and process documents
+documents = github_document_provider(git_repo_url, local_repo_path, relative_docs_path)
+```
+
+#### Local Document Provider
+
+Process documents from local directories—ideal for offline data pipelines and local development.
+
+```python
+from autollm.utils.document_providers import local_document_provider
+
+input_dir = "/local/documents/path"
+
+# Read files as documents from local directory
+documents = local_document_provider(input_dir=input_dir)
+```
+
 ______________________________________________________________________
 
 ## FAQ
@@ -185,10 +220,10 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
 - [ ] **VectorDB Integrations**:
 
-  - [ ] Decouple DB index operations from vector store classes
+  - [x] Decouple DB index operations from vector store classes
   - [ ] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
-  - [ ] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
-  - [ ] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
+  - [x] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
+  - [x] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
 
 - [ ] **Pipelines**:
 
@@ -198,6 +233,16 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 - [ ] **FastAPI Integration**:
 
   - [ ] FastAPI integration for Pipelines
+
+- [ ] **Tests**:
+
+  - [ ] Add unit tests for online vectorDB integrations
+
+- [ ] **Additional Document Providers**:
+
+  - [ ] Amazon S3-based document provider
+  - [ ] FTP-based document provider
+  - [ ] Google Drive-based document provider
 
 ______________________________________________________________________
 

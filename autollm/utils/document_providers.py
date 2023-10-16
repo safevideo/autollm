@@ -1,18 +1,14 @@
 from pathlib import Path
-from typing import Sequence
+from typing import List, Optional, Sequence
 
 from llama_index.schema import Document
 
+from autollm.utils.document_reading import read_files_as_documents
 from autollm.utils.git_utils import clone_or_pull_repository
-from autollm.utils.markdown_processing import process_and_get_documents
 
 
-# TODO: Use SimpleDirectoryReader and configure its file_extractor argument to use MultiMarkdownReader for md files
-def github_document_provider(
-        git_repo_url: str,
-        local_repo_path: Path,
-        relative_docs_path: Path,
-        read_as_single_doc: bool = True) -> Sequence[Document]:
+def github_document_provider(git_repo_url: str, local_repo_path: Path,
+                             relative_docs_path: Path) -> Sequence[Document]:
     """
     A document provider that fetches documents from a GitHub repository.
 
@@ -32,24 +28,27 @@ def github_document_provider(
     docs_path = local_repo_path / relative_docs_path
 
     # Step 3: Read and process the documents
-    documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
+    documents = read_files_as_documents(input_dir=str(docs_path))
 
     return documents
 
 
-# TODO: Use SimpleDirectoryReader from llama_index
-def local_document_provider(docs_path: Path, read_as_single_doc: bool = True) -> Sequence[Document]:
+def local_document_provider(
+        input_dir: Optional[str] = None,
+        input_files: Optional[List] = None,
+        *args,
+        **kwargs) -> Sequence[Document]:
     """
     A document provider that fetches documents from a local directory.
 
     Parameters:
-        docs_path (Path): The path to the directory containing the docs.
-        read_as_single_doc (bool): Whether to treat each file as a single document.
+        input_dir (str): The path to the directory containing the documents.
+        input_files (List): A list of file paths.
 
     Returns:
         documents (Sequence[Document]): A sequence of Document objects.
     """
     # Step 1: Read and process the documents
-    documents = process_and_get_documents(docs_path, read_as_single_doc=read_as_single_doc)
+    documents = read_files_as_documents(input_dir=input_dir, input_files=input_files, *args, **kwargs)
 
     return documents
