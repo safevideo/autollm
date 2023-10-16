@@ -9,7 +9,8 @@ from autollm.utils.multimarkdown_reader import MultiMarkdownReader
 logger = logging.getLogger(__name__)
 
 
-def process_and_get_documents(
+# TODO: add all files supports beside md, use SimpleDirReader
+def read_files_as_documents(
         path_or_files: Union[Path, List[Path]],
         read_as_single_doc: bool = False,
         extra_info: Optional[Dict] = None) -> List[Document]:

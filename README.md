@@ -101,8 +101,8 @@ Create robust query engine pipelines with automatic cost logging. Supports fine-
 ```python
 from autollm import AutoQueryEngine
 
-# Initialize a query engine with existing vector store and service context
-vector_store = AutoVectorStore.from_defaults(
+# Initialize a query engine with existing vector store index and service context
+vector_store_index = AutoVectorStoreIndex.from_defaults(
     vector_store_type="VectorStoreIndex", documents=documents
 )
 service_context = AutoServiceContext.from_defaults(enable_cost_calculator=True)
@@ -136,7 +136,10 @@ query_engine = AutoQueryEngine.from_parameters(
     query_wrapper_prompt="Your Query Wrapper Prompt",
     enable_cost_calculator=True,
     llm_params={"model": "gpt-3.5-turbo"},
-    vector_store_params={"vector_store_type": "qdrant", "index_name": "quickstart"},
+    vector_store_params={"vector_store_type": "QdrantVectorStore", "client": qdrant_client.QdrantClient(
+    url="http://<host>:<port>"
+    api_key="<qdrant-api-key>",
+), "collection_name": "quickstart"},
     service_context_params={"chunk_size": 1024},
     query_engine_params={"similarity_top_k": 10},
 )
@@ -144,7 +147,9 @@ query_engine = AutoQueryEngine.from_parameters(
 response = query_engine.query("Why is SafeVideo AI awesome?")
 
 print(response.response)
+```
 
+```
 >> Because they redefine the movie experience by AI!
 ```
 
