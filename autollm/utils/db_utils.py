@@ -4,8 +4,6 @@ from typing import Sequence
 
 from llama_index import Document, StorageContext, VectorStoreIndex
 from llama_index.vector_stores import PineconeVectorStore, QdrantVectorStore
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams
 
 from autollm.auto.vector_store_index import AutoVectorStoreIndex
 from autollm.utils.constants import DEFAULT_INDEX_NAME
@@ -29,9 +27,14 @@ def initialize_pinecone_index(
 
 
 def initialize_qdrant_index(index_name: str, size: int = 1536, distance: str = 'EUCLID'):
+    """Initialize Qdrant index."""
+    from qdrant_client import QdrantClient
+    from qdrant_client.models import Distance, VectorParams
+
     # Initialize client
     url = read_env_variable('QDRANT_URL')
     api_key = read_env_variable('QDRANT_API_KEY')
+
     client = QdrantClient(url=url, api_key=api_key)
 
     # Convert string distance measure to Distance Enum equals to Distance.EUCLID
@@ -45,6 +48,7 @@ def initialize_qdrant_index(index_name: str, size: int = 1536, distance: str = '
 def connect_vectorstore(vector_store, **params):
     """Connect to an existing vector store."""
     import pinecone
+    from qdrant_client import QdrantClient
 
     # Logic to connect to vector store based on the specific type of vector store
     if isinstance(vector_store, PineconeVectorStore):
