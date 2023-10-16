@@ -221,7 +221,7 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 - [ ] **VectorDB Integrations**:
 
   - [x] Decouple DB index operations from vector store classes
-  - \[\] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
+  - [ ] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
   - [x] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
   - [x] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
 
@@ -234,7 +234,7 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
   - [ ] FastAPI integration for Pipelines
 
-- \[\] **Tests**:
+- [ ] **Tests**:
 
   - [ ] Add unit tests for online vectorDB integrations
 
