@@ -167,3 +167,5 @@ testing.py
 file_hashes.txt
 # For vector index storage
 storage/
+# vscode settings
+.vscode
