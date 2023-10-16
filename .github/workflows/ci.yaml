@@ -66,7 +66,7 @@ jobs:
           pre-commit install
           pre-commit run --all-files
 
-      - name: Run tests with github secret
+      - name: Run tests
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: pytest
