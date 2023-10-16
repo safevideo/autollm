@@ -1,43 +1,84 @@
+# db_utils.py
 import logging
 from typing import Sequence
 
+import pinecone
 from llama_index import Document
+from llama_index.vector_stores import PineconeVectorStore, QdrantVectorStore
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams
 
 from autollm.auto.vector_store import AutoVectorStore
-from autollm.utils.constants import DEFAULT_INDEX_NAME, DEFAULT_VECTORE_STORE_TYPE
+from autollm.utils.constants import DEFAULT_INDEX_NAME
+from autollm.utils.env_utils import read_env_variable
 from autollm.utils.hash_utils import check_for_changes
 
 logger = logging.getLogger(__name__)
 
 
+def initialize_pinecone_index(
+        index_name: str, dimension: int = 1536, metric: str = 'euclidean', pod_type: str = 'p1'):
+    # Read environment variables for Pinecone initialization
+    api_key = read_env_variable('PINECONE_API_KEY')
+    environment = read_env_variable('PINECONE_ENVIRONMENT')
+
+    # Initialize Pinecone
+    pinecone.init(api_key=api_key, environment=environment)
+    pinecone.create_index(index_name, dimension=dimension, metric=metric, pod_type=pod_type)
+
+
+def initialize_qdrant_index(index_name: str, size: int = 1536, distance: str = 'EUCLID'):
+    # Initialize client
+    url = read_env_variable('QDRANT_URL')
+    api_key = read_env_variable('QDRANT_API_KEY')
+    client = QdrantClient(url=url, api_key=api_key)
+
+    # Convert string distance measure to Distance Enum equals to Distance.EUCLID
+    distance = Distance[distance]
+
+    # Create index
+    client.recreate_collection(
+        collection_name=index_name, vectors_config=VectorParams(size=size, distance=distance))
+
+
+def connect_vectorstore(vector_store, **params):
+    # Logic to connect to vector store based on the specific type of vector store
+    if isinstance(vector_store, PineconeVectorStore):
+        vector_store.pinecone_index = pinecone.Index(params['index_name'])
+    elif isinstance(vector_store, QdrantVectorStore):
+        vector_store.client = QdrantClient(url=params['url'], api_key=params['api_key'])
+    # TODO: Add more elif conditions for other vector stores as needed
+
+
+def update_vectorindex(vector_store, documents: Sequence[Document]):
+    # Logic to update vector index based on the specific type of vector store
+    for document in documents:
+        vector_store.vectorindex.delete_ref_doc(document.id_, delete_from_docstore=True)
+        vector_store.vectorindex.insert(document)
+
+
 def initialize_database(
-        documents: Sequence[Document], vectore_store_type: str = DEFAULT_VECTORE_STORE_TYPE) -> None:
-    """
-    Initializes the vector database for the first time from given documents.
-
-    Parameters:
-        documents (Sequence[Document]): List of documents to initialize the vector store with.
-        vectore_store_type (str): Type of vector store to use ('qdrant', 'pinecone', etc.).
-
-    Returns:
-        None
-    """
+        documents: Sequence[Document], vector_store_class_name: str, **vector_store_params) -> None:
     logger.info('Initializing vector store')
 
-    # Create a new index and connect to it
-    vector_store = AutoVectorStore.from_defaults(
-        vector_store_type=vectore_store_type, collection_name=DEFAULT_INDEX_NAME)
-    vector_store.initialize_vectorindex()
-    vector_store.connect_vectorstore()
+    vector_store = AutoVectorStore.from_defaults(vector_store_class_name, **vector_store_params)
+
+    if vector_store_class_name == 'PineconeVectorStore':
+        initialize_pinecone_index(vector_store, **vector_store_params)
+    elif vector_store_class_name == 'QdrantVectorStore':
+        initialize_qdrant_index(vector_store, **vector_store_params)
+    # TODO: Add more elif conditions for other vector stores as needed
+
+    connect_vectorstore(vector_store, **vector_store_params)
 
     logger.info('Updating vector store with documents')
 
-    # Update the index with the documents
-    vector_store.overwrite_vectorindex(documents)
+    update_vectorindex(vector_store, documents)
 
     logger.info('Vector database successfully initialized.')
 
 
+# TODO: refactor and update.
 def update_database(documents: Sequence[Document], vectore_store_type: str) -> None:
     """
     Update the vector database to synchronize it with the provided list of documents.
