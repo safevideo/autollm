@@ -2,7 +2,6 @@
 import logging
 from typing import Sequence
 
-import pinecone
 from llama_index import Document, StorageContext, VectorStoreIndex
 from llama_index.vector_stores import PineconeVectorStore, QdrantVectorStore
 from qdrant_client import QdrantClient
@@ -18,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 def initialize_pinecone_index(
         index_name: str, dimension: int = 1536, metric: str = 'euclidean', pod_type: str = 'p1'):
+    import pinecone
+
     # Read environment variables for Pinecone initialization
     api_key = read_env_variable('PINECONE_API_KEY')
     environment = read_env_variable('PINECONE_ENVIRONMENT')
@@ -43,6 +44,8 @@ def initialize_qdrant_index(index_name: str, size: int = 1536, distance: str = '
 
 def connect_vectorstore(vector_store, **params):
     """Connect to an existing vector store."""
+    import pinecone
+
     # Logic to connect to vector store based on the specific type of vector store
     if isinstance(vector_store, PineconeVectorStore):
         vector_store.pinecone_index = pinecone.Index(params['index_name'])

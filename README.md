@@ -70,29 +70,26 @@ os.environ["AWS_REGION_NAME"] = ""
 llm = AutoLLM(model="anthropic.claude-v2")
 ```
 
-### AutoVectorStore (Supported VectorDBs: Pinecone, Qdrant, InMemory)
+### AutoVectorStoreIndex (Supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support))
 
-Instantly initialize a VectorDB instance with same API
+Dynamically initialize a VectorStoreIndex instance from 20+ VectorDB options with the same AutoVectorStoreIndex api
 
 ```python
-from autollm import AutoVectorStore
+from autollm import AutoVectorStoreIndex
 
-# Dynamically initialize a VectorDB instance
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="qdrant", index_name="quickstart", size=1536, distance="EUCLID"
+# Dynamically initialize a VectorStoreIndex instance with the same AutoVectorStoreIndex api
+vector_store_index = AutoVectorStoreIndex.from_defaults(
+    vector_store_type="QdrantVectorStore", client=qdrant_client.QdrantClient(
+    uri="http://<host>:<port>"
+    api_key="<qdrant-api-key>",
+), collection_name="quickstart"
 )
 
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="pinecone",
-    index_name="quickstart",
-    dimension=1536,
-    metric_type="euclidean",
-    pod_type="p1",
-)
+vector_store_index = AutoVectorStoreIndex.from_defaults(vector_store_type="PineconeVectorStore", pinecone_index=pinecone.Index("quickstart"))
 
-vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="in_memory", path_or_files="path/to/documents"
-)
+
+vector_store_index = AutoVectorStoreIndex.from_defaults(
+        vector_store_type="VectorStoreIndex", documents=documents)
 ```
 
 ### AutoQueryEngine (Creates a query engine pipeline in a single line of code)
@@ -106,7 +103,7 @@ from autollm import AutoQueryEngine
 
 # Initialize a query engine with existing vector store and service context
 vector_store = AutoVectorStore.from_defaults(
-    vector_store_type="in_memory", input_files="path/to/documents"
+    vector_store_type="VectorStoreIndex", documents=documents
 )
 service_context = AutoServiceContext.from_defaults(enable_cost_calculator=True)
 query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
@@ -185,10 +182,10 @@ Our roadmap outlines upcoming features and integrations aimed at making QuickLLM
 
 - [ ] **VectorDB Integrations**:
 
-  - [ ] Decouple DB index operations from vector store classes
-  - [ ] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
-  - [ ] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
-  - [ ] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
+  - [x] Decouple DB index operations from vector store classes
+  - \[\] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
+  - [x] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
+  - [x] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
 
 - [ ] **Pipelines**:
 
