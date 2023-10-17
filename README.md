@@ -66,24 +66,18 @@ os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 os.environ["AWS_REGION_NAME"] = ""
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
+# Dynamically initialize a llama_index llm instance with the same AutoLLM interface
 llm = AutoLLM(model="anthropic.claude-v2")
 ```
 
 ### AutoVectorStoreIndex (Supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support))
 
-Dynamically initialize a VectorStoreIndex instance from 20+ VectorDB options with the same AutoVectorStoreIndex api
+Dynamically initialize a VectorStoreIndex instance from 20+ VectorDB options with the same AutoVectorStoreIndex interface:
 
 ```python
 from autollm import AutoVectorStoreIndex
 
-# Dynamically initialize a VectorStoreIndex instance with the same AutoVectorStoreIndex api
-vector_store_index = AutoVectorStoreIndex.from_defaults(
-    vector_store_type="QdrantVectorStore", client=qdrant_client.QdrantClient(
-    uri="http://<host>:<port>"
-    api_key="<qdrant-api-key>",
-), collection_name="quickstart"
-)
+# Dynamically initialize a VectorStoreIndex instance with the same AutoVectorStoreIndex interface:
 
 vector_store_index = AutoVectorStoreIndex.from_defaults(vector_store_type="PineconeVectorStore", pinecone_index=pinecone.Index("quickstart"))
 
@@ -101,7 +95,7 @@ Create robust query engine pipelines with automatic cost logging. Supports fine-
 ```python
 from autollm import AutoQueryEngine
 
-# Initialize a query engine with existing vector store index and service context
+# Initialize a query engine with an existing vector store index and service context
 vector_store_index = AutoVectorStoreIndex.from_defaults(
     vector_store_type="VectorStoreIndex", documents=documents
 )
@@ -125,10 +119,12 @@ print(response.response)
 
 #### Advanced Usage:
 
-For fine-grained control, you can initialize the `AutoQueryEngine` by explicitly passing parameters for the LLM, Vector Store, and Service Context.
+You can initialize the `AutoQueryEngine` for fine-grained control by explicitly passing parameters for the LLM, Vector Store, and Service Context.
 
 ```python
 from autollm import AutoQueryEngine
+
+import qdrant_client
 
 # Initialize the query engine with explicit parameters
 query_engine = AutoQueryEngine.from_parameters(
@@ -210,18 +206,18 @@ ______________________________________________________________________
 
 **Q: Can I use this for commercial projects?**
 
-A: Yes, QuickLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
+A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
 
 ______________________________________________________________________
 
 ## Roadmap
 
-Our roadmap outlines upcoming features and integrations aimed at making QuickLLM the most extensible and powerful base package for large language model applications.
+Our roadmap outlines upcoming features and integrations to make AutoLLM the most extensible and powerful base package for large language model applications.
 
 - [ ] **VectorDB Integrations**:
 
   - [x] Decouple DB index operations from vector store classes
-  - [ ] Add utility functions for creating and updating indexes based on local files and llamaindex vector store instances
+  - [ ] Add utility functions for creating and updating indexes based on local files and llama-index vector store instances
   - [x] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
   - [x] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
 
@@ -248,13 +244,13 @@ ______________________________________________________________________
 
 ## Contributing
 
-We welcome contributions to QuickLLM! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+We welcome contributions to AutoLLM! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
 
 ______________________________________________________________________
 
 ## License
 
-QuickLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE.txt).
+AutoLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE.txt).
 
 ______________________________________________________________________
 
@@ -262,7 +258,7 @@ ______________________________________________________________________
 
 For more information, support, or questions, please contact:
 
-- **Email**: [support@safevideo.ai](mailto:support@quickllm.com)
+- **Email**: [support@safevideo.ai](mailto:support@safevideo.ai)
 - **Website**: [SafeVideo](https://safevideo.ai/)
 - **LinkedIn**: [SafeVideo AI](https://www.linkedin.com/company/safevideo/)
 
