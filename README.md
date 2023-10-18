@@ -214,7 +214,7 @@ In your `main.py`, include the following line of code:
 ```python
 from autollm import create_web_app
 
-app = create_web_app(config, env)
+app = create_web_app(config_path, env_path)
 ```
 
 Here, `config` and `env` should be replaced by your configuration and environment file paths.
