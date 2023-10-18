@@ -79,11 +79,14 @@ from autollm import AutoVectorStoreIndex
 
 # Dynamically initialize a VectorStoreIndex instance with the same AutoVectorStoreIndex interface:
 
-vector_store_index = AutoVectorStoreIndex.from_defaults(vector_store_type="PineconeVectorStore", pinecone_index=pinecone.Index("quickstart"))
+vector_store_index = AutoVectorStoreIndex.from_defaults(
+    vector_store_type="PineconeVectorStore", pinecone_index=pinecone.Index("quickstart")
+)
 
 
 vector_store_index = AutoVectorStoreIndex.from_defaults(
-        vector_store_type="VectorStoreIndex", documents=documents)
+    vector_store_type="VectorStoreIndex", documents=documents
+)
 ```
 
 ### AutoQueryEngine (Creates a query engine pipeline in a single line of code)
