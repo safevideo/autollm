@@ -203,6 +203,30 @@ input_dir = "/local/documents/path"
 documents = local_document_provider(input_dir=input_dir)
 ```
 
+### FastAPI Integration in 1-Line 🚀
+
+Creating a FastAPI application integrated with AutoLLM has never been easier. Follow the quick guide below to get started.
+
+#### Create Your FastAPI Application
+
+In your `main.py`, include the following line of code:
+
+```python
+from autollm import create_web_app
+
+app = create_web_app(config, env)
+```
+
+Here, `config` and `env` should be replaced by your configuration and environment file paths.
+
+#### Run Your Application
+
+After creating your FastAPI app, run the following command in your terminal to get it up and running:
+
+```bash
+uvicorn main:app
+```
+
 ______________________________________________________________________
 
 ## FAQ

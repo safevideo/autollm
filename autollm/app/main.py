@@ -1,11 +1,17 @@
 import logging
 
 from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel, Field
 
 from autollm.app.docs import description, openapi_url, tags_metadata, terms_of_service, title, version
 from autollm.app.utils import load_config_and_initialize_engines
 
 logging.basicConfig(level=logging.INFO)
+
+
+class QueryPayload(BaseModel):
+    task: str = Field(..., description="Task to execute")
+    user_query: str = Field(..., description="User's query")
 
 
 # Function to create the FastAPI web app
@@ -22,9 +28,10 @@ def create_web_app(config_file_path: str, env_file_path: str = None):
     query_engines = load_config_and_initialize_engines(config_file_path, env_file_path)
 
     @app.post("/query")
-    async def query(
-            task: str = Query(..., description="Task to execute"),
-            user_query: str = Query(..., description="User's query")):
+    async def query(payload: QueryPayload):
+        task = payload.task
+        user_query = payload.user_query
+
         if task not in query_engines:
             raise HTTPException(status_code=400, detail="Invalid task name")
 
