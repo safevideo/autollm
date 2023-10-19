@@ -5,13 +5,10 @@ tasks:
     system_prompt: "Please summarize the following text:"  # System prompt for this task
     vector_store_params:
       vector_store_type: "VectorStoreIndex"
-      additional_params: {}  # Additional params specific to the Vector Store type
     llm_params:
       model: "gpt-3.5-turbo"
-      additional_params: {}  # Additional params specific to the LLM
     service_context_params:
       chunk_size: 1024
-      additional_params: {}  # Additional service context parameters
     query_engine_params:
       similarity_top_k: 5
     enable_cost_calculator: true
@@ -19,13 +16,10 @@ tasks:
     system_prompt: "Question:"  # System prompt for this task
     vector_store_params:
       vector_store_type: "VectorStoreIndex"
-      additional_params: {}
     llm_params:
       model: "gpt-3.5-turbo"
-      additional_params: {}
     service_context_params:
       chunk_size: 1024
-      additional_params: {}
     query_engine_params:
       similarity_top_k: 3
     enable_cost_calculator: false
