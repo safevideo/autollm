@@ -3,7 +3,7 @@
 from fastapi.testclient import TestClient
 from llama_index.indices.query.base import BaseQueryEngine
 
-from autollm.serve.main import create_web_app, load_config_and_initialize_engines
+from autollm.serve.utils import create_web_app, load_config_and_initialize_engines
 
 
 def test_load_config_and_initialize_engines():
