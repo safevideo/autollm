@@ -277,7 +277,7 @@ ______________________________________________________________________
 
 ## License
 
-AutoLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE.txt).
+AutoLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE).
 
 ______________________________________________________________________
 
