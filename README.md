@@ -241,15 +241,15 @@ ______________________________________________________________________
 
 Our roadmap outlines upcoming features and integrations to make AutoLLM the most extensible and powerful base package for large language model applications.
 
-- [ ] **Budget Based Email Notification**
+- [ ] **Budget based email notification feature**
 
 - [ ] **Add evaluation metrics for LLMs**:
 
-- [ ] **Default AutoLLM to use LanceDB**
+- [ ] **Set default vector store as LanceDB**
 
 - [ ] **Add unit tests for online vectorDB integrations**:
 
-- [ ] **Add Example Code to Readme on how to entegrate llamahub readers**:
+- [ ] **Add example code snippet to Readme on how to integrate llama-hub readers**:
 
 ______________________________________________________________________
 
