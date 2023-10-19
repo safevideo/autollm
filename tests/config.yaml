@@ -1,0 +1,24 @@
+# config.example.yaml
+tasks:
+  - name: "summarize"
+    system_prompt: "Please summarize the following text:"  # System prompt for this task
+    vector_store_params:
+      vector_store_type: "VectorStoreIndex"
+    llm_params:
+      model: "gpt-3.5-turbo"
+    service_context_params:
+      chunk_size: 1024
+    query_engine_params:
+      similarity_top_k: 5
+    enable_cost_calculator: true
+  - name: "qa"
+    system_prompt: "Question:"  # System prompt for this task
+    vector_store_params:
+      vector_store_type: "VectorStoreIndex"
+    llm_params:
+      model: "gpt-3.5-turbo"
+    service_context_params:
+      chunk_size: 1024
+    query_engine_params:
+      similarity_top_k: 3
+    enable_cost_calculator: false
