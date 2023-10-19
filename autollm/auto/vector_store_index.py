@@ -40,9 +40,9 @@ class AutoVectorStoreIndex:
             index (VectorStoreIndex): The initialized Vector Store index instance for given vector store type and parameter set.
         """
         if documents is None:
-            documents = Document.example()
+            documents = [Document.example()]
         if vector_store_type == "VectorStoreIndex":
-            index = VectorStoreIndex.from_documents(documents=[documents], *args, **kwargs)
+            index = VectorStoreIndex.from_documents(documents=documents, *args, **kwargs)
         else:
             VectorStoreClass = import_vector_store_class(vector_store_type)
             vector_store = VectorStoreClass(*args, **kwargs)
