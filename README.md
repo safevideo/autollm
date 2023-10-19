@@ -241,31 +241,15 @@ ______________________________________________________________________
 
 Our roadmap outlines upcoming features and integrations to make AutoLLM the most extensible and powerful base package for large language model applications.
 
-- [ ] **VectorDB Integrations**:
+- [ ] **Budget Based Email Notification**
 
-  - [x] Decouple DB index operations from vector store classes
-  - [ ] Add utility functions for creating and updating indexes based on local files and llama-index vector store instances
-  - [x] Update AutoVectorStore to support all VectorDB integrations without manual maintenance of vector store classes
-  - [x] Update AutoQueryEngine, AutoLLM, and AutoServiceContext to support new AutoVectorStore API
+- [ ] **Add evaluation metrics for LLMs**:
 
-- [ ] **Pipelines**:
+- [ ] **Default AutoLLM to use LanceDB**
 
-  - [ ] In memory PDF QA pipeline
-  - [ ] DB-based documentation QA pipeline
+- [ ] **Add unit tests for online vectorDB integrations**:
 
-- [ ] **FastAPI Integration**:
-
-  - [ ] FastAPI integration for Pipelines
-
-- [ ] **Tests**:
-
-  - [ ] Add unit tests for online vectorDB integrations
-
-- [ ] **Additional Document Providers**:
-
-  - [ ] Amazon S3-based document provider
-  - [ ] FTP-based document provider
-  - [ ] Google Drive-based document provider
+- [ ] **Add Example Code to Readme on how to entegrate llamahub readers**:
 
 ______________________________________________________________________
 
