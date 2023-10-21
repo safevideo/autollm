@@ -54,11 +54,6 @@ class AutoServiceContext:
                     content=query_wrapper_prompt,
                 ),
             ])
-        # Use the provided query wrapper prompt as is if it is a BasePromptTemplate
-        elif isinstance(query_wrapper_prompt, BasePromptTemplate):
-            pass
-        else:
-            raise ValueError(f'Invalid system_prompt type: {type(query_wrapper_prompt)}')
 
         callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
         if enable_cost_calculator:
