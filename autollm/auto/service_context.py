@@ -43,22 +43,17 @@ class AutoServiceContext:
         Returns:
             ServiceContext: The initialized ServiceContext from default parameters with extra token counting functionality.
         """
-        if not system_prompt or not query_wrapper_prompt:
+        if not system_prompt and not query_wrapper_prompt:
             logger.info('System prompt and query wrapper prompt not provided. Using default prompts.')
             system_prompt, query_wrapper_prompt = set_default_prompt_template()
         # Convert system_prompt to ChatPromptTemplate if it is a string
-        elif isinstance(query_wrapper_prompt, str):
+        if isinstance(query_wrapper_prompt, str):
             query_wrapper_prompt = ChatPromptTemplate([
                 ChatMessage(
                     role=MessageRole.USER,
                     content=query_wrapper_prompt,
                 ),
             ])
-        # Use the provided query wrapper prompt as is if it is a BasePromptTemplate
-        elif isinstance(query_wrapper_prompt, BasePromptTemplate):
-            pass
-        else:
-            raise ValueError(f'Invalid system_prompt type: {type(query_wrapper_prompt)}')
 
         callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
         if enable_cost_calculator:
