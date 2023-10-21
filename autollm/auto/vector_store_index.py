@@ -23,7 +23,7 @@ class AutoVectorStoreIndex:
 
     @staticmethod
     def from_defaults(
-            vector_store_type: str,
+            vector_store_type: str = "LanceDBVectorStore",
             documents: Optional[Sequence[Document]] = None,
             *args,
             **kwargs) -> VectorStoreIndex:
@@ -31,7 +31,7 @@ class AutoVectorStoreIndex:
         Initializes a Vector Store index from Vector Store type and additional parameters.
 
         Parameters:
-            vector_store_type (str): The class name of the vector store (e.g., 'PineconeVectorStore', 'VectorStoreIndex')
+            vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'PineconeVectorStore'..)
             documents (Optional[Sequence[Document]]): Documents to initialize in memory vector store index.
             *args: Additional positional arguments for initializing the vector store
             **kwargs: Additional parameters for initializing the vector store
