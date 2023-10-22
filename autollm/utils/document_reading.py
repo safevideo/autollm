@@ -18,7 +18,6 @@ def read_files_as_documents(
         filename_as_id: bool = True,
         recursive: bool = True,
         read_as_single_doc: bool = True,
-        *args,
         **kwargs) -> Sequence[Document]:
     """
     Process markdown files to extract documents using SimpleDirectoryReader.
@@ -43,7 +42,6 @@ def read_files_as_documents(
         input_files=input_files,
         filename_as_id=filename_as_id,
         recursive=recursive,
-        *args,
         **kwargs)
 
     # Read and process the documents
@@ -53,24 +51,29 @@ def read_files_as_documents(
     return documents
 
 
-def read_github_repo_as_documents(git_repo_url: str, relative_folder_path: Path) -> Sequence[str]:
+def read_github_repo_as_documents(git_repo_url: str,
+                                  relative_folder_path: Optional[str] = None) -> Sequence[Document]:
     """
     A document provider that fetches documents from a specific folder within a GitHub repository.
 
     Parameters:
         git_repo_url (str): The URL of the GitHub repository.
-        relative_folder_path (Path): The relative path from the repo root to the folder containing documents.
+        relative_folder_path (str): The relative path from the repo root to the folder containing documents.
 
     Returns:
-        documents (Sequence[str]): A sequence of Document objects.
+        documents (Sequence[Document]): A sequence of Document objects.
     """
     # Step 1: Create a temporary directory for cloning the repository
-    with tempfile.TemporaryDirectory(dir=".autollm-temp") as temp_dir:
+    with tempfile.TemporaryDirectory(dir=".") as temp_dir:
+        print(temp_dir)
         # Step 2: Clone or pull the GitHub repository to get the latest documents
         clone_or_pull_repository(git_repo_url, Path(temp_dir))
 
         # Step 3: Specify the path to the documents
-        docs_path = Path(temp_dir) / relative_folder_path
+        if relative_folder_path is None:
+            docs_path = temp_dir
+        else:
+            docs_path = temp_dir / Path(relative_folder_path)
 
         # Step 4: Read and process the documents
         documents = read_files_as_documents(input_dir=str(docs_path))

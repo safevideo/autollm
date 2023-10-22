@@ -43,15 +43,16 @@ class AutoVectorStoreIndex:
 
         # Initialize vector store
         VectorStoreClass = import_vector_store_class(vector_store_type)
-        vector_store = VectorStoreClass(**kwargs)
 
         # Initialize vector store index from existing vector store
         if documents is None:
+            vector_store = VectorStoreClass(**kwargs)
             index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
         # Initialize vector store index from documents
         else:
             if vector_store_type == "LanceDBVectorStore" and "uri" not in kwargs:
                 kwargs["uri"] = "/tmp/lancedb"
+            vector_store = VectorStoreClass(**kwargs)
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
             index = VectorStoreIndex.from_documents(
                 documents=documents, storage_context=storage_context, show_progress=True)
