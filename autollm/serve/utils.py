@@ -1,9 +1,10 @@
 import logging
-from typing import Dict
+from typing import Dict, Optional, Sequence
 
 import yaml
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from llama_index import Document
 from pydantic import BaseModel, Field
 
 from autollm.auto.query_engine import AutoQueryEngine
@@ -13,8 +14,10 @@ logging.basicConfig(level=logging.INFO)
 
 
 # Function to load the configuration for tasks and initialize query engines
-def load_config_and_initialize_engines(config_file_path: str,
-                                       env_file_path: str = None) -> Dict[str, AutoQueryEngine]:
+def load_config_and_initialize_engines(
+        config_file_path: str,
+        env_file_path: str = None,
+        documents: Optional[Sequence[Document]] = None) -> Dict[str, AutoQueryEngine]:
     # Optionally load environment variables from a .env file
     if env_file_path:
         load_dotenv(dotenv_path=env_file_path)
@@ -27,6 +30,7 @@ def load_config_and_initialize_engines(config_file_path: str,
     query_engines = {}
     for task_params in config['tasks']:
         task_name = task_params.pop('name')
+        task_params['vector_store_params']['documents'] = documents
         query_engines[task_name] = AutoQueryEngine.from_parameters(**task_params)
 
     return query_engines
@@ -38,7 +42,8 @@ class QueryPayload(BaseModel):
 
 
 # Function to create the FastAPI web app
-def create_web_app(config_file_path: str, env_file_path: str = None):
+def create_web_app(
+        config_file_path: str, env_file_path: str = None, documents: Optional[Sequence[Document]] = None):
     app = FastAPI(
         title=title,
         description=description,
@@ -48,7 +53,7 @@ def create_web_app(config_file_path: str, env_file_path: str = None):
         openapi_tags=tags_metadata,
     )
 
-    query_engines = load_config_and_initialize_engines(config_file_path, env_file_path)
+    query_engines = load_config_and_initialize_engines(config_file_path, env_file_path, documents)
 
     @app.post("/query")
     async def query(payload: QueryPayload):

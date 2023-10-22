@@ -6,7 +6,7 @@ from autollm.auto.query_engine import AutoQueryEngine
 
 def test_auto_query_engine():
     documents = [Document.example()]
-    vector_store_params = {"vector_store_type": "VectorStoreIndex", "documents": documents}
+    vector_store_params = {"vector_store_type": "SimpleVectorStore", "documents": documents}
     query_engine = AutoQueryEngine.from_parameters(vector_store_params=vector_store_params)
 
     # Check if the query_engine is an instance of BaseQueryEngine

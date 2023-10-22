@@ -1,9 +1,9 @@
 # config.example.yaml
 tasks:
   - name: "summarize"
-    system_prompt: "Please summarize the following text:"  # System prompt for this task
+    system_prompt: "You are a friendly chatbot that can summarize documents.:"  # System prompt for this task
     vector_store_params:
-      vector_store_type: "VectorStoreIndex"
+      vector_store_type: "SimpleVectorStore"
     llm_params:
       model: "gpt-3.5-turbo"
     service_context_params:
@@ -12,9 +12,9 @@ tasks:
       similarity_top_k: 5
     enable_cost_calculator: true
   - name: "qa"
-    system_prompt: "Question:"  # System prompt for this task
+    system_prompt: "You are a friendly chatbot that can answer questions."  # System prompt for this task
     vector_store_params:
-      vector_store_type: "VectorStoreIndex"
+      vector_store_type: "SimpleVectorStore"
     llm_params:
       model: "gpt-3.5-turbo"
     service_context_params:
