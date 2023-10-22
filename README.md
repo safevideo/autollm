@@ -79,14 +79,7 @@ from autollm import AutoVectorStoreIndex
 
 # Dynamically initialize a VectorStoreIndex instance with the same AutoVectorStoreIndex interface:
 
-vector_store_index = AutoVectorStoreIndex.from_defaults(
-    vector_store_type="PineconeVectorStore", pinecone_index=pinecone.Index("quickstart")
-)
-
-
-vector_store_index = AutoVectorStoreIndex.from_defaults(
-    vector_store_type="VectorStoreIndex", documents=documents
-)
+vector_store_index = AutoVectorStoreIndex.from_defaults(uri="tmp/lancedb)
 ```
 
 ### AutoQueryEngine (Creates a query engine pipeline in a single line of code)
@@ -100,15 +93,17 @@ from autollm import AutoQueryEngine
 
 # Initialize a query engine with an existing vector store index and service context
 vector_store_index = AutoVectorStoreIndex.from_defaults(
-    vector_store_type="VectorStoreIndex", documents=documents
+    vector_store_type="LanceDBVectorStore", uri="tmp/lancedb"
 )
 service_context = AutoServiceContext.from_defaults(enable_cost_calculator=True)
-query_engine = AutoQueryEngine.from_instances(vector_store, service_context)
+query_engine = AutoQueryEngine.from_instances(vector_store_index, service_context)
 ```
 
 ```python
 # Initialize a query engine with default parameters
-query_engine = AutoQueryEngine.from_parameters()
+query_engine = (
+    AutoQueryEngine.from_parameters()
+)  # Defaults to LanceDBVectorStore with enabled cost calculator
 
 # Ask a question
 response = query_engine.query("Why is SafeVideo AI open sourcing this project?")

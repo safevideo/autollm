@@ -25,7 +25,6 @@ class AutoVectorStoreIndex:
     def from_defaults(
             vector_store_type: str = "LanceDBVectorStore",
             documents: Optional[Sequence[Document]] = None,
-            *args,
             **kwargs) -> VectorStoreIndex:
         """
         Initializes a Vector Store index from Vector Store type and additional parameters.
@@ -42,10 +41,10 @@ class AutoVectorStoreIndex:
         if documents is None:
             documents = [Document.example()]
         if vector_store_type == "VectorStoreIndex":
-            index = VectorStoreIndex.from_documents(documents=documents, *args, **kwargs)
+            index = VectorStoreIndex.from_documents(documents=documents, **kwargs)
         else:
             VectorStoreClass = import_vector_store_class(vector_store_type)
-            vector_store = VectorStoreClass(*args, **kwargs)
-            index = VectorStoreIndex.from_vector_store(vector_store=vector_store, *args, **kwargs)
+            vector_store = VectorStoreClass(**kwargs)
+            index = VectorStoreIndex.from_vector_store(vector_store=vector_store, **kwargs)
 
         return index
