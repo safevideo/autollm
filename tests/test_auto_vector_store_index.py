@@ -8,7 +8,7 @@ def test_auto_vector_store():
     documents = [Document.example()]
 
     vector_store_index = AutoVectorStoreIndex.from_defaults(
-        vector_store_type="VectorStoreIndex", documents=documents)
+        vector_store_type="SimpleVectorStore", documents=documents)
 
     # Check if the vector_store_index is an instance of VectorStoreIndex
     assert isinstance(vector_store_index, VectorStoreIndex)

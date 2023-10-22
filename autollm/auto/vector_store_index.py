@@ -1,6 +1,6 @@
 from typing import Optional, Sequence
 
-from llama_index import Document, VectorStoreIndex
+from llama_index import Document, StorageContext, VectorStoreIndex
 
 
 def import_vector_store_class(vector_store_class_name: str):
@@ -16,6 +16,7 @@ def import_vector_store_class(vector_store_class_name: str):
     return class_
 
 
+# TODO: add from_config (e.g., from yaml file)
 class AutoVectorStoreIndex:
     """AutoVectorStoreIndex lets you dynamically initialize any Vector Store index based on the vector store
     class name and additional parameters.
@@ -30,21 +31,29 @@ class AutoVectorStoreIndex:
         Initializes a Vector Store index from Vector Store type and additional parameters.
 
         Parameters:
-            vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'PineconeVectorStore'..)
-            documents (Optional[Sequence[Document]]): Documents to initialize in memory vector store index.
-            *args: Additional positional arguments for initializing the vector store
+            vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'SimpleVectorStore'..)
+            documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
             **kwargs: Additional parameters for initializing the vector store
 
         Returns:
             index (VectorStoreIndex): The initialized Vector Store index instance for given vector store type and parameter set.
         """
+        if documents is None and vector_store_type == "SimpleVectorStore":
+            raise ValueError("documents must be provided for SimpleVectorStore")
+
+        # Initialize vector store
+        VectorStoreClass = import_vector_store_class(vector_store_type)
+        vector_store = VectorStoreClass(**kwargs)
+
+        # Initialize vector store index from existing vector store
         if documents is None:
-            documents = [Document.example()]
-        if vector_store_type == "VectorStoreIndex":
-            index = VectorStoreIndex.from_documents(documents=documents, **kwargs)
+            index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
+        # Initialize vector store index from documents
         else:
-            VectorStoreClass = import_vector_store_class(vector_store_type)
-            vector_store = VectorStoreClass(**kwargs)
-            index = VectorStoreIndex.from_vector_store(vector_store=vector_store, **kwargs)
+            if vector_store_type == "LanceDBVectorStore" and "uri" not in kwargs:
+                kwargs["uri"] = "/tmp/lancedb"
+            storage_context = StorageContext.from_defaults(vector_store=vector_store)
+            index = VectorStoreIndex.from_documents(
+                documents=documents, storage_context=storage_context, show_progress=True)
 
         return index

@@ -1,9 +1,13 @@
 # Importing the necessary modules for testing and mocking
 
 from fastapi.testclient import TestClient
+from llama_index import Document
 from llama_index.indices.query.base import BaseQueryEngine
 
 from autollm.serve.utils import create_web_app, load_config_and_initialize_engines
+
+# Mock the documents
+documents = [Document.example()]
 
 
 def test_load_config_and_initialize_engines():
@@ -17,7 +21,8 @@ def test_load_config_and_initialize_engines():
         }
     }
 
-    query_engines = load_config_and_initialize_engines('tests/config.yaml')
+    # Mock the load_config_and_initialize_engines function with the sample config and documents
+    query_engines = load_config_and_initialize_engines('tests/config.yaml', documents=documents)
 
     # Validate the type and configuration of each query engine
     for task in sample_config.keys():
@@ -27,7 +32,7 @@ def test_load_config_and_initialize_engines():
 # 2. Testing FastAPI App Creation
 def test_create_web_app():
     # Assuming the function create_web_app is being imported correctly
-    app = create_web_app('tests/config.yaml')
+    app = create_web_app('tests/config.yaml', documents=documents)
 
     # Validate presence of the query endpoint
     assert any(route.path == "/query" for route in app.routes)
@@ -36,7 +41,7 @@ def test_create_web_app():
 # 3. Testing Query Endpoint
 def test_query_endpoint():
     # Create the FastAPI app with test configuration
-    app = create_web_app('tests/config.yaml')
+    app = create_web_app('tests/config.yaml', documents=documents)
     client = TestClient(app)
 
     # Test with a valid task (changed "task1" to "summarize")

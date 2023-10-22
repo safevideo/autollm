@@ -33,10 +33,7 @@ class AutoQueryEngine:
             query_wrapper_prompt: str = None,
             enable_cost_calculator: bool = True,
             llm_params: dict = None,
-            vector_store_params: dict = {
-                "vector_store_type": "LanceDBVectorStore",
-                "uri": "/tmp/lancedb"
-            },
+            vector_store_params: dict = {"vector_store_type": "LanceDBVectorStore"},
             service_context_params: dict = None,
             query_engine_params: dict = None) -> BaseQueryEngine:
         """
