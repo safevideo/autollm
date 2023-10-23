@@ -1,5 +1,5 @@
 import logging
-import tempfile
+import shutil
 from pathlib import Path
 from typing import List, Optional, Sequence
 
@@ -58,27 +58,31 @@ def read_github_repo_as_documents(git_repo_url: str,
 
     Parameters:
         git_repo_url (str): The URL of the GitHub repository.
-        relative_folder_path (str): The relative path from the repo root to the folder containing documents.
+        relative_folder_path (str, optional): The relative path from the repo root to the folder containing documents.
 
     Returns:
-        documents (Sequence[Document]): A sequence of Document objects.
+        Sequence[Document]: A sequence of Document objects.
     """
-    # Step 1: Create a temporary directory for cloning the repository
-    with tempfile.TemporaryDirectory(dir=".") as temp_dir:
-        print(temp_dir)
-        # Step 2: Clone or pull the GitHub repository to get the latest documents
-        clone_or_pull_repository(git_repo_url, Path(temp_dir))
 
-        # Step 3: Specify the path to the documents
-        if relative_folder_path is None:
-            docs_path = temp_dir
-        else:
-            docs_path = temp_dir / Path(relative_folder_path)
+    # Ensure the temp_dir directory exists
+    temp_dir = Path("autollm/temp/")
+    temp_dir.mkdir(parents=True, exist_ok=True)
 
-        # Step 4: Read and process the documents
+    print(f"Temporary directory created at {temp_dir}")
+
+    try:
+        # Clone or pull the GitHub repository to get the latest documents
+        clone_or_pull_repository(git_repo_url, temp_dir)
+
+        # Specify the path to the documents
+        docs_path = temp_dir if relative_folder_path is None else (temp_dir / Path(relative_folder_path))
+
+        # Read and process the documents
         documents = read_files_as_documents(input_dir=str(docs_path))
-        logger.info(f"Deleting temporary directory {temp_dir}..")
-
-    # Step 5: The temporary directory will be deleted upon exiting the 'with' block
+        # Logging (assuming logger is configured)
+        logger.info(f"Operations complete, deleting temporary directory {temp_dir}..")
+    finally:
+        # Delete the temporary directory
+        shutil.rmtree(temp_dir)
 
     return documents
