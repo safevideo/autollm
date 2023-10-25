@@ -5,8 +5,9 @@ from llama_index import OpenAIEmbedding, ServiceContext
 from llama_index.callbacks import CallbackManager
 from llama_index.embeddings.base import BaseEmbedding
 from llama_index.llms.utils import LLMType
-from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
+from llama_index.prompts import PromptTemplate
 from llama_index.prompts.base import BasePromptTemplate
+from llama_index.prompts.prompt_type import PromptType
 
 from autollm.callbacks.cost_calculating import CostCalculatingHandler
 from autollm.utils.llm_utils import set_default_prompt_template
@@ -48,12 +49,8 @@ class AutoServiceContext:
             system_prompt, query_wrapper_prompt = set_default_prompt_template()
         # Convert system_prompt to ChatPromptTemplate if it is a string
         if isinstance(query_wrapper_prompt, str):
-            query_wrapper_prompt = ChatPromptTemplate([
-                ChatMessage(
-                    role=MessageRole.USER,
-                    content=query_wrapper_prompt,
-                ),
-            ])
+            query_wrapper_prompt = PromptTemplate(
+                template=query_wrapper_prompt, prompt_type=PromptType.QUESTION_ANSWER)
 
         callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
         if enable_cost_calculator:

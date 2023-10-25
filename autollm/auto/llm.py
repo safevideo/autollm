@@ -8,7 +8,7 @@ class AutoLLM:
     """
 
     @staticmethod
-    def from_defaults(model: str = "gpt-3.5-turbo", *args, **kwargs) -> LLM:
+    def from_defaults(model: str = "gpt-3.5-turbo", **kwargs) -> LLM:
         """
         Create any LLM by model name. Check https://docs.litellm.ai/docs/providers for a list of
         supported models.
@@ -26,4 +26,4 @@ class AutoLLM:
             LLM: The initialized LiteLLM instance for given model name and parameter set.
         """
 
-        return LiteLLM(model=model, *args, **kwargs)
+        return LiteLLM(model=model, **kwargs)
