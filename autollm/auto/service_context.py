@@ -49,8 +49,7 @@ class AutoServiceContext:
             system_prompt, query_wrapper_prompt = set_default_prompt_template()
         # Convert system_prompt to ChatPromptTemplate if it is a string
         if isinstance(query_wrapper_prompt, str):
-            query_wrapper_prompt = PromptTemplate(
-                template=query_wrapper_prompt, prompt_type=PromptType.QUESTION_ANSWER)
+            query_wrapper_prompt = PromptTemplate(template=query_wrapper_prompt)
 
         callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
         if enable_cost_calculator:
