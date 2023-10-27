@@ -3,7 +3,7 @@
     <a align="center" href="" target="_blank">
       <img
         width="100%"
-        src="https://github-production-user-asset-6210df.s3.amazonaws.com/44926076/278394163-6af17028-b7cc-4511-b677-7031ed31ffbc.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20231027%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231027T124157Z&X-Amz-Expires=300&X-Amz-Signature=c9618430d2631db3f45551ad062d9b940b91723636c23dcc0639e659f3b425b6&X-Amz-SignedHeaders=host&actor_id=44926076&key_id=0&repo_id=694565231"
+        src="https://github.com/safevideo/autollm/assets/44926076/6af17028-b7cc-4511-b677-7031ed31ffbc"
       >
     </a>
   </p>
