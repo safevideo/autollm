@@ -41,6 +41,7 @@ class QueryPayload(BaseModel):
     user_query: str = Field(..., description="User's query")
 
 
+# TODO: Turn into AutoWebApp class
 # Function to create the FastAPI web app
 def create_web_app(
         config_file_path: str, env_file_path: str = None, documents: Optional[Sequence[Document]] = None):

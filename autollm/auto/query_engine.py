@@ -6,6 +6,7 @@ from autollm.auto.service_context import AutoServiceContext
 from autollm.auto.vector_store_index import AutoVectorStoreIndex
 
 
+# TODO: add from_config method
 class AutoQueryEngine:
     """AutoQueryEngine for query execution and optionally logging the query cost."""
 
