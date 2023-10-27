@@ -20,12 +20,12 @@
 
 | Feature                         | AutoLLM | LangChain | LlamaIndex | LiteLLM |
 | ------------------------------- | :-----: | :-------: | :--------: | :-----: |
-| **80+ LLMs**                    |   ✔️    |    ✔️     |     ✔️     |   ✔️    |
-| **Unified API**                 |   ✔️    |     ❌     |     ❌      |   ✔️    |
-| **20+ Vector Databases**        |   ✔️    |    ✔️     |     ✔️     |    ❌    |
-| **Cost Calculation (80+ LLMs)** |   ✔️    |     ❌     |     ❌      |   ✔️    |
-| **1-Line FastAPI**              |   ✔️    |     ❌     |     ❌      |    ❌    |
-| **1-Line RAG LLM Engine**       |   ✔️    |     ❌     |     ❌      |    ❌    |
+| **80+ LLMs**                    |    ✅    |     ✅     |     ✅      |    ✅    |
+| **Unified API**                 |    ✅    |     ❌     |     ❌      |    ✅    |
+| **20+ Vector Databases**        |    ✅    |     ✅     |     ✅      |    ❌    |
+| **Cost Calculation (80+ LLMs)** |    ✅    |     ❌     |     ❌      |    ✅    |
+| **1-Line FastAPI**              |    ✅    |     ❌     |     ❌      |    ❌    |
+| **1-Line RAG LLM Engine**       |    ✅    |     ❌     |     ❌      |    ❌    |
 
 ______________________________________________________________________
 
