@@ -29,7 +29,7 @@
 
 ______________________________________________________________________
 
-## 📦 Installation
+## 📦 installation
 
 Easily install autollm package with pip in [**Python>=3.8**](https://www.python.org/downloads/) environment.
 
@@ -39,119 +39,9 @@ pip install autollm
 
 ______________________________________________________________________
 
-## 🌟 Features
-
-### 📚 Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
-
-<details>
-    <summary>👉 Microsoft Azure - OpenAI example:</summary>
-
-```python
-from autollm import AutoLLM
-
-os.environ["AZURE_API_KEY"] = ""
-os.environ["AZURE_API_BASE"] = ""
-os.environ["AZURE_API_VERSION"] = ""
-
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
-llm = AutoLLM(model="azure/<your_deployment_name>")
-```
-
-</details>
-
-<details>
-    <summary>👉 Google - VertexAI example</summary>
-
-```python
-from autollm import AutoLLM
-
-## set ENV variables
-os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
-os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
-
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
-llm = AutoLLM(model="text-bison@001")
-```
-
-</details>
-
-<details>
-<summary>👉 AWS Bedrock - Claude v2 example</summary>
-
-```python
-from autollm import AutoLLM
-
-## set ENV variables
-os.environ["AWS_ACCESS_KEY_ID"] = ""
-os.environ["AWS_SECRET_ACCESS_KEY"] = ""
-os.environ["AWS_REGION_NAME"] = ""
-
-# Dynamically initialize a llama_index llm instance with the same AutoLLM interface
-llm = AutoLLM(model="anthropic.claude-v2")
-```
-
-</details>
-
-### 📈 Supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
-
-🌟 **Pro Tip**: AutoLLM defaults to LanceDB if no vector store is specified.
-
-<details>
-    <summary>👉 Default - LanceDB example</summary>
-
-```python
-from autollm import AutoVectorStoreIndex
-
-vector_store_index = AutoVectorStoreIndex.from_defaults()
-```
-
-</details>
-
-### 💰 Automated Cost Calculation for [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
-
-<details>
-    <summary>👉 Keep track of your LLM costs</summary>
-
-```python
-from autollm import AutoServiceContext
-
-service_context = AutoServiceContext(enable_cost_calculation=True)
-
-# Example calculation verbose output
-"""
-Embedding Token Usage: 7
-LLM Prompt Token Usage: 1482
-LLM Completion Token Usage: 47
-LLM Total Token Cost: $0.002317
-"""
-```
-
-</details>
-
-### 🚀 Create FastAPI App in 1-Line
-
-<details>
-    <summary>👉 Example</summary>
-
-```python
-from autollm import create_web_app
-
-app = create_web_app(config_path, env_path)
-```
-
-Here, `config` and `env` should be replaced by your configuration and environment file paths.
-
-After creating your FastAPI app, run the following command in your terminal to get it up and running:
-
-```bash
-uvicorn main:app
-```
-
-</details>
-
 ## 🎯 quickstart
 
-### 🔥 create a query engine in one line
+### create a query engine in one line
 
 <details>
     <summary>👉 basic usage </summary>
@@ -202,7 +92,119 @@ Because they are cool!
 
 ______________________________________________________________________
 
-## 🔄 smooth migration from llama-index
+## 🌟 features
+
+### supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
+
+<details>
+    <summary>👉 Microsoft Azure - OpenAI example:</summary>
+
+```python
+from autollm import AutoLLM
+
+os.environ["AZURE_API_KEY"] = ""
+os.environ["AZURE_API_BASE"] = ""
+os.environ["AZURE_API_VERSION"] = ""
+
+# Dynamically initialize a llama_index llm instance with the same AutoLLM api
+llm = AutoLLM(model="azure/<your_deployment_name>")
+```
+
+</details>
+
+<details>
+    <summary>👉 Google - VertexAI example</summary>
+
+```python
+from autollm import AutoLLM
+
+## set ENV variables
+os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
+os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+
+# Dynamically initialize a llama_index llm instance with the same AutoLLM api
+llm = AutoLLM(model="text-bison@001")
+```
+
+</details>
+
+<details>
+<summary>👉 AWS Bedrock - Claude v2 example</summary>
+
+```python
+from autollm import AutoLLM
+
+## set ENV variables
+os.environ["AWS_ACCESS_KEY_ID"] = ""
+os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+os.environ["AWS_REGION_NAME"] = ""
+
+# Dynamically initialize a llama_index llm instance with the same AutoLLM interface
+llm = AutoLLM(model="anthropic.claude-v2")
+```
+
+</details>
+
+### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
+
+🌟 **Pro Tip**: AutoLLM defaults to LanceDB if no vector store is specified.
+
+<details>
+    <summary>👉 Default - LanceDB example</summary>
+
+```python
+from autollm import AutoVectorStoreIndex
+
+vector_store_index = AutoVectorStoreIndex.from_defaults()
+```
+
+</details>
+
+### automated cost calculation for [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
+
+<details>
+    <summary>👉 Keep track of your LLM costs</summary>
+
+```python
+from autollm import AutoServiceContext
+
+service_context = AutoServiceContext(enable_cost_calculation=True)
+
+# Example calculation verbose output
+"""
+Embedding Token Usage: 7
+LLM Prompt Token Usage: 1482
+LLM Completion Token Usage: 47
+LLM Total Token Cost: $0.002317
+"""
+```
+
+</details>
+
+### create FastAPI App in 1-Line
+
+<details>
+    <summary>👉 Example</summary>
+
+```python
+from autollm import create_web_app
+
+app = create_web_app(config_path, env_path)
+```
+
+Here, `config` and `env` should be replaced by your configuration and environment file paths.
+
+After creating your FastAPI app, run the following command in your terminal to get it up and running:
+
+```bash
+uvicorn main:app
+```
+
+</details>
+
+______________________________________________________________________
+
+## 🔄 migration from llama-index
 
 Switching from LlamaIndex? We've got you covered.
 
@@ -232,9 +234,9 @@ A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0), 
 
 ______________________________________________________________________
 
-## Roadmap
+## roadmap
 
-Our roadmap outlines upcoming features and integrations to make AutoLLM the most extensible and powerful base package for large language model applications.
+Our roadmap outlines upcoming features and integrations to make autollm the most extensible and powerful base package for large language model applications.
 
 - [ ] **Budget based email notification feature**
 
@@ -246,13 +248,13 @@ Our roadmap outlines upcoming features and integrations to make AutoLLM the most
 
 ______________________________________________________________________
 
-## 📜 License
+## 📜 license
 
-AutoLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE).
+autollm is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE).
 
 ______________________________________________________________________
 
-## 📞 Contact
+## 📞 contact
 
 For more information, support, or questions, please contact:
 
@@ -262,7 +264,7 @@ For more information, support, or questions, please contact:
 
 ______________________________________________________________________
 
-## 🌟 Contributing
+## 🌟 contributing
 
 **Love AutoLLM? Star the repo or contribute and help us make it even better!** See our [contributing guidelines](CONTRIBUTING.md) for more information.
 
