@@ -2,7 +2,7 @@
   <p>
     <a align="center" href="" target="_blank">
       <img
-        width="100%"
+        width="1280"
         src="https://github.com/safevideo/autollm/assets/44926076/6af17028-b7cc-4511-b677-7031ed31ffbc"
       >
     </a>
@@ -16,7 +16,7 @@
 
 ## 🤔 why autollm?
 
-**Simplify. Unify. Amplify.** Integrate any Large Language Model (LLM) or Vector Database with just one line of code.
+**Simplify. Unify. Amplify.** Create Retrieval Augmented Generation (RAG) based Large Language Model (LLM) API's with just one line of code.
 
 | Feature                         | AutoLLM | LangChain | LlamaIndex | LiteLLM |
 | ------------------------------- | :-----: | :-------: | :--------: | :-----: |
@@ -41,22 +41,38 @@ ______________________________________________________________________
 
 ## 🎯 quickstart
 
-### create a query engine in one line
-
-<details>
-    <summary>👉 basic usage </summary>
+### create a query engine in seconds
 
 ```python
 >>> from autollm.utils.document_reading import read_local_files_as_documents
 >>> from autollm import AutoQueryEngine
 
->>> documents = read_files_as_documents(input_dir="tmp/docs")
->>> query_engine = AutoQueryEngine.from_parameters()
+>>> query_engine = AutoQueryEngine.from_parameters(
+>>>   documents: List[llama_index.Documents]
+>>> )
 
->>> response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
-response = query_engine.query("Why is SafeVideo AI awesome?")
->>> print(response.response)
-Because they redefine the movie experience by AI!
+>>> response = query_engine.query(
+>>>   "Why did SafeVideo AI develop this project?"
+>>> )
+
+>>> response.response
+"Because they wanted to deploy rag based llm apis in no time!"
+```
+
+### convert it to a FastAPI app in 1-line
+
+```python
+>>> import uvicorn
+
+>>> from autollm import AutoFastAPI
+
+>>> app = AutoFastAPI.from_query_engine(query_engine)
+
+>>> uvicorn.run(app, host="0.0.0.0", port=8000)
+INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
@@ -67,22 +83,44 @@ Because they redefine the movie experience by AI!
 ```python
 >>> from autollm import AutoQueryEngine
 
-# Initialize the query engine with explicit parameters
 >>> query_engine = AutoQueryEngine.from_parameters(
-    system_prompt="You are an expert qa assistant. Provide accurate and detailed answers to queries",
-    query_wrapper_prompt="The document information is the following: {context_str} | Using the document information and mostly relying on it,
-answer the query. | Query {query_str} | Answer:",
-    enable_cost_calculator=True,
-    llm_params={"model": "gpt-3.5-turbo"},
-    vector_store_params={"vector_store_type": "LanceDBVectorStore", "uri": "/tmp/lancedb", "table_name": "lancedb", "nprobs": 20},
-    service_context_params={"chunk_size": 1024},
-    query_engine_params={"similarity_top_k": 10},
-)
+>>>   documents=documents,
+>>>   system_prompt= ...
+>>>   query_wrapper_prompt= ...
+>>>   enable_cost_calculator=True,
+>>>   llm_params={"model": "gpt-3.5-turbo"},
+>>>   vector_store_params={
+>>>     "vector_store_type": "LanceDBVectorStore",
+>>>     "uri": "/tmp/lancedb",
+>>>     "table_name": "lancedb",
+>>>     "nprobs": 20
+>>>   },
+>>>   service_context_params={"chunk_size": 1024},
+>>>   query_engine_params={"similarity_top_k": 10},
+>>> )
 
->>> response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
+>>> response = query_engine.query("Who is SafeVideo AI?")
 
 >>> print(response.response)
-Because they are cool!
+"A startup that provides self hosted AI API's for companies!"
+```
+
+```python
+>>> from autollm import AutoFastAPI
+
+>>> app = AutoFastAPI.from_query_engine(
+      query_engine,
+      api_title= ...,
+      api_description= ...,
+      api_version= ...,
+      api_term_of_service= ...,
+    )
+
+>>> uvicorn.run(app, host="0.0.0.0", port=8000)
+INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
@@ -139,9 +177,8 @@ ______________________________________________________________________
 
 ### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
 
-🌟 **pro tip**: autollm defaults to lancedb if no vector store is specified.
-
-lancedb is lightweight, scales from development to production and is 100x cheaper than alternatives
+🌟 **pro tip**: `autollm` defaults to `lancedb` as the vector store since it is lightweight,
+scales from development to production and is 100x cheaper than alternatives!
 
 <details>
     <summary>👉 default - lancedb example</summary>
@@ -149,15 +186,14 @@ lancedb is lightweight, scales from development to production and is 100x cheape
 ```python
 >>> from autollm import AutoVectorStoreIndex
 
->>> vector_store_index = AutoVectorStoreIndex.from_defaults()
+>>> vector_store_index = AutoVectorStoreIndex.from_defaults(
+>>>     documents=documents
+>>> )
 ```
 
 </details>
 
 ### automated cost calculation for [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
-
-<details>
-    <summary>👉 keep track of your llm costs</summary>
 
 ```python
 >>> from autollm import AutoServiceContext
@@ -171,17 +207,15 @@ LLM Completion Token Usage: 47
 LLM Total Token Cost: $0.002317
 ```
 
-</details>
-
 ### create FastAPI App in 1-Line
 
 <details>
     <summary>👉 example</summary>
 
 ```python
->>> from autollm import create_web_app
+>>> from autollm import AutoFastAPI
 
->>> app = create_web_app(config_path, env_path)
+>>> app = AutoFastAPI.from_config(config_path, env_path)
 ```
 
 Here, `config` and `env` should be replaced by your configuration and environment file paths.
@@ -198,22 +232,23 @@ ______________________________________________________________________
 
 ## 🔄 migration from llama-index
 
-Switching from LlamaIndex? We've got you covered.
+Switching from Llama-Index? We've got you covered.
 
 <details>
     <summary>👉 easy migration </summary>
 
 ```python
->>> from autollm import AutoQueryEngine
 >>> from llama_index import StorageContext, ServiceContext, VectorStoreIndex
 >>> from llama_index.vectorstores import LanceDBVectorStore
+
+>>> from autollm import AutoQueryEngine
 
 >>> vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
 >>> storage_context = StorageContext.from_defaults(vector_store=vector_store)
 >>> index = VectorStoreIndex.from_documents(documents=documents)
 >>> service_context = ServiceContext.from_defaults()
 
->>> query_engine = AutoQueryEngine.from_instance(index, service_context)
+>>> query_engine = AutoQueryEngine.from_instances(index, service_context)
 ```
 
 </details>
@@ -222,7 +257,8 @@ Switching from LlamaIndex? We've got you covered.
 
 **Q: Can I use this for commercial projects?**
 
-A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
+A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0),
+which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
 
 ______________________________________________________________________
 
@@ -230,13 +266,15 @@ ______________________________________________________________________
 
 Our roadmap outlines upcoming features and integrations to make autollm the most extensible and powerful base package for large language model applications.
 
-- [ ] **Budget based email notification feature**
+- [ ] **1-line [Gradio](https://www.gradio.app/) app creation and deployment**
 
-- [ ] **Add evaluation metrics for LLMs**:
+- [ ] **Budget based email notification**
 
-- [ ] **Add unit tests for online vectorDB integrations**:
+- [ ] **Built-in LLM evaluation**
 
-- [ ] **Add example code snippet to Readme on how to integrate llama-hub readers**:
+- [ ] **Unit tests for online vectorDB integrations**
+
+- [ ] **Example code snippet to Readme on how to integrate llama-hub readers**
 
 ______________________________________________________________________
 
