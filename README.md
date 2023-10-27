@@ -68,16 +68,13 @@ Because they redefine the movie experience by AI!
 >>> from autollm import AutoQueryEngine
 
 # Initialize the query engine with explicit parameters
-query_engine = AutoQueryEngine.from_parameters(
+>>> query_engine = AutoQueryEngine.from_parameters(
     system_prompt="You are an expert qa assistant. Provide accurate and detailed answers to queries",
     query_wrapper_prompt="The document information is the following: {context_str} | Using the document information and mostly relying on it,
 answer the query. | Query {query_str} | Answer:",
     enable_cost_calculator=True,
     llm_params={"model": "gpt-3.5-turbo"},
-    vector_store_params={"vector_store_type": "QdrantVectorStore", "client": qdrant_client.QdrantClient(
-    url="http://<host>:<port>"
-    api_key="<qdrant-api-key>",
-), "collection_name": "quickstart"},
+    vector_store_params={"vector_store_type": "LanceDBVectorStore", "uri": "/tmp/lancedb", "table_name": "lancedb", "nprobs": 20},
     service_context_params={"chunk_size": 1024},
     query_engine_params={"similarity_top_k": 10},
 )
@@ -100,14 +97,13 @@ ______________________________________________________________________
     <summary>👉 microsoft azure - openai example:</summary>
 
 ```python
-from autollm import AutoLLM
+>>> from autollm import AutoLLM
 
-os.environ["AZURE_API_KEY"] = ""
-os.environ["AZURE_API_BASE"] = ""
-os.environ["AZURE_API_VERSION"] = ""
+>>> os.environ["AZURE_API_KEY"] = ""
+>>> os.environ["AZURE_API_BASE"] = ""
+>>> os.environ["AZURE_API_VERSION"] = ""
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
-llm = AutoLLM(model="azure/<your_deployment_name>")
+>>> llm = AutoLLM(model="azure/<your_deployment_name>")
 ```
 
 </details>
@@ -116,14 +112,12 @@ llm = AutoLLM(model="azure/<your_deployment_name>")
     <summary>👉 google - vertexai example</summary>
 
 ```python
-from autollm import AutoLLM
+>>> from autollm import AutoLLM
 
-## set ENV variables
-os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
-os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+>>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
+>>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
-llm = AutoLLM(model="text-bison@001")
+>>> llm = AutoLLM(model="text-bison@001")
 ```
 
 </details>
@@ -132,15 +126,13 @@ llm = AutoLLM(model="text-bison@001")
 <summary>👉 aws bedrock - claude v2 example</summary>
 
 ```python
-from autollm import AutoLLM
+>>> from autollm import AutoLLM
 
-## set ENV variables
-os.environ["AWS_ACCESS_KEY_ID"] = ""
-os.environ["AWS_SECRET_ACCESS_KEY"] = ""
-os.environ["AWS_REGION_NAME"] = ""
+>>> os.environ["AWS_ACCESS_KEY_ID"] = ""
+>>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+>>> os.environ["AWS_REGION_NAME"] = ""
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM interface
-llm = AutoLLM(model="anthropic.claude-v2")
+>>> llm = AutoLLM(model="anthropic.claude-v2")
 ```
 
 </details>
@@ -155,9 +147,9 @@ lancedb is lightweight, scales from development to production and is 100x cheape
     <summary>👉 default - lancedb example</summary>
 
 ```python
-from autollm import AutoVectorStoreIndex
+>>> from autollm import AutoVectorStoreIndex
 
-vector_store_index = AutoVectorStoreIndex.from_defaults()
+>>> vector_store_index = AutoVectorStoreIndex.from_defaults()
 ```
 
 </details>
@@ -168,17 +160,15 @@ vector_store_index = AutoVectorStoreIndex.from_defaults()
     <summary>👉 keep track of your llm costs</summary>
 
 ```python
-from autollm import AutoServiceContext
+>>> from autollm import AutoServiceContext
 
-service_context = AutoServiceContext(enable_cost_calculation=True)
+>>> service_context = AutoServiceContext(enable_cost_calculation=True)
 
-# Example calculation verbose output
-"""
+# Example verbose output after query
 Embedding Token Usage: 7
 LLM Prompt Token Usage: 1482
 LLM Completion Token Usage: 47
 LLM Total Token Cost: $0.002317
-"""
 ```
 
 </details>
@@ -189,9 +179,9 @@ LLM Total Token Cost: $0.002317
     <summary>👉 example</summary>
 
 ```python
-from autollm import create_web_app
+>>> from autollm import create_web_app
 
-app = create_web_app(config_path, env_path)
+>>> app = create_web_app(config_path, env_path)
 ```
 
 Here, `config` and `env` should be replaced by your configuration and environment file paths.
