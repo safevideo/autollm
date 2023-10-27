@@ -275,7 +275,7 @@ ______________________________________________________________________
 <div align="center">
       <a href="https://www.linkedin.com/company/safevideo/">
           <img
-            src="https://github-production-user-asset-6210df.s3.amazonaws.com/44926076/278662107-ee33237c-77b6-4760-91f6-a3aff9b75e56.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20231027%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231027T134854Z&X-Amz-Expires=300&X-Amz-Signature=3c0fcdc2cfd4076c31a1bc8de3274d590dd720229bfda9935dbb27c88ba57274&X-Amz-SignedHeaders=host&actor_id=44926076&key_id=0&repo_id=694565231"
+            src="https://github.com/safevideo/autollm/assets/44926076/ee33237c-77b6-4760-91f6-a3aff9b75e56"
             width="17%"
           />
       </a>
