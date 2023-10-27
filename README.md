@@ -97,7 +97,7 @@ ______________________________________________________________________
 ### supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
 <details>
-    <summary>👉 Microsoft Azure - OpenAI example:</summary>
+    <summary>👉 microsoft azure - openai example:</summary>
 
 ```python
 from autollm import AutoLLM
@@ -113,7 +113,7 @@ llm = AutoLLM(model="azure/<your_deployment_name>")
 </details>
 
 <details>
-    <summary>👉 Google - VertexAI example</summary>
+    <summary>👉 google - vertexai example</summary>
 
 ```python
 from autollm import AutoLLM
@@ -129,7 +129,7 @@ llm = AutoLLM(model="text-bison@001")
 </details>
 
 <details>
-<summary>👉 AWS Bedrock - Claude v2 example</summary>
+<summary>👉 aws bedrock - claude v2 example</summary>
 
 ```python
 from autollm import AutoLLM
@@ -147,10 +147,12 @@ llm = AutoLLM(model="anthropic.claude-v2")
 
 ### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
 
-🌟 **Pro Tip**: AutoLLM defaults to LanceDB if no vector store is specified.
+🌟 **pro tip**: autollm defaults to lancedb if no vector store is specified.
+
+lancedb is lightweight, scales from development to production and is 100x cheaper than alternatives
 
 <details>
-    <summary>👉 Default - LanceDB example</summary>
+    <summary>👉 default - lancedb example</summary>
 
 ```python
 from autollm import AutoVectorStoreIndex
@@ -163,7 +165,7 @@ vector_store_index = AutoVectorStoreIndex.from_defaults()
 ### automated cost calculation for [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
 <details>
-    <summary>👉 Keep track of your LLM costs</summary>
+    <summary>👉 keep track of your llm costs</summary>
 
 ```python
 from autollm import AutoServiceContext
@@ -184,7 +186,7 @@ LLM Total Token Cost: $0.002317
 ### create FastAPI App in 1-Line
 
 <details>
-    <summary>👉 Example</summary>
+    <summary>👉 example</summary>
 
 ```python
 from autollm import create_web_app
