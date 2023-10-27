@@ -8,9 +8,9 @@
     </a>
   </p>
 
+[![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
-![Version 0.0.1](https://img.shields.io/badge/version-0.0.1-blue)
-![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)
+[![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)](LICENSE)
 
 </div>
 
@@ -157,15 +157,16 @@ uvicorn main:app
     <summary>👉 basic usage </summary>
 
 ```python
-query_engine = AutoQueryEngine.from_parameters()
+>>> from autollm.utils.document_reading import read_local_files_as_documents
+>>> from autollm import AutoQueryEngine
 
-response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
+>>> documents = read_files_as_documents(input_dir="tmp/docs")
+>>> query_engine = AutoQueryEngine.from_parameters()
 
-print(response.response)
-```
-
-```
->> Because they are cool!
+>>> response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
+response = query_engine.query("Why is SafeVideo AI awesome?")
+>>> print(response.response)
+Because they redefine the movie experience by AI!
 ```
 
 </details>
@@ -174,9 +175,7 @@ print(response.response)
     <summary>👉 advanced usage </summary>
 
 ```python
-from autollm import AutoQueryEngine
-
-import qdrant_client
+>>> from autollm import AutoQueryEngine
 
 # Initialize the query engine with explicit parameters
 query_engine = AutoQueryEngine.from_parameters(
@@ -193,58 +192,34 @@ answer the query. | Query {query_str} | Answer:",
     query_engine_params={"similarity_top_k": 10},
 )
 
-response = query_engine.query("Why is SafeVideo AI awesome?")
+>>> response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
 
-print(response.response)
-```
-
-```
->> Because they redefine the movie experience by AI!
+>>> print(response.response)
+Because they are cool!
 ```
 
 </details>
 
-### 📚 Document Reading
-
-#### 🌐 Create documents for a VectorDB from GitHub repo in one line!
-
-```python
-from autollm.utils.document_reading import read_github_repo_as_documents
-
-git_repo_url = "https://github.com/safevideo.git"
-relative_folder_path = Path("docs/")
-
-documents = read_github_repo_as_documents(git_repo_url, relative_folder_path)
-```
-
-#### 📂 Add Local Files into VectorDB in One Line (Supports [10+ File Types](https://github.com/run-llama/llama_index/blob/main/llama_index/readers/file/base.py#L19-L34))
-
-```python
-from autollm.utils.document_reading import read_local_files_as_documents
-
-documents = read_local_files_as_documents(input_dir="tmp/docs")
-```
-
 ______________________________________________________________________
 
-## 🔄 Smooth Migration from LlamaIndex
+## 🔄 smooth migration from llama-index
 
 Switching from LlamaIndex? We've got you covered.
 
-<details close>
-<summary> Easy Migration
+<details>
+    <summary>👉 easy migration </summary>
 
 ```python
-from autollm import AutoQueryEngine
-from llama_index import StorageContext, ServiceContext, VectorStoreIndex
-from llama_index.vectorstores import LanceDBVectorStore
+>>> from autollm import AutoQueryEngine
+>>> from llama_index import StorageContext, ServiceContext, VectorStoreIndex
+>>> from llama_index.vectorstores import LanceDBVectorStore
 
-vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
-storage_context = StorageContext.from_defaults(vector_store=vector_store)
-index = VectorStoreIndex.from_documents(documents=documents)
-service_context = ServiceContext.from_defaults()
+>>> vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
+>>> storage_context = StorageContext.from_defaults(vector_store=vector_store)
+>>> index = VectorStoreIndex.from_documents(documents=documents)
+>>> service_context = ServiceContext.from_defaults()
 
-query_engine = AutoQueryEngine.from_instance(index, service_context)
+>>> query_engine = AutoQueryEngine.from_instance(index, service_context)
 ```
 
 </details>
