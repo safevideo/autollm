@@ -16,7 +16,7 @@
 
 ## 🤔 why autollm?
 
-**Simplify. Unify. Amplify.** Create Retrieval Augmented Generation (RAG) based Large Language Model (LLM) API's with just one line of code.
+**Simplify. Unify. Amplify.**
 
 | Feature                         | AutoLLM | LangChain | LlamaIndex | LiteLLM |
 | ------------------------------- | :-----: | :-------: | :--------: | :-----: |
@@ -24,8 +24,8 @@
 | **Unified API**                 |    ✅    |     ❌     |     ❌      |    ✅    |
 | **20+ Vector Databases**        |    ✅    |     ✅     |     ✅      |    ❌    |
 | **Cost Calculation (80+ LLMs)** |    ✅    |     ❌     |     ❌      |    ✅    |
-| **1-Line FastAPI**              |    ✅    |     ❌     |     ❌      |    ❌    |
 | **1-Line RAG LLM Engine**       |    ✅    |     ❌     |     ❌      |    ❌    |
+| **1-Line FastAPI**              |    ✅    |     ❌     |     ❌      |    ❌    |
 
 ______________________________________________________________________
 
