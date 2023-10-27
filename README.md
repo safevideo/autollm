@@ -1,27 +1,37 @@
-# AutoLLM
+<div align="center">
+  <p>
+    <a align="center" href="" target="_blank">
+      <img
+        width="1280"
+        src="https://github.com/safevideo/autollm/assets/44926076/6af17028-b7cc-4511-b677-7031ed31ffbc"
+      >
+    </a>
+  </p>
 
-## Ship retrieval augmented generation based Large Language Model Web API's, in seconds
+[![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)](LICENSE)
 
-## [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/) ![Version 0.0.1](https://img.shields.io/badge/version-0.0.1-blue) ![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)
+</div>
 
-## 🤔 Why AutoLLM?
+## 🤔 why autollm?
 
-**Simplify. Unify. Amplify.** Integrate any Large Language Model (LLM) or Vector Database with just one line of code.
+**Simplify. Unify. Amplify.**
 
 | Feature                         | AutoLLM | LangChain | LlamaIndex | LiteLLM |
 | ------------------------------- | :-----: | :-------: | :--------: | :-----: |
-| **80+ LLMs**                    |   ✔️    |    ✔️     |     ✔️     |   ✔️    |
-| **Unified API**                 |   ✔️    |     ❌     |     ❌      |   ✔️    |
-| **20+ Vector Databases**        |   ✔️    |    ✔️     |     ✔️     |    ❌    |
-| **Cost Calculation (80+ LLMs)** |   ✔️    |     ❌     |     ❌      |   ✔️    |
-| **1-Line FastAPI**              |   ✔️    |     ❌     |     ❌      |    ❌    |
-| **1-Line RAG LLM Engine**       |   ✔️    |     ❌     |     ❌      |    ❌    |
+| **80+ LLMs**                    |    ✅    |     ✅     |     ✅      |    ✅    |
+| **Unified API**                 |    ✅    |     ❌     |     ❌      |    ✅    |
+| **20+ Vector Databases**        |    ✅    |     ✅     |     ✅      |    ❌    |
+| **Cost Calculation (80+ LLMs)** |    ✅    |     ❌     |     ❌      |    ✅    |
+| **1-Line RAG LLM Engine**       |    ✅    |     ❌     |     ❌      |    ❌    |
+| **1-Line FastAPI**              |    ✅    |     ❌     |     ❌      |    ❌    |
 
 ______________________________________________________________________
 
-## 📦 Installation
+## 📦 installation
 
-Easily install AutoLLM with pip in Python>=3.8 environment.
+Easily install autollm package with pip in [**Python>=3.8**](https://www.python.org/downloads/) environment.
 
 ```bash
 pip install autollm
@@ -29,170 +39,186 @@ pip install autollm
 
 ______________________________________________________________________
 
-## 🌟 Features
+## 🎯 quickstart
 
-### 📚 AutoLLM (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
-
-- Microsoft Azure - OpenAI example:
+### create a query engine in seconds
 
 ```python
-from autollm import AutoLLM
+>>> from autollm.utils.document_reading import read_local_files_as_documents
+>>> from autollm import AutoQueryEngine
 
-## set ENV variables
-os.environ["AZURE_API_KEY"] = ""
-os.environ["AZURE_API_BASE"] = ""
-os.environ["AZURE_API_VERSION"] = ""
+>>> query_engine = AutoQueryEngine.from_parameters(
+>>>   documents: List[llama_index.Documents]
+>>> )
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
-llm = AutoLLM(model="azure/<your_deployment_name>")
+>>> response = query_engine.query(
+>>>   "Why did SafeVideo AI develop this project?"
+>>> )
+
+>>> response.response
+"Because they wanted to deploy rag based llm apis in no time!"
 ```
 
-<details close>
-<summary> Google - VertexAI example:
+### convert it to a FastAPI app in 1-line
 
 ```python
-from autollm import AutoLLM
+>>> import uvicorn
 
-## set ENV variables
-os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
-os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+>>> from autollm import AutoFastAPI
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM api
-llm = AutoLLM(model="text-bison@001")
+>>> app = AutoFastAPI.from_query_engine(query_engine)
+
+>>> uvicorn.run(app, host="0.0.0.0", port=8000)
+INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
 
-<details close>
-<summary> AWS Bedrock - Claude v2 example:
+<details>
+    <summary>👉 advanced usage </summary>
 
 ```python
-from autollm import AutoLLM
+>>> from autollm import AutoQueryEngine
 
-## set ENV variables
-os.environ["AWS_ACCESS_KEY_ID"] = ""
-os.environ["AWS_SECRET_ACCESS_KEY"] = ""
-os.environ["AWS_REGION_NAME"] = ""
+>>> query_engine = AutoQueryEngine.from_parameters(
+>>>   documents=documents,
+>>>   system_prompt= ...
+>>>   query_wrapper_prompt= ...
+>>>   enable_cost_calculator=True,
+>>>   llm_params={"model": "gpt-3.5-turbo"},
+>>>   vector_store_params={
+>>>     "vector_store_type": "LanceDBVectorStore",
+>>>     "uri": "/tmp/lancedb",
+>>>     "table_name": "lancedb",
+>>>     "nprobs": 20
+>>>   },
+>>>   service_context_params={"chunk_size": 1024},
+>>>   query_engine_params={"similarity_top_k": 10},
+>>> )
 
-# Dynamically initialize a llama_index llm instance with the same AutoLLM interface
-llm = AutoLLM(model="anthropic.claude-v2")
+>>> response = query_engine.query("Who is SafeVideo AI?")
+
+>>> print(response.response)
+"A startup that provides self hosted AI API's for companies!"
+```
+
+```python
+>>> from autollm import AutoFastAPI
+
+>>> app = AutoFastAPI.from_query_engine(
+      query_engine,
+      api_title= ...,
+      api_description= ...,
+      api_version= ...,
+      api_term_of_service= ...,
+    )
+
+>>> uvicorn.run(app, host="0.0.0.0", port=8000)
+INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
 
-### 📈 AutoVectorStoreIndex (Supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support))
+______________________________________________________________________
 
-🌟 **Pro Tip**: AutoLLM defaults to LanceDB if no vector store is specified.
+## 🌟 features
 
-```python
-from autollm import AutoVectorStoreIndex
+### supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
-vector_store_index = AutoVectorStoreIndex.from_defaults()
-```
-
-### 🎯 AutoQueryEngine (Creates a query engine pipeline in a single line of code)
-
-Create robust query engine pipelines with automatic cost logging. Supports fine-grained control for advanced use-cases.
-
-#### Basic Usage:
+<details>
+    <summary>👉 microsoft azure - openai example:</summary>
 
 ```python
-query_engine = AutoQueryEngine.from_parameters()
+>>> from autollm import AutoLLM
 
-response = query_engine.query("Why is SafeVideo AI open sourcing this project?")
+>>> os.environ["AZURE_API_KEY"] = ""
+>>> os.environ["AZURE_API_BASE"] = ""
+>>> os.environ["AZURE_API_VERSION"] = ""
 
-print(response.response)
-```
-
-```
->> Because they are cool!
-```
-
-<details close>
-<summary> Advanced Usage:
-
-```python
-from autollm import AutoQueryEngine
-
-import qdrant_client
-
-# Initialize the query engine with explicit parameters
-query_engine = AutoQueryEngine.from_parameters(
-    system_prompt="You are an expert qa assistant. Provide accurate and detailed answers to queries",
-    query_wrapper_prompt="The document information is the following: {context_str} | Using the document information and mostly relying on it,
-answer the query. | Query {query_str} | Answer:",
-    enable_cost_calculator=True,
-    llm_params={"model": "gpt-3.5-turbo"},
-    vector_store_params={"vector_store_type": "QdrantVectorStore", "client": qdrant_client.QdrantClient(
-    url="http://<host>:<port>"
-    api_key="<qdrant-api-key>",
-), "collection_name": "quickstart"},
-    service_context_params={"chunk_size": 1024},
-    query_engine_params={"similarity_top_k": 10},
-)
-
-response = query_engine.query("Why is SafeVideo AI awesome?")
-
-print(response.response)
-```
-
-```
->> Because they redefine the movie experience by AI!
+>>> llm = AutoLLM(model="azure/<your_deployment_name>")
 ```
 
 </details>
 
-### 💰 Automated Cost Calculation (Supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json))
-
-Keep track of your LLM token usage and costs in real-time.
+<details>
+    <summary>👉 google - vertexai example</summary>
 
 ```python
-from autollm import AutoServiceContext
+>>> from autollm import AutoLLM
 
-service_context = AutoServiceContext(enable_cost_calculation=True)
+>>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
+>>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
 
-# Example calculation verbose output
-"""
+>>> llm = AutoLLM(model="text-bison@001")
+```
+
+</details>
+
+<details>
+<summary>👉 aws bedrock - claude v2 example</summary>
+
+```python
+>>> from autollm import AutoLLM
+
+>>> os.environ["AWS_ACCESS_KEY_ID"] = ""
+>>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+>>> os.environ["AWS_REGION_NAME"] = ""
+
+>>> llm = AutoLLM(model="anthropic.claude-v2")
+```
+
+</details>
+
+### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
+
+🌟 **pro tip**: `autollm` defaults to `lancedb` as the vector store since it is lightweight,
+scales from development to production and is 100x cheaper than alternatives!
+
+<details>
+    <summary>👉 default - lancedb example</summary>
+
+```python
+>>> from autollm import AutoVectorStoreIndex
+
+>>> vector_store_index = AutoVectorStoreIndex.from_defaults(
+>>>     documents=documents
+>>> )
+```
+
+</details>
+
+### automated cost calculation for [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
+
+```python
+>>> from autollm import AutoServiceContext
+
+>>> service_context = AutoServiceContext(enable_cost_calculation=True)
+
+# Example verbose output after query
 Embedding Token Usage: 7
 LLM Prompt Token Usage: 1482
 LLM Completion Token Usage: 47
 LLM Total Token Cost: $0.002317
-"""
 ```
 
-### 📚 Document Reading
+### create FastAPI App in 1-Line
 
-#### 🌐 Create documents for a VectorDB from GitHub repo in one line!
-
-```python
-from autollm.utils.document_reading import read_github_repo_as_documents
-
-git_repo_url = "https://github.com/safevideo.git"
-relative_folder_path = Path("docs/")
-
-documents = read_github_repo_as_documents(git_repo_url, relative_folder_path)
-```
-
-#### 📂 Add Local Files into VectorDB in One Line (Supports [10+ File Types](https://github.com/run-llama/llama_index/blob/main/llama_index/readers/file/base.py#L19-L34))
+<details>
+    <summary>👉 example</summary>
 
 ```python
-from autollm.utils.document_reading import read_local_files_as_documents
+>>> from autollm import AutoFastAPI
 
-documents = read_local_files_as_documents(input_dir="tmp/docs")
-```
-
-### 🚀 Create FastAPI App in 1-Line
-
-```python
-from autollm import create_web_app
-
-app = create_web_app(config_path, env_path)
+>>> app = AutoFastAPI.from_config(config_path, env_path)
 ```
 
 Here, `config` and `env` should be replaced by your configuration and environment file paths.
-
-<details close>
-<summary> Run Your Application
 
 After creating your FastAPI app, run the following command in your terminal to get it up and running:
 
@@ -201,26 +227,28 @@ uvicorn main:app
 ```
 
 </details>
+
 ______________________________________________________________________
 
-## 🔄 Smooth Migration from LlamaIndex
+## 🔄 migration from llama-index
 
-Switching from LlamaIndex? We've got you covered.
+Switching from Llama-Index? We've got you covered.
 
-<details close>
-<summary> Easy Migration
+<details>
+    <summary>👉 easy migration </summary>
 
 ```python
-from autollm import AutoQueryEngine
-from llama_index import StorageContext, ServiceContext, VectorStoreIndex
-from llama_index.vectorstores import LanceDBVectorStore
+>>> from llama_index import StorageContext, ServiceContext, VectorStoreIndex
+>>> from llama_index.vectorstores import LanceDBVectorStore
 
-vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
-storage_context = StorageContext.from_defaults(vector_store=vector_store)
-index = VectorStoreIndex.from_documents(documents=documents)
-service_context = ServiceContext.from_defaults()
+>>> from autollm import AutoQueryEngine
 
-query_engine = AutoQueryEngine.from_instance(index, service_context)
+>>> vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
+>>> storage_context = StorageContext.from_defaults(vector_store=vector_store)
+>>> index = VectorStoreIndex.from_documents(documents=documents)
+>>> service_context = ServiceContext.from_defaults()
+
+>>> query_engine = AutoQueryEngine.from_instances(index, service_context)
 ```
 
 </details>
@@ -229,31 +257,34 @@ query_engine = AutoQueryEngine.from_instance(index, service_context)
 
 **Q: Can I use this for commercial projects?**
 
-A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0), which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
+A: Yes, AutoLLM is licensed under GNU Affero General Public License (AGPL 3.0),
+which allows for commercial use under certain conditions. [Contact](#contact) us for more information.
 
 ______________________________________________________________________
 
-## Roadmap
+## roadmap
 
-Our roadmap outlines upcoming features and integrations to make AutoLLM the most extensible and powerful base package for large language model applications.
+Our roadmap outlines upcoming features and integrations to make autollm the most extensible and powerful base package for large language model applications.
 
-- [ ] **Budget based email notification feature**
+- [ ] **1-line [Gradio](https://www.gradio.app/) app creation and deployment**
 
-- [ ] **Add evaluation metrics for LLMs**:
+- [ ] **Budget based email notification**
 
-- [ ] **Add unit tests for online vectorDB integrations**:
+- [ ] **Built-in LLM evaluation**
 
-- [ ] **Add example code snippet to Readme on how to integrate llama-hub readers**:
+- [ ] **Unit tests for online vectorDB integrations**
 
-______________________________________________________________________
-
-## 📜 License
-
-AutoLLM is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE).
+- [ ] **Example code snippet to Readme on how to integrate llama-hub readers**
 
 ______________________________________________________________________
 
-## 📞 Contact
+## 📜 license
+
+autollm is available under the [GNU Affero General Public License (AGPL 3.0)](LICENSE).
+
+______________________________________________________________________
+
+## 📞 contact
 
 For more information, support, or questions, please contact:
 
@@ -263,6 +294,21 @@ For more information, support, or questions, please contact:
 
 ______________________________________________________________________
 
-## 🌟 Contributing
+## 🌟 contributing
 
 **Love AutoLLM? Star the repo or contribute and help us make it even better!** See our [contributing guidelines](CONTRIBUTING.md) for more information.
+
+<p align="center">
+    <a href="https://github.com/safevideo/autollm/graphs/contributors">
+      <img src="https://contrib.rocks/image?repo=safevideo/autollm" />
+    </a>
+</p>
+
+<div align="center">
+      <a href="https://www.linkedin.com/company/safevideo/">
+          <img
+            src="https://github.com/safevideo/autollm/assets/44926076/ee33237c-77b6-4760-91f6-a3aff9b75e56"
+            width="17%"
+          />
+      </a>
+</div>
