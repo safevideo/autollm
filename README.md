@@ -31,7 +31,7 @@ ______________________________________________________________________
 
 ## 📦 installation
 
-Easily install autollm package with pip in [**Python>=3.8**](https://www.python.org/downloads/) environment.
+easily install **autollm** package with pip in [**Python>=3.8**](https://www.python.org/downloads/) environment.
 
 ```bash
 pip install autollm
@@ -232,7 +232,7 @@ ______________________________________________________________________
 
 ## 🔄 migration from llama-index
 
-Switching from Llama-Index? We've got you covered.
+switching from Llama-Index? We've got you covered.
 
 <details>
     <summary>👉 easy migration </summary>
@@ -264,17 +264,15 @@ ______________________________________________________________________
 
 ## roadmap
 
-Our roadmap outlines upcoming features and integrations to make autollm the most extensible and powerful base package for large language model applications.
+our roadmap outlines upcoming features and integrations to make autollm the most extensible and powerful base package for large language model applications.
 
 - [ ] **1-line [Gradio](https://www.gradio.app/) app creation and deployment**
 
 - [ ] **Budget based email notification**
 
-- [ ] **Built-in LLM evaluation**
+- [ ] **Automated LLM evaluation**
 
-- [ ] **Unit tests for online vectorDB integrations**
-
-- [ ] **Example code snippet to Readme on how to integrate llama-hub readers**
+- [ ] **Add more quickstart apps on pdf-chat, documentation-chat, academic-paper-analysis, patent-analysis and more!**
 
 ______________________________________________________________________
 
@@ -286,7 +284,7 @@ ______________________________________________________________________
 
 ## 📞 contact
 
-For more information, support, or questions, please contact:
+for more information, support, or questions, please contact:
 
 - **Email**: [support@safevideo.ai](mailto:support@safevideo.ai)
 - **Website**: [SafeVideo](https://safevideo.ai/)
@@ -296,7 +294,7 @@ ______________________________________________________________________
 
 ## 🌟 contributing
 
-**Love AutoLLM? Star the repo or contribute and help us make it even better!** See our [contributing guidelines](CONTRIBUTING.md) for more information.
+**love autollm? Star the repo or contribute and help us make it even better!** See our [contributing guidelines](CONTRIBUTING.md) for more information.
 
 <p align="center">
     <a href="https://github.com/safevideo/autollm/graphs/contributors">
