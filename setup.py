@@ -51,8 +51,22 @@ setuptools.setup(
     description="Ship RAG based LLM Web API's, in seconds.",
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
-    packages=setuptools.find_packages(exclude=["tests"]),
+    url='https://github.com/safevideo/autollm',
+    packages=setuptools.find_packages(exclude=["tests", "examples"]),
     install_requires=get_requirements(),
     extras_require={'dev': DEV_REQUIREMETNS},
     python_requires='>=3.8',
+    classifiers=[
+        'Intended Audience :: Developers', 'Intended Audience :: Information Technology',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
+        'Operating System :: MacOS :: MacOS X', 'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX', 'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9', 'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11', 'Topic :: Software Development',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
+        'Topic :: Internet :: WWW/HTTP :: HTTP Servers'
+    ],
 )

@@ -11,6 +11,7 @@
 [![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)](LICENSE)
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/safevideo/autollm/blob/main/examples/quickstart.ipynb)
 
 </div>
 
@@ -44,7 +45,6 @@ ______________________________________________________________________
 ### create a query engine in seconds
 
 ```python
->>> from autollm.utils.document_reading import read_local_files_as_documents
 >>> from autollm import AutoQueryEngine
 
 >>> query_engine = AutoQueryEngine.from_parameters(
