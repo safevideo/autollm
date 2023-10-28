@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import yaml
 from dotenv import load_dotenv
 
 
@@ -32,3 +33,25 @@ def validate_environment_variables(required_vars: list) -> None:
     for var in required_vars:
         if var not in os.environ:
             raise OSError(f'Environment variable {var} is not set')
+
+
+def load_config_and_dotenv(config_file_path: str, env_file_path: str = None) -> dict:
+    """
+    Load the YAML configuration file and optionally load environment variables from a .env file.
+
+    Parameters:
+        config_file_path (str): Path to the YAML configuration file.
+        env_file_path (str): Path to the .env file.
+
+    Returns:
+        dict: The configuration dictionary.
+    """
+    # Optionally load environment variables from a .env file
+    if env_file_path:
+        load_dotenv(dotenv_path=env_file_path)
+
+    # Load the YAML configuration file
+    with open(config_file_path) as f:
+        config = yaml.safe_load(f)
+
+    return config

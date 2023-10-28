@@ -6,7 +6,7 @@ from llama_index.indices.query.base import BaseQueryEngine
 from autollm.auto.llm import AutoLLM
 from autollm.auto.service_context import AutoServiceContext
 from autollm.auto.vector_store_index import AutoVectorStoreIndex
-from autollm.serve.utils import load_config_and_dotenv
+from autollm.utils.env_utils import load_config_and_dotenv
 
 
 def create_query_engine(
