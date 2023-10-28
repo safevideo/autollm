@@ -69,7 +69,7 @@ class AutoFastAPI:
         if task_name_to_query_engine is not None and config_file_path is not None:
             raise ValueError("Only one of config_file_path or task_name_to_query_engine must be provided")
 
-        if not isinstance(task_name_to_query_engine, dict):
+        if task_name_to_query_engine is not None and not isinstance(task_name_to_query_engine, dict):
             raise ValueError("task_name_to_query_engine must be a dictionary")
 
         app = FastAPI(
@@ -159,3 +159,5 @@ class AutoFastAPI:
             response = query_engine.query(user_query)
 
             return response.response
+
+        return app
