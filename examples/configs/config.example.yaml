@@ -13,11 +13,11 @@ tasks:
       similarity_top_k: 5
     enable_cost_calculator: true
   - name: "qa"
-    system_prompt: "Question:"  # System prompt for this task
+    system_prompt: "You are a friendly ai assistant specialized in question answering."  # System prompt for this task
     vector_store_params:
       vector_store_type: "SimpleVectorStore"
     llm_params:
-      model: "gpt-3.5-turbo"
+      model: "gpt-4"
     service_context_params:
       chunk_size: 1024
     query_engine_params:
