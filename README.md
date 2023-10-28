@@ -3,7 +3,7 @@
     <a align="center" href="" target="_blank">
       <img
         width="1280"
-        src="https://github.com/safevideo/autollm/assets/44926076/6af17028-b7cc-4511-b677-7031ed31ffbc"
+        src="https://github.com/safevideo/autollm/assets/44926076/e545319a-4652-43a7-b02b-45ec877bcfdc"
       >
     </a>
   </p>
@@ -307,7 +307,7 @@ ______________________________________________________________________
 <div align="center">
       <a href="https://www.linkedin.com/company/safevideo/">
           <img
-            src="https://github.com/safevideo/autollm/assets/44926076/ee33237c-77b6-4760-91f6-a3aff9b75e56"
+            src="https://github.com/safevideo/autollm/assets/44926076/23355650-8540-44d9-b446-1d7d65baae79"
             width="17%"
           />
       </a>
