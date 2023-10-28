@@ -308,7 +308,7 @@ ______________________________________________________________________
       <a href="https://www.linkedin.com/company/safevideo/">
           <img
             src="https://github.com/safevideo/autollm/assets/44926076/30e06f9b-1915-4aed-8081-6796432daa7a"
-            width="5%"
+            width="3%"
           />
       </a>
 </div>
