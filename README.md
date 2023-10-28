@@ -45,7 +45,6 @@ ______________________________________________________________________
 ### create a query engine in seconds
 
 ```python
->>> from autollm.utils.document_reading import read_local_files_as_documents
 >>> from autollm import AutoQueryEngine
 
 >>> query_engine = AutoQueryEngine.from_parameters(
