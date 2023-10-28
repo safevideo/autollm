@@ -62,7 +62,7 @@ repos:
         args:
           - --ignore-words-list=crate,nd,strack,dota,ane,segway,fo,gool,winn
           # skip inline comments
-          - --skip="*.py:.*#.*"
+          - --skip="*.py:.*#.*,*ipynb"
 
   - repo: https://github.com/PyCQA/docformatter
     rev: v1.7.5
