@@ -18,14 +18,14 @@
 
 **Simplify. Unify. Amplify.**
 
-| Feature                         | AutoLLM | LangChain | LlamaIndex | LiteLLM |
-| ------------------------------- | :-----: | :-------: | :--------: | :-----: |
-| **100+ LLMs**                   |    ✅    |     ✅     |     ✅      |    ✅    |
-| **Unified API**                 |    ✅    |     ❌     |     ❌      |    ✅    |
-| **20+ Vector Databases**        |    ✅    |     ✅     |     ✅      |    ❌    |
-| **Cost Calculation (80+ LLMs)** |    ✅    |     ❌     |     ❌      |    ✅    |
-| **1-Line RAG LLM Engine**       |    ✅    |     ❌     |     ❌      |    ❌    |
-| **1-Line FastAPI**              |    ✅    |     ❌     |     ❌      |    ❌    |
+| Feature                          | AutoLLM | LangChain | LlamaIndex | LiteLLM |
+| -------------------------------- | :-----: | :-------: | :--------: | :-----: |
+| **100+ LLMs**                    |    ✅    |     ✅     |     ✅      |    ✅    |
+| **Unified API**                  |    ✅    |     ❌     |     ❌      |    ✅    |
+| **20+ Vector Databases**         |    ✅    |     ✅     |     ✅      |    ❌    |
+| **Cost Calculation (100+ LLMs)** |    ✅    |     ❌     |     ❌      |    ✅    |
+| **1-Line RAG LLM Engine**        |    ✅    |     ❌     |     ❌      |    ❌    |
+| **1-Line FastAPI**               |    ✅    |     ❌     |     ❌      |    ❌    |
 
 ______________________________________________________________________
 
@@ -192,7 +192,7 @@ it's setup-free, serverless, and 100x more cost-effective!
 
 </details>
 
-### automated cost calculation for [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
+### automated cost calculation for [100+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
 ```python
 >>> from autollm import AutoServiceContext
