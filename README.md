@@ -177,8 +177,8 @@ ______________________________________________________________________
 
 ### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
 
-🌟 **pro tip**: `autollm` defaults to `lancedb` as the vector store since it is lightweight,
-scales from development to production and is 100x cheaper than alternatives!
+🌟**Pro Tip**: `autollm` defaults to `lancedb` as the vector store: 
+it's setup-free, serverless, and 100x more cost-effective!
 
 <details>
     <summary>👉 default - lancedb example</summary>
