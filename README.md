@@ -20,7 +20,7 @@
 
 | Feature                         | AutoLLM | LangChain | LlamaIndex | LiteLLM |
 | ------------------------------- | :-----: | :-------: | :--------: | :-----: |
-| **80+ LLMs**                    |    ✅    |     ✅     |     ✅      |    ✅    |
+| **100+ LLMs**                   |    ✅    |     ✅     |     ✅      |    ✅    |
 | **Unified API**                 |    ✅    |     ❌     |     ❌      |    ✅    |
 | **20+ Vector Databases**        |    ✅    |     ✅     |     ✅      |    ❌    |
 | **Cost Calculation (80+ LLMs)** |    ✅    |     ❌     |     ❌      |    ✅    |
@@ -128,7 +128,7 @@ ______________________________________________________________________
 
 ## 🌟 features
 
-### supports [80+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
+### supports [100+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
 <details>
     <summary>👉 microsoft azure - openai example:</summary>
