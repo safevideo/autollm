@@ -4,7 +4,7 @@ This package provides automated integrations with leading large language models
 and vector databases, along with various utility functions.
 """
 
-__version__ = '0.0.12'
+__version__ = '0.0.13'
 __author__ = 'safevideo'
 __license__ = 'AGPL-3.0'
 
