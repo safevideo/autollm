@@ -3,13 +3,12 @@
     <a align="center" href="" target="_blank">
       <img
         width="1280"
-        src="https://github.com/safevideo/autollm/assets/44926076/e545319a-4652-43a7-b02b-45ec877bcfdc"
+        src="https://user-images.githubusercontent.com/44926076/278813325-e545319a-4652-43a7-b02b-45ec877bcfdc.png"
       >
     </a>
   </p>
 
 [![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)](LICENSE)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/safevideo/autollm/blob/main/examples/quickstart.ipynb)
 
@@ -177,7 +176,7 @@ ______________________________________________________________________
 
 ### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
 
-🌟**Pro Tip**: `autollm` defaults to `lancedb` as the vector store: 
+🌟**Pro Tip**: `autollm` defaults to `lancedb` as the vector store:
 it's setup-free, serverless, and 100x more cost-effective!
 
 <details>
@@ -294,7 +293,7 @@ ______________________________________________________________________
 
 ## 🌟 contributing
 
-**love autollm? Star the repo or contribute and help us make it even better!** See our [contributing guidelines](CONTRIBUTING.md) for more information.
+**love autollm? star the repo or contribute and help us make it even better!** see our [contributing guidelines](CONTRIBUTING.md) for more information.
 
 <p align="center">
     <a href="https://github.com/safevideo/autollm/graphs/contributors">
@@ -302,11 +301,27 @@ ______________________________________________________________________
     </a>
 </p>
 
+______________________________________________________________________
+
 <div align="center">
-      <a href="https://www.linkedin.com/company/safevideo/">
-          <img
-            src="https://github.com/safevideo/autollm/assets/44926076/30e06f9b-1915-4aed-8081-6796432daa7a"
-            width="3%"
-          />
-      </a>
+  <b>follow us for more!</b>
+  <br>
+  <a href="https://www.linkedin.com/company/safevideo/">
+      <img
+        src="https://user-images.githubusercontent.com/44926076/278822352-30e06f9b-1915-4aed-8081-6796432daa7a.png"
+        height="32px"
+      />
+  </a>
+  <a href="https://huggingface.co/safevideo">
+      <img
+        src="https://user-images.githubusercontent.com/34196005/278877706-ed074c9c-0938-48a1-98e8-39a322faf01d.png"
+        height="32px"
+      />
+  </a>
+  <a href="https://twitter.com/safevideo_ai">
+      <img
+        src="https://user-images.githubusercontent.com/34196005/278877049-141925a9-aa1b-4730-829e-74f6d08ee8ca.png"
+        height="32px"
+      />
+  </a>
 </div>
