@@ -7,19 +7,13 @@ from autollm.utils.templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 logger = logging.getLogger(__name__)
 
 
-def set_default_prompt_template() -> ChatPromptTemplate:
+def set_default_prompt_template():
     """
-    Sets the default prompt template for the query engine.
+    Sets the default prompt templates for the query engine.
 
     Returns:
         SystemPrompt (str): The default system prompt for the query engine.
-        ChatPromptTemplate: The default prompt template for the query engine.
+        QueryPromptTemplate: The default query prompt template for the query engine.
     """
-    chat_text_msgs = [
-        ChatMessage(
-            role=MessageRole.USER,
-            content=QUERY_PROMPT_TEMPLATE,
-        ),
-    ]
 
-    return SYSTEM_PROMPT, ChatPromptTemplate(chat_text_msgs)
+    return SYSTEM_PROMPT, QUERY_PROMPT_TEMPLATE
