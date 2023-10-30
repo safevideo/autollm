@@ -1,7 +1,7 @@
 # Importing the necessary modules for testing and mocking
 
 from fastapi.testclient import TestClient
-from llama_index import Document
+from llama_index import Document, VectorStoreIndex
 from llama_index.indices.query.base import BaseQueryEngine
 
 from autollm.auto.fastapi_app import AutoFastAPI
@@ -49,7 +49,7 @@ def test_auto_fastapi_from_query_engine():
     assert any(route.path == "/query" for route in app.routes)
 
 
-def test_query_endpoint():
+def test_query_endpoint_from_config():
     # Create the FastAPI app with test configuration
     app = AutoFastAPI.from_config('tests/config.yaml', documents=documents)
     client = TestClient(app)
@@ -61,3 +61,17 @@ def test_query_endpoint():
     # Test with an invalid task
     response = client.post("/query", json={"task": "invalid_task", "user_query": "test query"})
     assert response.status_code == 400
+
+
+def test_query_endpoint_from_query_engine():
+    # Create llama-index query engine
+    index = VectorStoreIndex.from_documents(documents=documents)
+    query_engine = index.as_query_engine()
+
+    # Create the FastAPI app from the query engine
+    app = AutoFastAPI.from_query_engine(query_engine=query_engine)
+    client = TestClient(app)
+
+    # Test with a user query
+    response = client.post("/query", json={"user_query": "why so serious?"})
+    assert response.status_code == 200

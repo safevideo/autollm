@@ -9,8 +9,12 @@ from autollm.serve.docs import description, openapi_url, tags_metadata, terms_of
 from autollm.serve.utils import load_config_and_initialize_engines
 
 
-class QueryPayload(BaseModel):
+class FromConfigQueryPayload(BaseModel):
     task: str = Field(..., description="Task to execute")
+    user_query: str = Field(..., description="User's query")
+
+
+class FromEngineQueryPayload(BaseModel):
     user_query: str = Field(..., description="User's query")
 
 
@@ -86,7 +90,7 @@ class AutoFastAPI:
                 config_file_path, env_file_path, documents)
 
         @app.post("/query")
-        async def query(payload: QueryPayload):
+        async def query(payload: FromConfigQueryPayload):
             task = payload.task
             user_query = payload.user_query
 
@@ -153,7 +157,7 @@ class AutoFastAPI:
         )
 
         @app.post("/query")
-        async def query(payload: QueryPayload):
+        async def query(payload: FromEngineQueryPayload):
             user_query = payload.user_query
 
             response = query_engine.query(user_query)
