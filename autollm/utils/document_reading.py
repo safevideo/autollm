@@ -1,7 +1,9 @@
 import logging
 import shutil
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Callable, Tuple
+import os
+import stat
 
 from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
@@ -54,6 +56,20 @@ def read_files_as_documents(
     return documents
 
 
+# From http://stackoverflow.com/a/4829285/548792
+def on_rm_error(func: Callable, path: str, exc_info: Tuple):
+    """
+    Error handler for `shutil.rmtree` to handle permission errors.
+    
+    Parameters:
+        func (Callable): The function that raised the error.
+        path (str): The path to the file or directory which couldn't be removed.
+        exc_info (Tuple): Exception information returned by sys.exc_info().
+    """
+    os.chmod(path, stat.S_IWRITE)
+    os.unlink(path)
+    
+    
 def read_github_repo_as_documents(
         git_repo_url: str,
         relative_folder_path: Optional[str] = None,
@@ -89,6 +105,6 @@ def read_github_repo_as_documents(
         logger.info(f"Operations complete, deleting temporary directory {temp_dir}..")
     finally:
         # Delete the temporary directory
-        shutil.rmtree(temp_dir)
+        shutil.rmtree(temp_dir, onerror=on_rm_error)
 
     return documents
