@@ -16,7 +16,6 @@ def import_vector_store_class(vector_store_class_name: str):
     return class_
 
 
-# TODO: add from_config (e.g., from yaml file)
 class AutoVectorStoreIndex:
     """AutoVectorStoreIndex lets you dynamically initialize any Vector Store index based on the vector store
     class name and additional parameters.

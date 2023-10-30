@@ -7,7 +7,6 @@ from llama_index.embeddings.base import BaseEmbedding
 from llama_index.llms.utils import LLMType
 from llama_index.prompts import PromptTemplate
 from llama_index.prompts.base import BasePromptTemplate
-from llama_index.prompts.prompt_type import PromptType
 
 from autollm.callbacks.cost_calculating import CostCalculatingHandler
 from autollm.utils.llm_utils import set_default_prompt_template
