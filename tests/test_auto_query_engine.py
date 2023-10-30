@@ -25,7 +25,7 @@ def test_auto_query_engine_from_instances():
 
 
 def test_auto_query_engine_from_config():
-    query_engine = AutoQueryEngine.from_config(config_file="tests/config.yaml", documents=documents)
+    query_engine = AutoQueryEngine.from_config(config_file_path="tests/config.yaml", documents=documents)
 
     # Check if the query_engine is an instance of BaseQueryEngine
     assert isinstance(query_engine, BaseQueryEngine)
