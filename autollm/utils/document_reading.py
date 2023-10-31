@@ -1,9 +1,9 @@
 import logging
-import shutil
-from pathlib import Path
-from typing import List, Optional, Sequence, Callable, Tuple
 import os
+import shutil
 import stat
+from pathlib import Path
+from typing import Callable, List, Optional, Sequence, Tuple
 
 from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
@@ -60,7 +60,7 @@ def read_files_as_documents(
 def on_rm_error(func: Callable, path: str, exc_info: Tuple):
     """
     Error handler for `shutil.rmtree` to handle permission errors.
-    
+
     Parameters:
         func (Callable): The function that raised the error.
         path (str): The path to the file or directory which couldn't be removed.
@@ -68,8 +68,8 @@ def on_rm_error(func: Callable, path: str, exc_info: Tuple):
     """
     os.chmod(path, stat.S_IWRITE)
     os.unlink(path)
-    
-    
+
+
 def read_github_repo_as_documents(
         git_repo_url: str,
         relative_folder_path: Optional[str] = None,
