@@ -85,6 +85,8 @@ ______________________________________________________________________
 "A startup that provides self hosted AI API's for companies!"
 ```
 
+</details>
+
 ### convert it to a FastAPI app in 1-line
 
 ```python
@@ -100,8 +102,6 @@ INFO:    Waiting for application startup.
 INFO:    Application startup complete.
 INFO:    Uvicorn running on http://http://0.0.0.0:8000/
 ```
-
-</details>
 
 <details>
     <summary>👉 advanced usage </summary>
