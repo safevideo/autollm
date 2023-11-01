@@ -1,44 +1,66 @@
-### PR recommendations
+# Contributing to AutoLLM 🌟
 
-To allow your work to be integrated as seamlessly as possible, we advise you to:
+Thank you for considering a contribution to AutoLLM. Your input is invaluable to our project's continued growth and improvement.
 
-- **Create a new branch** for your PR. This will allow you to keep your changes separate from the `main` branch and
-  facilitate the review process.
+## PR Guidelines 📝
 
-- **Keep your PR small**. If you want to contribute a new feature, consider splitting it into multiple PRs. This will
-  allow us to review your work more easily and provide you with feedback faster.
+To streamline the integration of your contributions:
 
-- Verify your PR is **up-to-date** with `safevideo/autollm` `main` branch. If your PR is behind you can update
-  your code by clicking the 'Update branch' button or by running `git pull` and `git merge main` locally.
+- **New Branch, Who's This? 🌱**: Always create a new branch for your PR. It keeps things neat and makes the review process smoother.
 
-### Docstrings
+- **Size Matters 📏**: Aim for smaller PRs. If you have a big feature in mind, consider breaking it up. It helps us understand your contribution better and gets you feedback quicker!
 
-Not all functions or classes require docstrings but when they do, we
-follow [google-style docstrings format](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings).
-Here is an example:
+- **Stay Current 🕰️**: Ensure your PR is synchronized with the latest updates from the `safevideo/autollm` `main` branch. If your branch is outdated, update it using the 'Update branch' button or by executing `git pull` and `git merge main`.
+
+## Code Standards 🛠️
+
+Maintaining a consistent codebase is crucial. We utilize tools such as [flake8](https://flake8.pycqa.org/en/latest/) and [isort](https://pycqa.github.io/isort/) to achieve this.
+
+### Pre-commit Hooks 🔗
+
+1. **Installation**:
+
+   ```bash
+   pip install autollm[dev]
+   ```
+
+1. **Pre-commit Setup**:
+
+   ```bash
+   pre-commit install
+   pre-commit run --all-files
+   ```
+
+Upon setup, the pre-commit hooks will automatically check and format code during commits.
+
+### Docstrings 📜
+
+For functions or classes that warrant explanation, we use docstrings adhering to the [google-style format](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings):
 
 ```python
 """
-    What the function does. Performs NMS on given detection predictions.
+    Brief description of the function's purpose.
 
-    Args:
-        arg1: The description of the 1st argument
-        arg2: The description of the 2nd argument
+    Parameters:
+        arg1: Description of the first argument.
+        arg2: Description of the second argument.
 
     Returns:
-        What the function returns. Empty if nothing is returned.
+        Expected return values or outcomes.
 
     Raises:
-        Exception Class: When and why this exception can be raised by the function.
+        Potential exceptions and reasons for them.
 """
 ```
 
-### Code style
+## Testing 🔍
 
-We use pre-commit hooks to ensure that all code is formatted according to
-[flake8](https://flake8.pycqa.org/en/latest/) and
-[isort](https://pycqa.github.io/isort/). To install the pre-commit hooks, run:
+Before finalizing your PR, ensure it aligns with our existing test suite:
 
 ```bash
-pre-commit install
+pytest
 ```
+
+______________________________________________________________________
+
+Your interest and potential contributions to AutoLLM are greatly appreciated. Together, we can continue refining and expanding AutoLLM for the broader community.
