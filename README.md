@@ -234,15 +234,31 @@ ______________________________________________________________________
 it's setup-free, serverless, and 100x more cost-effective!
 
 <details>
-    <summary>👉 default - lancedb example</summary>
+    <summary>👉 more vectordbs:</summary>
 
-```python
->>> from autollm import AutoVectorStoreIndex
+- QdrantVectorStore example:
+  ```python
+  >>> from autollm import AutoQueryEngine
+  >>> import qdrant_client
 
->>> vector_store_index = AutoVectorStoreIndex.from_defaults(
->>>     documents=documents
->>> )
-```
+  >>> vector_store_type = "QdrantVectorStore"
+  >>> client = qdrant_client.QdrantClient(
+  ...     url="http://<host>:<port>",
+  ...     api_key="<qdrant-api-key>"
+  ... )
+  >>> collection_name = "quickstart"
+
+  >>> vector_store_params = {
+  ...     "vector_store_type": vector_store_type,
+  ...     "client": client,
+  ...     "collection_name": collection_name,
+  ... }
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     vector_store_params=vector_store_params
+  ... )
+  ```
 
 </details>
 
@@ -345,7 +361,7 @@ for more information, support, or questions, please contact:
 
 ______________________________________________________________________
 
-## 🌟 contributing
+## 🏆 contributing
 
 **love autollm? star the repo or contribute and help us make it even better!** see our [contributing guidelines](CONTRIBUTING.md) for more information.
 
