@@ -110,6 +110,8 @@ class AutoFastAPI:
 
             return response.response
 
+        return app
+
     @staticmethod
     def from_query_engine(
             query_engine: BaseQueryEngine,
