@@ -9,7 +9,8 @@
   </p>
 
 [![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
-[![GNU AGPL 3.0](https://img.shields.io/badge/license-AGPL_3.0-green)](LICENSE)
+<a href="https://pepy.tech/project/autollm"><img src="https://pepy.tech/badge/autollm" alt="total autollm downloads"></a>
+[![license](https://img.shields.io/pypi/l/autollm)](LICENSE)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/safevideo/autollm/blob/main/examples/quickstart.ipynb)
 
 </div>
@@ -44,19 +45,48 @@ ______________________________________________________________________
 ### create a query engine in seconds
 
 ```python
->>> from autollm import AutoQueryEngine
+>>> from autollm import AutoQueryEngine, read_files_as_documents
 
->>> query_engine = AutoQueryEngine.from_parameters(
->>>   documents: List[llama_index.Documents]
->>> )
+>>> documents = read_files_as_documents(input_dir="examples/data")
+>>> query_engine = AutoQueryEngine.from_parameters(documents=documents)
 
 >>> response = query_engine.query(
->>>   "Why did SafeVideo AI develop this project?"
->>> )
+...     "Why did SafeVideo AI develop this project?"
+... )
 
 >>> response.response
 "Because they wanted to deploy rag based llm apis in no time!"
 ```
+
+<details>
+    <summary>👉 advanced usage </summary>
+
+```python
+>>> from autollm import AutoQueryEngine
+
+>>> query_engine = AutoQueryEngine.from_parameters(
+...     documents=documents,
+...     system_prompt='...',
+...     query_wrapper_prompt='...',
+...     enable_cost_calculator=True,
+...     llm_params={"model": "gpt-3.5-turbo"},
+...     vector_store_params={
+...       "vector_store_type": "LanceDBVectorStore",
+...       "uri": "/tmp/lancedb",
+...       "table_name": "lancedb",
+...       "nprobs": 20
+...     },
+...     service_context_params={"chunk_size": 1024},
+...     query_engine_params={"similarity_top_k": 10},
+... )
+
+>>> response = query_engine.query("Who is SafeVideo AI?")
+
+>>> print(response.response)
+"A startup that provides self hosted AI API's for companies!"
+```
+
+</details>
 
 ### convert it to a FastAPI app in 1-line
 
@@ -68,58 +98,31 @@ ______________________________________________________________________
 >>> app = AutoFastAPI.from_query_engine(query_engine)
 
 >>> uvicorn.run(app, host="0.0.0.0", port=8000)
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://http://0.0.0.0:8000/
+INFO:    Started server process [12345]
+INFO:    Waiting for application startup.
+INFO:    Application startup complete.
+INFO:    Uvicorn running on http://http://0.0.0.0:8000/
 ```
-
-</details>
 
 <details>
     <summary>👉 advanced usage </summary>
 
 ```python
->>> from autollm import AutoQueryEngine
-
->>> query_engine = AutoQueryEngine.from_parameters(
->>>   documents=documents,
->>>   system_prompt= ...
->>>   query_wrapper_prompt= ...
->>>   enable_cost_calculator=True,
->>>   llm_params={"model": "gpt-3.5-turbo"},
->>>   vector_store_params={
->>>     "vector_store_type": "LanceDBVectorStore",
->>>     "uri": "/tmp/lancedb",
->>>     "table_name": "lancedb",
->>>     "nprobs": 20
->>>   },
->>>   service_context_params={"chunk_size": 1024},
->>>   query_engine_params={"similarity_top_k": 10},
->>> )
-
->>> response = query_engine.query("Who is SafeVideo AI?")
-
->>> print(response.response)
-"A startup that provides self hosted AI API's for companies!"
-```
-
-```python
 >>> from autollm import AutoFastAPI
 
 >>> app = AutoFastAPI.from_query_engine(
-      query_engine,
-      api_title= ...,
-      api_description= ...,
-      api_version= ...,
-      api_term_of_service= ...,
+...      query_engine,
+...      api_title='...',
+...      api_description='...',
+...      api_version='...',
+...      api_term_of_service='...',
     )
 
 >>> uvicorn.run(app, host="0.0.0.0", port=8000)
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://http://0.0.0.0:8000/
+INFO:    Started server process [12345]
+INFO:    Waiting for application startup.
+INFO:    Application startup complete.
+INFO:    Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
@@ -130,47 +133,99 @@ ______________________________________________________________________
 
 ### supports [100+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
-<details>
-    <summary>👉 microsoft azure - openai example:</summary>
-
 ```python
->>> from autollm import AutoLLM
+>>> from autollm import AutoQueryEngine
 
->>> os.environ["AZURE_API_KEY"] = ""
->>> os.environ["AZURE_API_BASE"] = ""
->>> os.environ["AZURE_API_VERSION"] = ""
+>>> os.environ["HUGGINGFACE_API_KEY"] = "huggingface_api_key"
 
->>> llm = AutoLLM(model="azure/<your_deployment_name>")
+>>> model = "huggingface/WizardLM/WizardCoder-Python-34B-V1.0"
+>>> api_base = "https://my-endpoint.huggingface.cloud"
+
+>>> llm_params = {
+...     "model": model,
+...     "api_base": api_base,
+... }
+
+>>> AutoQueryEngine.from_parameters(
+...     documents='...',
+...     llm_params=llm_params
+... )
 ```
 
-</details>
-
 <details>
-    <summary>👉 google - vertexai example</summary>
+    <summary>👉 more llms:</summary>
 
-```python
->>> from autollm import AutoLLM
+- huggingface - ollama example:
 
->>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
->>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+  ```python
+  >>> from autollm import AutoQueryEngine
 
->>> llm = AutoLLM(model="text-bison@001")
-```
+  >>> model = "ollama/llama2"
+  >>> api_base = "http://localhost:11434"
 
-</details>
+  >>> llm_params = {
+  ...     "model": model,
+  ...     "api_base": api_base,
+  ... }
 
-<details>
-<summary>👉 aws bedrock - claude v2 example</summary>
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
 
-```python
->>> from autollm import AutoLLM
+- microsoft azure - openai example:
 
->>> os.environ["AWS_ACCESS_KEY_ID"] = ""
->>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
->>> os.environ["AWS_REGION_NAME"] = ""
+  ```python
+  >>> from autollm import AutoQueryEngine
 
->>> llm = AutoLLM(model="anthropic.claude-v2")
-```
+  >>> os.environ["AZURE_API_KEY"] = ""
+  >>> os.environ["AZURE_API_BASE"] = ""
+  >>> os.environ["AZURE_API_VERSION"] = ""
+
+  >>> model = "azure/<your_deployment_name>")
+  >>> llm_params = {"model": model}
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
+
+- google - vertexai example:
+
+  ```python
+  >>> from autollm import AutoQueryEngine
+
+  >>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
+  >>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+
+  >>> model = "text-bison@001"
+  >>> llm_params = {"model": model}
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
+
+- aws bedrock - claude v2 example:
+
+  ```python
+  >>> from autollm import AutoQueryEngine
+
+  >>> os.environ["AWS_ACCESS_KEY_ID"] = ""
+  >>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+  >>> os.environ["AWS_REGION_NAME"] = ""
+
+  >>> model = "anthropic.claude-v2"
+  >>> llm_params = {"model": model}
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
 
 </details>
 
@@ -180,15 +235,31 @@ ______________________________________________________________________
 it's setup-free, serverless, and 100x more cost-effective!
 
 <details>
-    <summary>👉 default - lancedb example</summary>
+    <summary>👉 more vectordbs:</summary>
 
-```python
->>> from autollm import AutoVectorStoreIndex
+- QdrantVectorStore example:
+  ```python
+  >>> from autollm import AutoQueryEngine
+  >>> import qdrant_client
 
->>> vector_store_index = AutoVectorStoreIndex.from_defaults(
->>>     documents=documents
->>> )
-```
+  >>> vector_store_type = "QdrantVectorStore"
+  >>> client = qdrant_client.QdrantClient(
+  ...     url="http://<host>:<port>",
+  ...     api_key="<qdrant-api-key>"
+  ... )
+  >>> collection_name = "quickstart"
+
+  >>> vector_store_params = {
+  ...     "vector_store_type": vector_store_type,
+  ...     "client": client,
+  ...     "collection_name": collection_name,
+  ... }
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     vector_store_params=vector_store_params
+  ... )
+  ```
 
 </details>
 
@@ -291,7 +362,7 @@ for more information, support, or questions, please contact:
 
 ______________________________________________________________________
 
-## 🌟 contributing
+## 🏆 contributing
 
 **love autollm? star the repo or contribute and help us make it even better!** see our [contributing guidelines](CONTRIBUTING.md) for more information.
 
