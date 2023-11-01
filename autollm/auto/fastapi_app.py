@@ -1,21 +1,24 @@
 from typing import Optional, Sequence
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from llama_index import Document
 from llama_index.indices.query.base import BaseQueryEngine
 from pydantic import BaseModel, Field
 
 from autollm.serve.docs import description, openapi_url, tags_metadata, terms_of_service, title, version
-from autollm.serve.utils import load_config_and_initialize_engines
+from autollm.serve.utils import load_config_and_initialize_engines, stream_text_data
 
 
 class FromConfigQueryPayload(BaseModel):
     task: str = Field(..., description="Task to execute")
     user_query: str = Field(..., description="User's query")
+    streaming: Optional[bool] = Field(False, description="Flag to enable streaming of response")
 
 
 class FromEngineQueryPayload(BaseModel):
     user_query: str = Field(..., description="User's query")
+    streaming: Optional[bool] = Field(False, description="Flag to enable streaming of response")
 
 
 class AutoFastAPI:
@@ -101,6 +104,10 @@ class AutoFastAPI:
             query_engine: BaseQueryEngine = task_name_to_query_engine[task]
             response = query_engine.query(user_query)
 
+            # Check if the response should be streamed
+            if payload.streaming:
+                return StreamingResponse(stream_text_data(response.response))
+
             return response.response
 
         return app
@@ -161,6 +168,10 @@ class AutoFastAPI:
             user_query = payload.user_query
 
             response = query_engine.query(user_query)
+
+            # Check if the response should be streamed
+            if payload.streaming:
+                return StreamingResponse(stream_text_data(response.response))
 
             return response.response
 
