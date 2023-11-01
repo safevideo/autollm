@@ -9,9 +9,8 @@
   </p>
 
 [![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
-[![downloads](https://img.shields.io/pypi/dm/autollm)](https://pypistats.org/packages/autollm)
+<a href="https://pepy.tech/project/autollm"><img src="https://pepy.tech/badge/autollm" alt="total autollm downloads"></a>
 [![license](https://img.shields.io/pypi/l/autollm)](LICENSE)
-[![python-version](https://img.shields.io/pypi/pyversions/autollm)](https://badge.fury.io/py/autollm)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/safevideo/autollm/blob/main/examples/quickstart.ipynb)
 
 </div>
