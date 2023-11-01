@@ -152,7 +152,26 @@ ______________________________________________________________________
 ```
 
 <details>
-    <summary>👉 more examples:</summary>
+    <summary>👉 more llms:</summary>
+
+- huggingface - ollama example:
+
+  ```python
+  >>> from autollm import AutoQueryEngine
+
+  >>> model = "ollama/llama2"
+  >>> api_base = "http://localhost:11434"
+
+  >>> llm_params = {
+  ...     "model": model,
+  ...     "api_base": api_base,
+  ... }
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
 
 - microsoft azure - openai example:
 
