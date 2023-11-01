@@ -44,18 +44,45 @@ ______________________________________________________________________
 ### create a query engine in seconds
 
 ```python
->>> from autollm import AutoQueryEngine
+>>> from autollm import AutoQueryEngine, read_files_as_documents
 
->>> query_engine = AutoQueryEngine.from_parameters(
->>>   documents: List[llama_index.Documents]
->>> )
+>>> documents = read_files_as_documents(input_dir="examples/data")
+>>> query_engine = AutoQueryEngine.from_parameters(documents=documents)
 
 >>> response = query_engine.query(
->>>   "Why did SafeVideo AI develop this project?"
->>> )
+...     "Why did SafeVideo AI develop this project?"
+... )
 
 >>> response.response
 "Because they wanted to deploy rag based llm apis in no time!"
+```
+
+<details>
+    <summary>👉 advanced usage </summary>
+
+```python
+>>> from autollm import AutoQueryEngine
+
+>>> query_engine = AutoQueryEngine.from_parameters(
+...     documents=documents,
+...     system_prompt='...',
+...     query_wrapper_prompt='...',
+...     enable_cost_calculator=True,
+...     llm_params={"model": "gpt-3.5-turbo"},
+...     vector_store_params={
+...       "vector_store_type": "LanceDBVectorStore",
+...       "uri": "/tmp/lancedb",
+...       "table_name": "lancedb",
+...       "nprobs": 20
+...     },
+...     service_context_params={"chunk_size": 1024},
+...     query_engine_params={"similarity_top_k": 10},
+... )
+
+>>> response = query_engine.query("Who is SafeVideo AI?")
+
+>>> print(response.response)
+"A startup that provides self hosted AI API's for companies!"
 ```
 
 ### convert it to a FastAPI app in 1-line
@@ -68,10 +95,10 @@ ______________________________________________________________________
 >>> app = AutoFastAPI.from_query_engine(query_engine)
 
 >>> uvicorn.run(app, host="0.0.0.0", port=8000)
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://http://0.0.0.0:8000/
+INFO:    Started server process [12345]
+INFO:    Waiting for application startup.
+INFO:    Application startup complete.
+INFO:    Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
@@ -80,46 +107,21 @@ INFO:     Uvicorn running on http://http://0.0.0.0:8000/
     <summary>👉 advanced usage </summary>
 
 ```python
->>> from autollm import AutoQueryEngine
-
->>> query_engine = AutoQueryEngine.from_parameters(
->>>   documents=documents,
->>>   system_prompt= ...
->>>   query_wrapper_prompt= ...
->>>   enable_cost_calculator=True,
->>>   llm_params={"model": "gpt-3.5-turbo"},
->>>   vector_store_params={
->>>     "vector_store_type": "LanceDBVectorStore",
->>>     "uri": "/tmp/lancedb",
->>>     "table_name": "lancedb",
->>>     "nprobs": 20
->>>   },
->>>   service_context_params={"chunk_size": 1024},
->>>   query_engine_params={"similarity_top_k": 10},
->>> )
-
->>> response = query_engine.query("Who is SafeVideo AI?")
-
->>> print(response.response)
-"A startup that provides self hosted AI API's for companies!"
-```
-
-```python
 >>> from autollm import AutoFastAPI
 
 >>> app = AutoFastAPI.from_query_engine(
-      query_engine,
-      api_title= ...,
-      api_description= ...,
-      api_version= ...,
-      api_term_of_service= ...,
+...      query_engine,
+...      api_title='...',
+...      api_description='...',
+...      api_version='...',
+...      api_term_of_service='...',
     )
 
 >>> uvicorn.run(app, host="0.0.0.0", port=8000)
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://http://0.0.0.0:8000/
+INFO:    Started server process [12345]
+INFO:    Waiting for application startup.
+INFO:    Application startup complete.
+INFO:    Uvicorn running on http://http://0.0.0.0:8000/
 ```
 
 </details>
@@ -130,18 +132,25 @@ ______________________________________________________________________
 
 ### supports [100+ LLMs](https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json)
 
-<details>
-    <summary>👉 microsoft azure - openai example:</summary>
-
 ```python
->>> from autollm import AutoLLM
+>>> from autollm import AutoQueryEngine
 
->>> os.environ["AZURE_API_KEY"] = ""
->>> os.environ["AZURE_API_BASE"] = ""
->>> os.environ["AZURE_API_VERSION"] = ""
+>>> model = "huggingface/WizardLM/WizardCoder-Python-34B-V1.0"
+>>> api_base = "https://my-endpoint.huggingface.cloud"
 
->>> llm = AutoLLM(model="azure/<your_deployment_name>")
+>>> llm_params = {
+...     "model": model,
+...     "api_base": api_base,
+... }
+
+>>> AutoQueryEngine.from_parameters(
+...     documents='...',
+...     llm_params=llm_params
+... )
 ```
+
+<details>
+    <summary>👉 more examples:</summary>
 
 </details>
 
