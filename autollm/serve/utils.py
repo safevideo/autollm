@@ -9,6 +9,8 @@ from autollm.utils.env_utils import load_config_and_dotenv
 
 logging.basicConfig(level=logging.INFO)
 
+STREAMING_CHUNK_SIZE = 16
+
 
 def load_config_and_initialize_engines(
         config_file_path: str,
@@ -36,3 +38,12 @@ def load_config_and_initialize_engines(
         query_engines[task_name] = AutoQueryEngine.from_parameters(documents=documents, **task_params)
 
     return query_engines
+
+
+def stream_text_data(text_data: str, chunk_size: int = STREAMING_CHUNK_SIZE):
+    start = 0
+    end = chunk_size
+    while start < len(text_data):
+        yield text_data[start:end]
+        start = end
+        end += chunk_size
