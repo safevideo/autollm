@@ -135,6 +135,8 @@ ______________________________________________________________________
 ```python
 >>> from autollm import AutoQueryEngine
 
+>>> os.environ["HUGGINGFACE_API_KEY"] = "huggingface_api_key"
+
 >>> model = "huggingface/WizardLM/WizardCoder-Python-34B-V1.0"
 >>> api_base = "https://my-endpoint.huggingface.cloud"
 
@@ -152,34 +154,58 @@ ______________________________________________________________________
 <details>
     <summary>👉 more examples:</summary>
 
-</details>
+- microsoft azure - openai example:
 
-<details>
-    <summary>👉 google - vertexai example</summary>
+  ```python
+  >>> from autollm import AutoQueryEngine
 
-```python
->>> from autollm import AutoLLM
+  >>> os.environ["AZURE_API_KEY"] = ""
+  >>> os.environ["AZURE_API_BASE"] = ""
+  >>> os.environ["AZURE_API_VERSION"] = ""
 
->>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
->>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
+  >>> model = "azure/<your_deployment_name>")
+  >>> llm_params = {"model": model}
 
->>> llm = AutoLLM(model="text-bison@001")
-```
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
 
-</details>
+- google - vertexai example:
 
-<details>
-<summary>👉 aws bedrock - claude v2 example</summary>
+  ```python
+  >>> from autollm import AutoQueryEngine
 
-```python
->>> from autollm import AutoLLM
+  >>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
+  >>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
 
->>> os.environ["AWS_ACCESS_KEY_ID"] = ""
->>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
->>> os.environ["AWS_REGION_NAME"] = ""
+  >>> model = "text-bison@001"
+  >>> llm_params = {"model": model}
 
->>> llm = AutoLLM(model="anthropic.claude-v2")
-```
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
+
+- aws bedrock - claude v2 example:
+
+  ```python
+  >>> from autollm import AutoQueryEngine
+
+  >>> os.environ["AWS_ACCESS_KEY_ID"] = ""
+  >>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
+  >>> os.environ["AWS_REGION_NAME"] = ""
+
+  >>> model = "anthropic.claude-v2"
+  >>> llm_params = {"model": model}
+
+  >>> AutoQueryEngine.from_parameters(
+  ...     documents='...',
+  ...     llm_params=llm_params
+  ... )
+  ```
 
 </details>
 
