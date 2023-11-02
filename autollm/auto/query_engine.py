@@ -158,6 +158,8 @@ class AutoQueryEngine:
         """
 
         config = load_config_and_dotenv(config_file_path, env_file_path)
+        # Get the first task configuration
+        config = config['tasks'][0]
 
         return create_query_engine(
             documents=documents,
