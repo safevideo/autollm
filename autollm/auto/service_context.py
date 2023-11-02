@@ -1,9 +1,9 @@
 import logging
-from typing import Union
+from typing import Optional, Union
 
-from llama_index import OpenAIEmbedding, ServiceContext
+from llama_index import ServiceContext
 from llama_index.callbacks import CallbackManager
-from llama_index.embeddings.base import BaseEmbedding
+from llama_index.embeddings.utils import EmbedType
 from llama_index.llms.utils import LLMType
 from llama_index.prompts import PromptTemplate
 from llama_index.prompts.base import BasePromptTemplate
@@ -21,8 +21,8 @@ class AutoServiceContext:
 
     @staticmethod
     def from_defaults(
-            llm: LLMType = "default",
-            embed_model: BaseEmbedding = None,
+            llm: Optional[LLMType] = "default",
+            embed_model: Optional[EmbedType] = "default",
             system_prompt: str = None,
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = False,
@@ -32,8 +32,8 @@ class AutoServiceContext:
         enable_token_counting is True, tracks the number of tokens used by the LLM for each query.
 
         Parameters:
-            llm (LLM): The LLM to use for the query engine. Defaults to gp3-5-turbo.
-            embed_model (BaseEmbedding): The embedding model to use for the query engine.
+            llm (LLM): The LLM to use for the query engine. Defaults to gpt-3.5-turbo.
+            embed_model (BaseEmbedding): The embedding model to use for the query engine. Defaults to OpenAIEmbedding.
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
             cost_calculator_verbose (bool): Flag to enable cost calculator logging.
@@ -53,9 +53,6 @@ class AutoServiceContext:
         if enable_cost_calculator:
             model = llm.metadata.model_name if not "default" else "gpt-3.5-turbo"
             callback_manager.add_handler(CostCalculatingHandler(model=model, verbose=True))
-
-        if embed_model is None:
-            embed_model = OpenAIEmbedding()
 
         service_context = ServiceContext.from_defaults(
             llm=llm,

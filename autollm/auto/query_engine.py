@@ -1,6 +1,7 @@
-from typing import Sequence
+from typing import Optional, Sequence
 
 from llama_index import Document, ServiceContext, VectorStoreIndex
+from llama_index.embeddings.utils import EmbedType
 from llama_index.indices.query.base import BaseQueryEngine
 
 from autollm.auto.llm import AutoLLM
@@ -14,6 +15,7 @@ def create_query_engine(
         system_prompt: str = None,
         query_wrapper_prompt: str = None,
         enable_cost_calculator: bool = True,
+        embed_model: Optional[EmbedType] = "default",
         llm_params: dict = None,
         vector_store_params: dict = None,
         service_context_params: dict = None,
@@ -26,6 +28,7 @@ def create_query_engine(
         system_prompt (str): The system prompt to use for the query engine.
         query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
         enable_cost_calculator (bool): Flag to enable cost calculator logging.
+        embed_model (BaseEmbedding): The embedding model to use for the query engine. Defaults to OpenAIEmbedding.
         llm_params (dict): Parameters for the LLM.
         vector_store_params (dict): Parameters for the vector store.
         service_context_params (dict): Parameters for the service context.
@@ -46,6 +49,7 @@ def create_query_engine(
     vector_store_index = AutoVectorStoreIndex.from_defaults(**vector_store_params, documents=documents)
     service_context = AutoServiceContext.from_defaults(
         llm=llm,
+        embed_model=embed_model,
         system_prompt=system_prompt,
         query_wrapper_prompt=query_wrapper_prompt,
         enable_cost_calculator=enable_cost_calculator,
