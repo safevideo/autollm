@@ -1,6 +1,15 @@
 from typing import Optional, Sequence
 
 from llama_index import Document, StorageContext, VectorStoreIndex
+from llama_index.node_parser import SimpleNodeParser
+from llama_index.node_parser.extractors import (
+    EntityExtractor,
+    KeywordExtractor,
+    MetadataExtractor,
+    QuestionsAnsweredExtractor,
+    SummaryExtractor,
+    TitleExtractor,
+)
 
 
 def import_vector_store_class(vector_store_class_name: str):
@@ -25,6 +34,7 @@ class AutoVectorStoreIndex:
     def from_defaults(
             vector_store_type: str = "LanceDBVectorStore",
             documents: Optional[Sequence[Document]] = None,
+            enable_metadata_extraction: bool = False,
             **kwargs) -> VectorStoreIndex:
         """
         Initializes a Vector Store index from Vector Store type and additional parameters.
@@ -32,6 +42,7 @@ class AutoVectorStoreIndex:
         Parameters:
             vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'SimpleVectorStore'..)
             documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
+            enable_metadata_extraction (bool): Whether to enable automated metadata extraction as questions, keywords, entities, or summaries.
             **kwargs: Additional parameters for initializing the vector store
 
         Returns:
@@ -53,7 +64,22 @@ class AutoVectorStoreIndex:
                 kwargs["uri"] = "/tmp/lancedb"
             vector_store = VectorStoreClass(**kwargs)
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
-            index = VectorStoreIndex.from_documents(
-                documents=documents, storage_context=storage_context, show_progress=True)
+
+            if enable_metadata_extraction:
+                metadata_extractor = MetadataExtractor(
+                    extractors=[
+                        TitleExtractor(nodes=5),
+                        QuestionsAnsweredExtractor(questions=3),
+                        SummaryExtractor(summaries=["prev", "self"]),
+                        KeywordExtractor(keywords=10),
+                        EntityExtractor(prediction_threshold=0.5)
+                    ], )
+                node_parser = SimpleNodeParser.from_defaults(metadata_extractor=metadata_extractor, )
+                nodes = node_parser.get_nodes_from_documents(documents)
+                index = VectorStoreIndex(nodes=nodes, storage_context=storage_context)
+            # Initialize index without metadata extraction
+            else:
+                index = VectorStoreIndex.from_documents(
+                    documents=documents, storage_context=storage_context, show_progress=True)
 
         return index
