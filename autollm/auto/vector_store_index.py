@@ -3,6 +3,7 @@ from typing import Optional, Sequence
 from llama_index import Document, StorageContext, VectorStoreIndex
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.node_parser.extractors import (
+    EntityExtractor,
     KeywordExtractor,
     MetadataExtractor,
     QuestionsAnsweredExtractor,
@@ -71,6 +72,7 @@ class AutoVectorStoreIndex:
                         QuestionsAnsweredExtractor(questions=3),
                         SummaryExtractor(summaries=["prev", "self"]),
                         KeywordExtractor(keywords=10),
+                        EntityExtractor(prediction_threshold=0.5)
                     ], )
                 node_parser = SimpleNodeParser.from_defaults(metadata_extractor=metadata_extractor, )
                 nodes = node_parser.get_nodes_from_documents(documents)
