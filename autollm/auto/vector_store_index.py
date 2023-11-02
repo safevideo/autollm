@@ -1,6 +1,6 @@
 from typing import Optional, Sequence
 
-from llama_index import Document, StorageContext, VectorStoreIndex
+from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
 from llama_index.node_parser import SimpleNodeParser
 from llama_index.node_parser.extractors import (
     EntityExtractor,
@@ -33,16 +33,18 @@ class AutoVectorStoreIndex:
     @staticmethod
     def from_defaults(
             vector_store_type: str = "LanceDBVectorStore",
-            documents: Optional[Sequence[Document]] = None,
             enable_metadata_extraction: bool = False,
+            documents: Optional[Sequence[Document]] = None,
+            service_context: Optional[ServiceContext] = None,
             **kwargs) -> VectorStoreIndex:
         """
         Initializes a Vector Store index from Vector Store type and additional parameters.
 
         Parameters:
             vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'SimpleVectorStore'..)
-            documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
             enable_metadata_extraction (bool): Whether to enable automated metadata extraction as questions, keywords, entities, or summaries.
+            documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
+            service_context (Optional[ServiceContext]): Service context to initialize the vector store index from.
             **kwargs: Additional parameters for initializing the vector store
 
         Returns:
@@ -57,7 +59,8 @@ class AutoVectorStoreIndex:
         # Initialize vector store index from existing vector store
         if documents is None:
             vector_store = VectorStoreClass(**kwargs)
-            index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
+            index = VectorStoreIndex.from_vector_store(
+                vector_store=vector_store, service_context=service_context)
         # Initialize vector store index from documents
         else:
             if vector_store_type == "LanceDBVectorStore" and "uri" not in kwargs:
@@ -74,12 +77,19 @@ class AutoVectorStoreIndex:
                         KeywordExtractor(keywords=10),
                         EntityExtractor(prediction_threshold=0.5)
                     ], )
-                node_parser = SimpleNodeParser.from_defaults(metadata_extractor=metadata_extractor, )
+                node_parser = SimpleNodeParser.from_defaults(metadata_extractor=metadata_extractor)
                 nodes = node_parser.get_nodes_from_documents(documents)
-                index = VectorStoreIndex(nodes=nodes, storage_context=storage_context)
+                index = VectorStoreIndex(
+                    nodes=nodes,
+                    storage_context=storage_context,
+                    service_context=service_context,
+                    show_progress=True)
             # Initialize index without metadata extraction
             else:
                 index = VectorStoreIndex.from_documents(
-                    documents=documents, storage_context=storage_context, show_progress=True)
+                    documents=documents,
+                    storage_context=storage_context,
+                    service_context=service_context,
+                    show_progress=True)
 
         return index

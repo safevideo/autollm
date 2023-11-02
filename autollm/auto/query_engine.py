@@ -46,7 +46,6 @@ def create_query_engine(
     query_engine_params = {} if query_engine_params is None else query_engine_params
 
     llm = AutoLLM.from_defaults(**llm_params)
-    vector_store_index = AutoVectorStoreIndex.from_defaults(**vector_store_params, documents=documents)
     service_context = AutoServiceContext.from_defaults(
         llm=llm,
         embed_model=embed_model,
@@ -54,8 +53,10 @@ def create_query_engine(
         query_wrapper_prompt=query_wrapper_prompt,
         enable_cost_calculator=enable_cost_calculator,
         **service_context_params)
+    vector_store_index = AutoVectorStoreIndex.from_defaults(
+        **vector_store_params, documents=documents, service_context=service_context)
 
-    return vector_store_index.as_query_engine(service_context=service_context, **query_engine_params)
+    return vector_store_index.as_query_engine(**query_engine_params)
 
 
 class AutoQueryEngine:
