@@ -66,8 +66,7 @@ class AutoVectorStoreIndex:
             if vector_store_type == "LanceDBVectorStore" and "uri" not in kwargs:
                 kwargs["uri"] = "/tmp/lancedb"
             vector_store = VectorStoreClass(**kwargs)
-            storage_context = StorageContext.from_defaults(
-                vector_store=vector_store, service_context=service_context)
+            storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
             if enable_metadata_extraction:
                 metadata_extractor = MetadataExtractor(
