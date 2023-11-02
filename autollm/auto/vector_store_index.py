@@ -34,7 +34,7 @@ class AutoVectorStoreIndex:
     def from_defaults(
             vector_store_type: str = "LanceDBVectorStore",
             documents: Optional[Sequence[Document]] = None,
-            metadata_extraction_enabled: bool = False,
+            enable_metadata_extraction: bool = False,
             **kwargs) -> VectorStoreIndex:
         """
         Initializes a Vector Store index from Vector Store type and additional parameters.
@@ -42,7 +42,7 @@ class AutoVectorStoreIndex:
         Parameters:
             vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'SimpleVectorStore'..)
             documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
-            metadata_extraction_enabled (bool): Whether to enable metadata extraction.
+            enable_metadata_extraction (bool): Whether to enable automated metadata extraction as questions, keywords, entities, or summaries.
             **kwargs: Additional parameters for initializing the vector store
 
         Returns:
@@ -65,7 +65,7 @@ class AutoVectorStoreIndex:
             vector_store = VectorStoreClass(**kwargs)
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-            if metadata_extraction_enabled:
+            if enable_metadata_extraction:
                 metadata_extractor = MetadataExtractor(
                     extractors=[
                         TitleExtractor(nodes=5),
