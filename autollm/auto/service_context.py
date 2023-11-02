@@ -32,7 +32,7 @@ class AutoServiceContext:
         enable_token_counting is True, tracks the number of tokens used by the LLM for each query.
 
         Parameters:
-            llm (LLM): The LLM to use for the query engine. Defaults to gp3-5-turbo.
+            llm (LLM): The LLM to use for the query engine. Defaults to gpt-3.5-turbo.
             embed_model (BaseEmbedding): The embedding model to use for the query engine. Defaults to OpenAIEmbedding.
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
