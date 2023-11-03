@@ -8,6 +8,12 @@
     </a>
   </p>
 
+<br>
+
+[questions](https://github.com/safevideo/autollm/discussions/categories/q-a) | [feature requests](https://github.com/safevideo/autollm/discussions/categories/feature-requests)
+
+<br>
+
 [![version](https://badge.fury.io/py/autollm.svg)](https://badge.fury.io/py/autollm)
 <a href="https://pepy.tech/project/autollm"><img src="https://pepy.tech/badge/autollm" alt="total autollm downloads"></a>
 [![license](https://img.shields.io/pypi/l/autollm)](LICENSE)
