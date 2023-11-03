@@ -3,7 +3,6 @@ from typing import Dict, List, Optional
 
 from llama_index.schema import Document
 
-from autollm.utils.hash_utils import get_md5
 from autollm.utils.markdown_reader import MarkdownReader
 
 
@@ -36,9 +35,6 @@ class MultiMarkdownReader(MarkdownReader):
             extra_info = {}
 
         relative_file_path = str(file)
-        # TODO: check if this is still necessary after llama_index refresh method entegration
-        extra_info['original_file_path'] = relative_file_path
-        extra_info['md5_hash'] = get_md5(file)
 
         if self.read_as_single_doc:
             # Reading entire markdown as a single document
