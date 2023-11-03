@@ -1,0 +1,33 @@
+from typing import List
+
+from langchain.document_loaders import PDFMinerLoader
+from llama_index.readers.base import BaseReader
+from llama_index.schema import Document
+
+
+class LangchainPDFReader(BaseReader):
+    """Custom PDF reader that uses langchain's PDFMinerLoader."""
+
+    def __init__(self, extract_images: bool = False) -> None:
+        """Initialize the reader."""
+        self.extract_images = extract_images
+
+    def load_data(self, file_path: str, extra_info: dict = None) -> List[Document]:
+        """Load data from a PDF file using langchain's PDFMinerLoader."""
+        # Convert the PosixPath object to a string before passing it to PDFMinerLoader
+        loader = PDFMinerLoader(str(file_path), extract_images=self.extract_images)
+        langchain_documents = loader.load()  # This returns a list of langchain Document objects
+
+        # Convert langchain documents into llama-index documents
+        documents = []
+        for langchain_document in langchain_documents:
+            # Create a llama-index document for each langchain document
+            doc = Document.from_langchain_format(langchain_document)
+
+            # If there's extra info, we can add it to the Document's metadata
+            if extra_info is not None:
+                doc.metadata.update(extra_info)
+
+            documents.append(doc)
+
+        return documents

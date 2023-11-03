@@ -5,11 +5,12 @@ import stat
 from pathlib import Path
 from typing import Callable, List, Optional, Sequence, Tuple
 
-from llama_index.readers.file.base import SimpleDirectoryReader
+from llama_index.readers.file.base import DEFAULT_FILE_READER_CLS, SimpleDirectoryReader
 from llama_index.schema import Document
 
 from autollm.utils.git_utils import clone_or_pull_repository
 from autollm.utils.multimarkdown_reader import MultiMarkdownReader
+from autollm.utils.pdf_reader import LangchainPDFReader
 
 logger = logging.getLogger(__name__)
 
@@ -30,14 +31,17 @@ def read_files_as_documents(
         input_files (List): List of file paths.
         filename_as_id (bool): Whether to use the filename as the document id.
         recursive (bool): Whether to recursively search for files in the input directory.
-        required_exts (Optional[List[str]]): List of required extensions.
+        required_exts (Optional[List[str]]): List of file extensions to be read. Defaults to all supported extensions.
         read_as_single_doc (bool): If True, read each markdown as a single document.
 
     Returns:
         documents (Sequence[Document]): A sequence of Document objects.
     """
     # Configure file_extractor to use MultiMarkdownReader for md files
-    file_extractor = {".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc)}
+    file_extractor = {
+        **DEFAULT_FILE_READER_CLS, ".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc),
+        ".pdf": LangchainPDFReader(extract_images=False)
+    }
 
     # Initialize SimpleDirectoryReader
     reader = SimpleDirectoryReader(
