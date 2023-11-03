@@ -42,6 +42,21 @@ ______________________________________________________________________
 
 ## 🎯 quickstart
 
+### tutorials
+
+- **video tutorials**:
+
+  - [Make RAG with API Just in a few Seconds!!!](https://www.youtube.com/watch?v=sgKpBMGC6M0&list=LL&index=2) -
+  - [Autollm automagically create llm apps in seconds](https://www.youtube.com/watch?v=HZik9309wQc&list=LL&index=3)
+
+- **blog posts**:
+
+  - [Introduction to AutoLLM](https://abrahimzaman360.medium.com/introduction-to-autollm-c8cd31be2a5f)
+
+- **colab notebooks**:
+
+  - quickstart: [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/safevideo/autollm/blob/main/examples/quickstart.ipynb)
+
 ### create a query engine in seconds
 
 ```python
