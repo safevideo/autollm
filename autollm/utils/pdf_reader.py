@@ -8,7 +8,7 @@ from llama_index.schema import Document
 class LangchainPDFReader(BaseReader):
     """Custom PDF reader that uses langchain's PDFMinerLoader."""
 
-    def __init__(self, extract_images: bool = True) -> None:
+    def __init__(self, extract_images: bool = False) -> None:
         """Initialize the reader."""
         self.extract_images = extract_images
 
