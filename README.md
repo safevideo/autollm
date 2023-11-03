@@ -46,7 +46,7 @@ ______________________________________________________________________
 
 - **video tutorials**:
 
-  - [Make RAG with API Just in a few Seconds!!!](https://www.youtube.com/watch?v=sgKpBMGC6M0&list=LL&index=2) -
+  - [Make RAG with API Just in a few Seconds!!!](https://www.youtube.com/watch?v=sgKpBMGC6M0&list=LL&index=2)
   - [Autollm automagically create llm apps in seconds](https://www.youtube.com/watch?v=HZik9309wQc&list=LL&index=3)
 
 - **blog posts**:
