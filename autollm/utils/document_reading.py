@@ -31,7 +31,7 @@ def read_files_as_documents(
         input_files (List): List of file paths.
         filename_as_id (bool): Whether to use the filename as the document id.
         recursive (bool): Whether to recursively search for files in the input directory.
-        required_exts (Optional[List[str]]): List of required extensions.
+        required_exts (Optional[List[str]]): List of file extensions to be read. Defaults to all supported extensions.
         read_as_single_doc (bool): If True, read each markdown as a single document.
 
     Returns:
