@@ -6,10 +6,9 @@ from autollm.auto.query_engine import AutoQueryEngine
 documents = [Document.example()]
 
 
-def test_auto_query_engine_from_parameters():
+def test_auto_query_engine_from_defaults():
     vector_store_params = {"vector_store_type": "SimpleVectorStore"}
-    query_engine = AutoQueryEngine.from_parameters(
-        documents=documents, vector_store_params=vector_store_params)
+    query_engine = AutoQueryEngine.from_defaults(documents=documents, vector_store_params=vector_store_params)
 
     # Check if the query_engine is an instance of BaseQueryEngine
     assert isinstance(query_engine, BaseQueryEngine)

@@ -2,8 +2,8 @@ from llama_index.llms import LiteLLM
 from llama_index.llms.base import LLM
 
 
-class AutoLLM:
-    """AutoLLM lets you dynamically initialize any LLM based on the llm class name and additional
+class AutoLiteLLM:
+    """AutoLiteLLM lets you dynamically initialize any LLM based on the llm class name and additional
     parameters.
     """
 
