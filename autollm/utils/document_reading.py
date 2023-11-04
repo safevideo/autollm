@@ -143,7 +143,7 @@ def read_sitemap_as_documents(sitemap_url: str, filter: Optional[str] = None) ->
     try:
         from llama_hub.web.sitemap.base import SitemapReader
     except ImportError:
-        raise ImportError("llama_hub is not installed. Please pip install llama_hub to use this function.")
+        raise ImportError("llama-hub is not installed. Please pip install llama-hub to use this function.")
 
     sitemap_reader = SitemapReader(html_to_text=True, limit=10)
     documents = sitemap_reader.load_data(sitemap_url=sitemap_url, filter=filter)
