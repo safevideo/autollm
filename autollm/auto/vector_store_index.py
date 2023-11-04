@@ -63,8 +63,9 @@ class AutoVectorStoreIndex:
                 vector_store=vector_store, service_context=service_context)
         # Initialize vector store index from documents
         else:
-            if vector_store_type == "LanceDBVectorStore" and "uri" not in kwargs:
-                kwargs["uri"] = "./.lancedb"
+            if vector_store_type == "LanceDBVectorStore":
+                kwargs["uri"] = "./.lancedb" if "uri" not in kwargs else kwargs["uri"]
+                kwargs["table_name"] = "vectors" if "table_name" not in kwargs else kwargs["table_name"]
             vector_store = VectorStoreClass(**kwargs)
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
