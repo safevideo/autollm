@@ -7,29 +7,7 @@ from bs4 import BeautifulSoup
 from llama_index.schema import Document
 from tqdm import tqdm
 
-SELECTORS = [
-    "article.bd-article",
-    'article[role="main"]',
-    "div.md-content",
-    'div[role="main"]',
-    "div.container",
-    "div.section",
-    "article",
-    "main",
-]
-
-IGNORED_TAGS = [
-    "nav",
-    "aside",
-    "form",
-    "header",
-    "noscript",
-    "svg",
-    "canvas",
-    "footer",
-    "script",
-    "style",
-]
+from autollm.utils.web_page_reader import WebPageReader
 
 logger = logging.getLogger(__name__)
 
@@ -76,49 +54,13 @@ class WebDocsReader:
         urls = [link for link in self.visited_links if urlparse(link).netloc == urlparse(url).netloc]
         return urls
 
-    def _load_data_from_url(self, url):
-        response = requests.get(url)
-        if response.status_code != 200:
-            logger.info(f"Failed to fetch the website: {response.status_code}")
-            return []
-
-        soup = BeautifulSoup(response.content, "html.parser")
-
-        output = []
-        for selector in SELECTORS:
-            element = soup.select_one(selector)
-            if element:
-                content = element.prettify()
-                break
-        else:
-            logger.info(f"Failed to find any element for URL: {url}")
-            content = soup.get_text()
-
-        soup = BeautifulSoup(content, "html.parser")
-        for tag in soup(IGNORED_TAGS):
-            tag.decompose()
-
-        content = " ".join(soup.stripped_strings)
-        output.append({
-            "content": content,
-            "meta_data": {
-                "url": url
-            },
-        })
-
-        return output
-
     def load_data(self, url: str) -> List[Document]:
         all_urls = self._get_all_urls(url)
         logger.info(f"Total URLs to process: {len(all_urls)}")
 
-        output = []
-        for u in tqdm(all_urls, desc="Processing URLs"):
-            output.extend(self._load_data_from_url(u))
-
+        web_reader = WebPageReader()
         documents = []
-        for d in output:
-            document = Document(text=d['content'], metadata=d['meta_data'])
-            documents.append(document)
+        for u in tqdm(all_urls, desc="Processing URLs"):
+            documents.extend(web_reader.load_data(u))
 
         return documents
