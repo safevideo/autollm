@@ -334,7 +334,7 @@ switching from Llama-Index? We've got you covered.
 
 >>> from autollm import AutoQueryEngine
 
->>> vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
+>>> vector_store = LanceDBVectorStore(uri="./.lancedb")
 >>> storage_context = StorageContext.from_defaults(vector_store=vector_store)
 >>> index = VectorStoreIndex.from_documents(documents=documents)
 >>> service_context = ServiceContext.from_defaults()
