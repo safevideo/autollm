@@ -63,18 +63,22 @@ class AutoVectorStoreIndex:
                 vector_store=vector_store, service_context=service_context)
         # Initialize vector store index from documents
         else:
-            if vector_store_type == "LanceDBVectorStore" and "uri" not in kwargs:
-                kwargs["uri"] = "/tmp/lancedb"
+            if vector_store_type == "LanceDBVectorStore":
+                kwargs["uri"] = "./.lancedb" if "uri" not in kwargs else kwargs["uri"]
+                kwargs["table_name"] = "vectors" if "table_name" not in kwargs else kwargs["table_name"]
             vector_store = VectorStoreClass(**kwargs)
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+            # Get llm from service context for metadata extraction
+            llm = service_context.llm if service_context is not None else None
 
             if enable_metadata_extraction:
                 metadata_extractor = MetadataExtractor(
                     extractors=[
-                        TitleExtractor(nodes=5),
-                        QuestionsAnsweredExtractor(questions=3),
-                        SummaryExtractor(summaries=["prev", "self"]),
-                        KeywordExtractor(keywords=10),
+                        TitleExtractor(llm=llm, nodes=5),
+                        QuestionsAnsweredExtractor(llm=llm, questions=3),
+                        SummaryExtractor(llm=llm, summaries=["prev", "self"]),
+                        KeywordExtractor(llm=llm, keywords=10),
                         EntityExtractor(prediction_threshold=0.5)
                     ], )
                 node_parser = SimpleNodeParser.from_defaults(metadata_extractor=metadata_extractor)

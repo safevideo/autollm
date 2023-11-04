@@ -69,7 +69,7 @@ ______________________________________________________________________
 >>> from autollm import AutoQueryEngine, read_files_as_documents
 
 >>> documents = read_files_as_documents(input_dir="examples/data")
->>> query_engine = AutoQueryEngine.from_parameters(documents=documents)
+>>> query_engine = AutoQueryEngine.from_parameters(documents)
 
 >>> response = query_engine.query(
 ...     "Why did SafeVideo AI develop this project?"
@@ -93,8 +93,8 @@ ______________________________________________________________________
 ...     llm_params={"model": "gpt-3.5-turbo"},
 ...     vector_store_params={
 ...       "vector_store_type": "LanceDBVectorStore",
-...       "uri": "/tmp/lancedb",
-...       "table_name": "lancedb",
+...       "uri": "./.lancedb",
+...       "table_name": "vectors",
 ...       "nprobs": 20
 ...     },
 ...     service_context_params={"chunk_size": 1024},
@@ -334,7 +334,7 @@ switching from Llama-Index? We've got you covered.
 
 >>> from autollm import AutoQueryEngine
 
->>> vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
+>>> vector_store = LanceDBVectorStore(uri="./.lancedb")
 >>> storage_context = StorageContext.from_defaults(vector_store=vector_store)
 >>> index = VectorStoreIndex.from_documents(documents=documents)
 >>> service_context = ServiceContext.from_defaults()

@@ -1,10 +1,11 @@
 # config.example.yaml
-version: '1.0'  # Version of this configuration file
+version: '2.1'  # Version of this configuration file
 tasks:
   - name: "summarize"
     system_prompt: "You are an expert ai assistant specialized in summarization."  # System prompt for this task
     vector_store_params:
       vector_store_type: "SimpleVectorStore"
+    embed_model: "default"  # ["default", "local:intfloat/multilingual-e5-large"]
     llm_params:
       model: "gpt-3.5-turbo"
     service_context_params:
@@ -16,6 +17,7 @@ tasks:
     system_prompt: "You are a friendly ai assistant specialized in question answering."  # System prompt for this task
     vector_store_params:
       vector_store_type: "SimpleVectorStore"
+    embed_model: "default"  # ["default", "local:intfloat/multilingual-e5-large"]
     llm_params:
       model: "gpt-4"
     service_context_params:
