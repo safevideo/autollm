@@ -93,7 +93,7 @@ ______________________________________________________________________
 ...     llm_params={"model": "gpt-3.5-turbo"},
 ...     vector_store_params={
 ...       "vector_store_type": "LanceDBVectorStore",
-...       "uri": "/tmp/lancedb",
+...       "uri": "./.lancedb",
 ...       "table_name": "lancedb",
 ...       "nprobs": 20
 ...     },
