@@ -69,7 +69,7 @@ ______________________________________________________________________
 >>> from autollm import AutoQueryEngine, read_sitemap_as_documents
 
 >>> documents = read_sitemap_as_documents("https://docs.ultralytics.com/sitemap.xml")
->>> query_engine = AutoQueryEngine.from_parameters(documents=documents)
+>>> query_engine = AutoQueryEngine.from_parameters(documents)
 
 >>> response = query_engine.query(
 ...     "Why did SafeVideo AI develop this project?"
