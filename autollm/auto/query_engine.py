@@ -28,7 +28,8 @@ def create_query_engine(
         system_prompt (str): The system prompt to use for the query engine.
         query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
         enable_cost_calculator (bool): Flag to enable cost calculator logging.
-        embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. Defaults to OpenAI.
+        embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
+                                            "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
         llm_params (dict): Parameters for the LLM.
         vector_store_params (dict): Parameters for the vector store.
         service_context_params (dict): Parameters for the service context.
@@ -125,7 +126,8 @@ class AutoQueryEngine:
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
             enable_cost_calculator (bool): Flag to enable cost calculator logging.
-            embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. Defaults to OpenAI.
+            embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
+                                                "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
             llm_params (dict): Parameters for the LLM.
             vector_store_params (dict): Parameters for the vector store.
             service_context_params (dict): Parameters for the service context.
@@ -172,7 +174,7 @@ class AutoQueryEngine:
             system_prompt=config.get('system_prompt'),
             query_wrapper_prompt=config.get('query_wrapper_prompt'),
             enable_cost_calculator=config.get('enable_cost_calculator'),
-            embed_model=config.get('embed_model'),
+            embed_model=config.get('embed_model', 'default'),
             llm_params=config.get('llm_params'),
             vector_store_params=config.get('vector_store_params'),
             service_context_params=config.get('service_context_params'),
