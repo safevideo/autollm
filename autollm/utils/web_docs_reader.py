@@ -1,12 +1,12 @@
+import hashlib
+import logging
 from typing import List
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
 
-# Constants for content selection and cleaning
 SELECTORS = [
     "article.bd-article",
     'article[role="main"]',
@@ -32,66 +32,87 @@ IGNORED_TAGS = [
 ]
 
 
-class WebDocsReader(BaseReader):
-    """Custom reader for web documents using BeautifulSoup for parsing HTML."""
+class WebDocsReader:
 
-    def __init__(self, selectors: List[str] = SELECTORS, ignored_tags: List[str] = IGNORED_TAGS) -> None:
-        """Initialize the reader."""
-        self.selectors = selectors
-        self.ignored_tags = ignored_tags
+    def __init__(self):
         self.visited_links = set()
 
-    def _fetch_and_parse(self, url: str) -> BeautifulSoup:
-        """Fetch the content of the web page and return a BeautifulSoup object."""
-        response = requests.get(url)
-        response.raise_for_status(
-        )  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
-        return BeautifulSoup(response.text, "html.parser")
-
-    def _clean_content(self, soup: BeautifulSoup) -> str:
-        """Clean the soup object to extract relevant text, ignoring the specified tags."""
-        for tag in soup(self.ignored_tags):
-            tag.decompose()
-        text = " ".join(soup.stripped_strings)
-        return text
-
-    def _get_child_links(self, soup: BeautifulSoup, current_url: str) -> List[str]:
-        """Get all child links from the soup object, relative to the current_url."""
-        base_url = f"{urlparse(current_url).scheme}://{urlparse(current_url).netloc}"
-        return [
-            urljoin(base_url, a.get('href')) for a in soup.find_all('a', href=True)
-            if urlparse(a.get('href')).netloc == urlparse(base_url).netloc
-        ]
-
-    def _get_normalized_url(self, url: str) -> str:
-        """Normalize the URL to avoid duplicates due to query parameters or fragments."""
-        parsed_url = urlparse(url)
-        return parsed_url._replace(query="", fragment="").geturl()
-
-    def _recursive_link_collector(self, url: str, base_url: str, depth=0, max_depth=3) -> None:
-        """Recursively collect links from the given URL, with depth control."""
-        normalized_url = self._get_normalized_url(url)
-        if normalized_url in self.visited_links or depth > max_depth:
-            return
-        self.visited_links.add(normalized_url)
-        soup = self._fetch_and_parse(url)
-        for child_url in self._get_child_links(soup, url):
-            # We only follow links that lead to the same domain
-            if urlparse(child_url).netloc == urlparse(base_url).netloc:
-                self._recursive_link_collector(child_url, base_url, depth=depth + 1, max_depth=max_depth)
-
-    def load_data(self, url: str) -> List[Document]:
-        """Load data from the web documents starting from the given URL."""
+    def _get_child_links_recursive(self, url):
         parsed_url = urlparse(url)
         base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
-        self._recursive_link_collector(url, base_url)
+        current_path = parsed_url.path
+
+        response = requests.get(url)
+        logging.info(f"Fetching URL: {url} - Status Code: {response.status_code}")
+        if response.status_code != 200:
+            logging.warning(f"Failed to fetch the website: {response.status_code}")
+            return
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        all_links = [link.get("href") for link in soup.find_all("a")]
+
+        child_links = [
+            link for link in all_links if link and link.startswith(current_path) and link != current_path
+        ]
+
+        absolute_paths = [urljoin(base_url, link) for link in child_links]
+
+        logging.info(f"Child links to process: {len(absolute_paths)}")
+        for link in absolute_paths:
+            logging.info(f"Processing child link: {link}")
+            if link not in self.visited_links:
+                self.visited_links.add(link)
+                self._get_child_links_recursive(link)
+
+    def _get_all_urls(self, url):
+        self.visited_links = set()
+        self._get_child_links_recursive(url)
+        urls = [link for link in self.visited_links if urlparse(link).netloc == urlparse(url).netloc]
+        return urls
+
+    def _load_data_from_url(self, url):
+        response = requests.get(url)
+        if response.status_code != 200:
+            logging.info(f"Failed to fetch the website: {response.status_code}")
+            return []
+
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        output = []
+        for selector in SELECTORS:
+            element = soup.select_one(selector)
+            if element:
+                logging.info(f"Found element with selector: {selector} for URL: {url}")
+                content = element.prettify()
+                break
+        else:
+            logging.info(f"Failed to find any element for URL: {url}")
+            content = soup.get_text()
+
+        soup = BeautifulSoup(content, "html.parser")
+        for tag in soup(IGNORED_TAGS):
+            tag.decompose()
+
+        content = " ".join(soup.stripped_strings)
+        output.append({
+            "content": content,
+            "meta_data": {
+                "url": url
+            },
+        })
+
+        return output
+
+    def load_data(self, url: str) -> List[Document]:
+        all_urls = self._get_all_urls(url)
+        logging.info(f"Total URLs to process: {len(all_urls)}")
+        output = []
+        for u in all_urls:
+            output.extend(self._load_data_from_url(u))
+
         documents = []
-        for url in self.visited_links:
-            soup = self._fetch_and_parse(url)
-            for selector in self.selectors:
-                content = soup.select_one(selector)
-                if content:
-                    text_content = self._clean_content(content)
-                    documents.append(Document(content=text_content, metadata={"url": url}))
-                    break
+        for d in output:
+            document = Document(text=d['content'], metadata=d['meta_data'])
+            documents.append(document)
+        logging.info(f"Total documents created: {len(documents)}")
         return documents
