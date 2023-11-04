@@ -6,7 +6,9 @@ Thank you for considering a contribution to AutoLLM. Your input is invaluable to
 
 To streamline the integration of your contributions:
 
-- **New Branch, Who's This? 🌱**: Always create a new branch for your PR. It keeps things neat and makes the review process smoother.
+- **Start by Forking 🍴**: This allows you to work on your own copy of the project. See [these steps](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) to open a PR from your fork.
+
+- **New Branch 🌱**: Always create a new branch for your PR. It keeps things neat and makes the review process smoother.
 
 - **Size Matters 📏**: Aim for smaller PRs. If you have a big feature in mind, consider breaking it up. It helps us understand your contribution better and gets you feedback quicker!
 
