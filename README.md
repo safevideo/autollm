@@ -66,9 +66,9 @@ ______________________________________________________________________
 ### create a query engine in seconds
 
 ```python
->>> from autollm import AutoQueryEngine, read_sitemap_as_documents
+>>> from autollm import AutoQueryEngine, read_files_as_documents
 
->>> documents = read_sitemap_as_documents("https://docs.ultralytics.com/sitemap.xml")
+>>> documents = read_files_as_documents(input_dir="examples/data")
 >>> query_engine = AutoQueryEngine.from_parameters(documents)
 
 >>> response = query_engine.query(
