@@ -19,10 +19,10 @@ logger = logging.getLogger(__name__)
 def read_files_as_documents(
         input_dir: Optional[str] = None,
         input_files: Optional[List] = None,
+        exclude_hidden: bool = True,
         filename_as_id: bool = True,
         recursive: bool = True,
         required_exts: Optional[List[str]] = None,
-        read_as_single_doc: bool = True,
         **kwargs) -> Sequence[Document]:
     """
     Process markdown files to extract documents using SimpleDirectoryReader.
@@ -30,17 +30,17 @@ def read_files_as_documents(
     Parameters:
         input_dir (str): Path to the directory containing the markdown files.
         input_files (List): List of file paths.
+        exclude_hidden (bool): Whether to exclude hidden files.
         filename_as_id (bool): Whether to use the filename as the document id.
         recursive (bool): Whether to recursively search for files in the input directory.
         required_exts (Optional[List[str]]): List of file extensions to be read. Defaults to all supported extensions.
-        read_as_single_doc (bool): If True, read each markdown as a single document.
 
     Returns:
         documents (Sequence[Document]): A sequence of Document objects.
     """
     # Configure file_extractor to use MultiMarkdownReader for md files
     file_extractor = {
-        ".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc),
+        ".md": MultiMarkdownReader(read_as_single_doc=True),
         ".pdf": LangchainPDFReader(extract_images=False)
     }
 
