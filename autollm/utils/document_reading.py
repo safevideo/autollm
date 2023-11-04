@@ -112,39 +112,3 @@ def read_github_repo_as_documents(
         shutil.rmtree(temp_dir, onerror=on_rm_error)
 
     return documents
-
-
-def read_sitemap_as_documents(sitemap_url: str, filter: Optional[str] = None) -> List[Document]:
-    """
-    Asynchronously read pages from the web based on their sitemap.xml.
-
-    Parameters:
-        sitemap_url (str): The URL of the sitemap.
-        filter (str, optional): A filter string to select specific sitemap entries.
-
-    Returns:
-        List[Document]: A list of documents read from the sitemap.
-
-    Note:
-        If running this function within a Jupyter notebook environment, ensure that the asyncio
-        event loop is properly handled. You can do this by uncommenting the following:
-
-        # import nest_asyncio
-        # nest_asyncio.apply()
-
-        This step is not necessary when running in a standard Python environment.
-
-    Example:
-        documents = read_sitemap_as_documents('https://example.com/sitemap.xml')
-
-    Raises:
-        ImportError: If llama_hub is not installed.
-    """
-    try:
-        from llama_hub.web.sitemap.base import SitemapReader
-    except ImportError:
-        raise ImportError("llama-hub is not installed. Please pip install llama-hub to use this function.")
-
-    sitemap_reader = SitemapReader(html_to_text=True, limit=10)
-    documents = sitemap_reader.load_data(sitemap_url=sitemap_url, filter=filter)
-    return documents
