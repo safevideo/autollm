@@ -13,13 +13,9 @@ from autollm.auto.llm import AutoLLM
 from autollm.auto.query_engine import AutoQueryEngine
 from autollm.auto.service_context import AutoServiceContext
 from autollm.auto.vector_store_index import AutoVectorStoreIndex
-from autollm.utils.document_reading import (
-    read_files_as_documents,
-    read_github_repo_as_documents,
-    read_sitemap_as_documents,
-)
+from autollm.utils.document_reading import read_files_as_documents, read_github_repo_as_documents
 
 __all__ = [
     'AutoLLM', 'AutoServiceContext', 'AutoVectorStoreIndex', 'AutoQueryEngine', 'AutoFastAPI',
-    'read_files_as_documents', 'read_github_repo_as_documents', 'read_sitemap_as_documents'
+    'read_files_as_documents', 'read_github_repo_as_documents'
 ]
