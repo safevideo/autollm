@@ -1,4 +1,3 @@
-import hashlib
 import logging
 from typing import List
 from urllib.parse import urljoin, urlparse
@@ -43,7 +42,6 @@ class WebDocsReader:
         current_path = parsed_url.path
 
         response = requests.get(url)
-        logging.info(f"Fetching URL: {url} - Status Code: {response.status_code}")
         if response.status_code != 200:
             logging.warning(f"Failed to fetch the website: {response.status_code}")
             return
@@ -51,15 +49,20 @@ class WebDocsReader:
         soup = BeautifulSoup(response.text, "html.parser")
         all_links = [link.get("href") for link in soup.find_all("a")]
 
-        child_links = [
-            link for link in all_links if link and link.startswith(current_path) and link != current_path
-        ]
+        # Normalize links and filter out external links and anchors
+        child_links = set()
+        for link in all_links:
+            # Skip any None or empty hrefs, and anchors
+            if not link or link.startswith('#') or link == current_path:
+                continue
+            # Convert relative links to absolute
+            full_link = urljoin(base_url, link)
+            # Add to set if the link is internal
+            if urlparse(full_link).netloc == parsed_url.netloc:
+                child_links.add(full_link)
 
-        absolute_paths = [urljoin(base_url, link) for link in child_links]
-
-        logging.info(f"Child links to process: {len(absolute_paths)}")
-        for link in absolute_paths:
-            logging.info(f"Processing child link: {link}")
+        # Process each child link
+        for link in child_links:
             if link not in self.visited_links:
                 self.visited_links.add(link)
                 self._get_child_links_recursive(link)
