@@ -5,6 +5,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 from llama_index.schema import Document
+from tqdm import tqdm
 
 SELECTORS = [
     "article.bd-article",
@@ -30,6 +31,8 @@ IGNORED_TAGS = [
     "style",
 ]
 
+logger = logging.getLogger(__name__)
+
 
 class WebDocsReader:
 
@@ -43,7 +46,7 @@ class WebDocsReader:
 
         response = requests.get(url)
         if response.status_code != 200:
-            logging.warning(f"Failed to fetch the website: {response.status_code}")
+            logger.warning(f"Failed to fetch the website: {response.status_code}")
             return
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -76,7 +79,7 @@ class WebDocsReader:
     def _load_data_from_url(self, url):
         response = requests.get(url)
         if response.status_code != 200:
-            logging.info(f"Failed to fetch the website: {response.status_code}")
+            logger.info(f"Failed to fetch the website: {response.status_code}")
             return []
 
         soup = BeautifulSoup(response.content, "html.parser")
@@ -85,11 +88,10 @@ class WebDocsReader:
         for selector in SELECTORS:
             element = soup.select_one(selector)
             if element:
-                logging.info(f"Found element with selector: {selector} for URL: {url}")
                 content = element.prettify()
                 break
         else:
-            logging.info(f"Failed to find any element for URL: {url}")
+            logger.info(f"Failed to find any element for URL: {url}")
             content = soup.get_text()
 
         soup = BeautifulSoup(content, "html.parser")
@@ -108,14 +110,15 @@ class WebDocsReader:
 
     def load_data(self, url: str) -> List[Document]:
         all_urls = self._get_all_urls(url)
-        logging.info(f"Total URLs to process: {len(all_urls)}")
+        logger.info(f"Total URLs to process: {len(all_urls)}")
+
         output = []
-        for u in all_urls:
+        for u in tqdm(all_urls, desc="Processing URLs"):
             output.extend(self._load_data_from_url(u))
 
         documents = []
         for d in output:
             document = Document(text=d['content'], metadata=d['meta_data'])
             documents.append(document)
-        logging.info(f"Total documents created: {len(documents)}")
+
         return documents
