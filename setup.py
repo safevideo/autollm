@@ -4,21 +4,21 @@ import re
 
 import setuptools
 
-DEV_REQUIREMETNS = [
-    'pre-commit==3.4.0',
-    'pytest==7.4.2',
-]
+
+def get_requirements(req_path: str):
+    with open(req_path, encoding='utf8') as f:
+        return f.read().splitlines()
+
+
+INSTALL_REQUIRES = get_requirements("requirements.txt")
+DEV_REQUIREMETNS = get_requirements("dev-requirements.txt")
+READERS_REQUIREMENTS = get_requirements("readers-requirements.txt")
 
 
 def get_long_description():
     base_dir = os.path.abspath(os.path.dirname(__file__))
     with open(os.path.join(base_dir, 'README.md'), encoding='utf-8') as f:
         return f.read()
-
-
-def get_requirements():
-    with open('requirements.txt', encoding='utf8') as f:
-        return f.read().splitlines()
 
 
 def get_version():
@@ -53,8 +53,11 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/safevideo/autollm',
     packages=setuptools.find_packages(exclude=["tests", "examples"]),
-    install_requires=get_requirements(),
-    extras_require={'dev': DEV_REQUIREMETNS},
+    install_requires=INSTALL_REQUIRES,
+    extras_require={
+        'dev': DEV_REQUIREMETNS,
+        'readers': READERS_REQUIREMENTS
+    },
     python_requires='>=3.8',
     classifiers=[
         'Intended Audience :: Developers', 'Intended Audience :: Information Technology',
