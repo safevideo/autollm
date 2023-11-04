@@ -5,7 +5,7 @@ import stat
 from pathlib import Path
 from typing import Callable, List, Optional, Sequence, Tuple
 
-from llama_index.readers.file.base import DEFAULT_FILE_READER_CLS, SimpleDirectoryReader
+from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
 
 from autollm.utils.git_utils import clone_or_pull_repository
@@ -40,7 +40,7 @@ def read_files_as_documents(
     """
     # Configure file_extractor to use MultiMarkdownReader for md files
     file_extractor = {
-        **DEFAULT_FILE_READER_CLS, ".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc),
+        ".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc),
         ".pdf": LangchainPDFReader(extract_images=False)
     }
 
