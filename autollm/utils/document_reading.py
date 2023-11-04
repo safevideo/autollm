@@ -11,6 +11,7 @@ from llama_index.schema import Document
 from autollm.utils.git_utils import clone_or_pull_repository
 from autollm.utils.multimarkdown_reader import MultiMarkdownReader
 from autollm.utils.pdf_reader import LangchainPDFReader
+from autollm.utils.web_docs_reader import WebDocsReader
 
 logger = logging.getLogger(__name__)
 
@@ -111,4 +112,19 @@ def read_github_repo_as_documents(
         # Delete the temporary directory
         shutil.rmtree(temp_dir, onerror=on_rm_error)
 
+    return documents
+
+
+def read_web_as_documents(url: str) -> List[Document]:
+    """
+    Read documents from a web URL using the WebDocsReader.
+
+    Parameters:
+        url (str): The starting URL from which to scrape documents.
+
+    Returns:
+        List[Document]: A list of Document objects containing content and metadata from the web pages.
+    """
+    reader = WebDocsReader()
+    documents = reader.load_data(url)
     return documents
