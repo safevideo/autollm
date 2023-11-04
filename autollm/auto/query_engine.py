@@ -105,6 +105,7 @@ class AutoQueryEngine:
 
         return vector_store_index.as_query_engine(service_context=service_context, **kwargs)
 
+    # TODO: change to from_defaults
     @staticmethod
     def from_parameters(
             documents: Sequence[Document] = None,
