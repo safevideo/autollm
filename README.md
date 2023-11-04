@@ -94,7 +94,7 @@ ______________________________________________________________________
 ...     vector_store_params={
 ...       "vector_store_type": "LanceDBVectorStore",
 ...       "uri": "./.lancedb",
-...       "table_name": "lancedb",
+...       "table_name": "vectors",
 ...       "nprobs": 20
 ...     },
 ...     service_context_params={"chunk_size": 1024},
