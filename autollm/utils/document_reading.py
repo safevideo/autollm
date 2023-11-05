@@ -9,7 +9,7 @@ from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
 
 from autollm.utils.git_utils import clone_or_pull_repository
-from autollm.utils.multimarkdown_reader import MultiMarkdownReader
+from autollm.utils.multimarkdown_reader import MarkdownReader
 from autollm.utils.pdf_reader import LangchainPDFReader
 from autollm.utils.web_docs_reader import WebDocsReader
 
@@ -38,16 +38,17 @@ def read_files_as_documents(
     Returns:
         documents (Sequence[Document]): A sequence of Document objects.
     """
-    # Configure file_extractor to use MultiMarkdownReader for md files
+    # Configure file_extractor to use MarkdownReader for md files
     file_extractor = {
-        ".md": MultiMarkdownReader(read_as_single_doc=True),
+        ".md": MarkdownReader(read_as_single_doc=True),
         ".pdf": LangchainPDFReader(extract_images=False)
     }
 
     # Initialize SimpleDirectoryReader
     reader = SimpleDirectoryReader(
-        file_extractor=file_extractor,
         input_dir=input_dir,
+        exclude_hidden=exclude_hidden,
+        file_extractor=file_extractor,
         input_files=input_files,
         filename_as_id=filename_as_id,
         recursive=recursive,
