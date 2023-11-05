@@ -5,12 +5,13 @@ import stat
 from pathlib import Path
 from typing import Callable, List, Optional, Sequence, Tuple
 
-from llama_index.readers.file.base import DEFAULT_FILE_READER_CLS, SimpleDirectoryReader
+from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
 
 from autollm.utils.git_utils import clone_or_pull_repository
-from autollm.utils.multimarkdown_reader import MultiMarkdownReader
+from autollm.utils.multimarkdown_reader import MarkdownReader
 from autollm.utils.pdf_reader import LangchainPDFReader
+from autollm.utils.web_docs_reader import WebDocsReader
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +19,10 @@ logger = logging.getLogger(__name__)
 def read_files_as_documents(
         input_dir: Optional[str] = None,
         input_files: Optional[List] = None,
+        exclude_hidden: bool = True,
         filename_as_id: bool = True,
         recursive: bool = True,
         required_exts: Optional[List[str]] = None,
-        read_as_single_doc: bool = True,
         **kwargs) -> Sequence[Document]:
     """
     Process markdown files to extract documents using SimpleDirectoryReader.
@@ -29,24 +30,25 @@ def read_files_as_documents(
     Parameters:
         input_dir (str): Path to the directory containing the markdown files.
         input_files (List): List of file paths.
+        exclude_hidden (bool): Whether to exclude hidden files.
         filename_as_id (bool): Whether to use the filename as the document id.
         recursive (bool): Whether to recursively search for files in the input directory.
         required_exts (Optional[List[str]]): List of file extensions to be read. Defaults to all supported extensions.
-        read_as_single_doc (bool): If True, read each markdown as a single document.
 
     Returns:
         documents (Sequence[Document]): A sequence of Document objects.
     """
-    # Configure file_extractor to use MultiMarkdownReader for md files
+    # Configure file_extractor to use MarkdownReader for md files
     file_extractor = {
-        **DEFAULT_FILE_READER_CLS, ".md": MultiMarkdownReader(read_as_single_doc=read_as_single_doc),
+        ".md": MarkdownReader(read_as_single_doc=True),
         ".pdf": LangchainPDFReader(extract_images=False)
     }
 
     # Initialize SimpleDirectoryReader
     reader = SimpleDirectoryReader(
-        file_extractor=file_extractor,
         input_dir=input_dir,
+        exclude_hidden=exclude_hidden,
+        file_extractor=file_extractor,
         input_files=input_files,
         filename_as_id=filename_as_id,
         recursive=recursive,
@@ -111,4 +113,19 @@ def read_github_repo_as_documents(
         # Delete the temporary directory
         shutil.rmtree(temp_dir, onerror=on_rm_error)
 
+    return documents
+
+
+def read_web_as_documents(url: str) -> List[Document]:
+    """
+    Read documents from a web URL using the WebDocsReader.
+
+    Parameters:
+        url (str): The starting URL from which to scrape documents.
+
+    Returns:
+        List[Document]: A list of Document objects containing content and metadata from the web pages.
+    """
+    reader = WebDocsReader()
+    documents = reader.load_data(url)
     return documents

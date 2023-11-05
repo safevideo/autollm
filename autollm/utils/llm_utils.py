@@ -1,7 +1,5 @@
 import logging
 
-from llama_index.prompts import ChatMessage, ChatPromptTemplate, MessageRole
-
 from autollm.utils.templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)

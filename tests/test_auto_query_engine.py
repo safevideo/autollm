@@ -1,4 +1,4 @@
-from llama_index import Document, ServiceContext, VectorStoreIndex
+from llama_index import Document, VectorStoreIndex
 from llama_index.query_engine import BaseQueryEngine
 
 from autollm.auto.query_engine import AutoQueryEngine

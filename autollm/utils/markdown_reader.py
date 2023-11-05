@@ -25,12 +25,14 @@ class MarkdownReader(BaseReader):
         *args: Any,
         remove_hyperlinks: bool = True,
         remove_images: bool = True,
+        read_as_single_doc: bool = False,
         **kwargs: Any,
     ) -> None:
         """Init params."""
         super().__init__(*args, **kwargs)
         self._remove_hyperlinks = remove_hyperlinks
         self._remove_images = remove_images
+        self._read_as_single_doc = read_as_single_doc
 
     def markdown_to_tups(self, markdown_text: str) -> List[Tuple[Optional[str], str]]:
         """
@@ -98,7 +100,7 @@ class MarkdownReader(BaseReader):
         markdown_tups = self.markdown_to_tups(content)
         return markdown_tups
 
-    def load_data(
+    def _load_data_as_sections(
         self,
         file: Path,
         extra_info: Optional[Dict] = None,
@@ -130,3 +132,50 @@ class MarkdownReader(BaseReader):
                     metadata=extra_info or {}))
 
         return results
+
+    def _load_data_as_single_doc(
+        self,
+        file: Path,
+        extra_info: Optional[Dict] = None,
+        content: Optional[str] = None,
+    ) -> List[Document]:
+        """
+        Parse file into string. If content is provided, use that instead of reading from file.
+
+        Parameters:
+            file (Path): The path to the markdown file.
+            extra_info (Optional[Dict]): Additional metadata to include.
+            content (Optional[str]): Content to use instead of reading from file.
+
+        Returns:
+            List[Document]: List of a single Document object representing markdown text.
+        """
+        # Reading entire markdown as a single document
+        with open(file, encoding='utf-8') as f:
+            content = f.read()
+        if self._remove_hyperlinks:
+            content = self.remove_hyperlinks(content)
+        if self._remove_images:
+            content = self.remove_images(content)
+
+        return [Document(text=content, metadata=extra_info)]
+
+    def load_data(self,
+                  file: Path,
+                  extra_info: Optional[Dict] = None,
+                  content: Optional[str] = None) -> List[Document]:
+        """
+        Parse file into string. If content is provided, use that instead of reading from file.
+
+        Parameters:
+            file (Path): The path to the markdown file.
+            extra_info (Optional[Dict]): Additional metadata to include.
+            content (Optional[str]): Content to use instead of reading from file.
+
+        Returns:
+            List[Document]: List of Document objects representing header-docs or a single Document object.
+        """
+        if self._read_as_single_doc:
+            return self._load_data_as_single_doc(file, extra_info, content)
+        else:
+            return self._load_data_as_sections(file, extra_info, content)

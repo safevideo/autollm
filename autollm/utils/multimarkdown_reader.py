@@ -7,12 +7,6 @@ from autollm.utils.markdown_reader import MarkdownReader
 
 
 class MultiMarkdownReader(MarkdownReader):
-    """
-    MultiMarkdown parser.
-
-    Extract text from multiple markdown files. Returns a list of dictionaries with keys as headers and values
-    as the text between headers.
-    """
 
     def __init__(self, *args, read_as_single_doc: bool = False, **kwargs) -> None:
         """
@@ -30,7 +24,6 @@ class MultiMarkdownReader(MarkdownReader):
         extra_info: Optional[Dict] = None,
         content: Optional[str] = None,
     ) -> List[Document]:
-        """Include original_file_path in extra_info and respect read_as_single_doc flag."""
         if extra_info is None:
             extra_info = {}
 

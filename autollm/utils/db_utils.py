@@ -5,10 +5,7 @@ from typing import Sequence
 from llama_index import Document, StorageContext, VectorStoreIndex
 from llama_index.vector_stores import PineconeVectorStore, QdrantVectorStore
 
-from autollm.auto.vector_store_index import AutoVectorStoreIndex
-from autollm.utils.constants import DEFAULT_INDEX_NAME
 from autollm.utils.env_utils import read_env_variable
-from autollm.utils.hash_utils import check_for_changes
 
 logger = logging.getLogger(__name__)
 
