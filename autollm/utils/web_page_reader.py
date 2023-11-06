@@ -68,7 +68,7 @@ class WebPageReader:
             tag.decompose()
 
         content = " ".join(soup.stripped_strings)
-        document = Document(text=content, metadata={"url": url})
+        document = Document(id_=url, text=content, metadata={"url": url})
         return [document]
 
 
