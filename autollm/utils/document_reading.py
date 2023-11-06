@@ -53,10 +53,13 @@ def read_files_as_documents(
         required_exts=required_exts,
         **kwargs)
 
+    logger.info(f"Reading files from {input_dir}..") if input_dir else logger.info(
+        f"Reading files {input_files}..")
+
     # Read and process the documents
     documents = reader.load_data()
 
-    logger.info(f"Found {len(documents)} 'documents'.")
+    logger.info(f"Found {len(documents)} 'document(s)'.")
     return documents
 
 
@@ -94,7 +97,7 @@ def read_github_repo_as_documents(
     temp_dir = Path("autollm/temp/")
     temp_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"Temporary directory created at {temp_dir}")
+    logger.info(f"Cloning github repo {git_repo_url} into temporary directory {temp_dir}..")
 
     try:
         # Clone or pull the GitHub repository to get the latest documents
