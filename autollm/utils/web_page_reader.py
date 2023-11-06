@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from llama_index.schema import Document
 
+from autollm.utils.constants import WEBPAGE_READER_TIMEOUT
 from autollm.utils.logging import logger
 
 # Constants defined outside the class
@@ -46,7 +47,7 @@ class WebPageReader:
         Returns:
             List[Document]: A list containing Document objects with the processed content and its metadata.
         """
-        response = requests.get(url)
+        response = requests.get(url, timeout=WEBPAGE_READER_TIMEOUT)
         if response.status_code != 200:
             logger.info(f"Failed to fetch the website: {response.status_code}")
             return []

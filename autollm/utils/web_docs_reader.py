@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from llama_index.schema import Document
 from tqdm import tqdm
 
+from autollm.utils.constants import WEBPAGE_READER_TIMEOUT
 from autollm.utils.logging import logger
 from autollm.utils.web_page_reader import WebPageReader
 
@@ -20,7 +21,7 @@ class WebDocsReader:
         base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
         current_path = parsed_url.path
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=WEBPAGE_READER_TIMEOUT)  # timeout in seconds
         if response.status_code != 200:
             logger.warning(f"Failed to fetch the website: {response.status_code}")
             return
