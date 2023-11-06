@@ -122,11 +122,8 @@ class CostCalculatingHandler(TokenCountingHandler):
             self.llm_token_counts.append(
                 get_llm_token_counts(payload=payload, event_id=event_id, model=self.model))
             if self._verbose:
-                logger.info(
-                    "LLM Prompt Token Usage: "
-                    f"{self.llm_token_counts[-1].prompt_token_count}\n"
-                    "LLM Completion Token Usage: "
-                    f"{self.llm_token_counts[-1].completion_token_count}", )
+                logger.info(f"LLM Prompt Token Usage: {self.llm_token_counts[-1].prompt_token_count}")
+                logger.info(f"LLM Completion Token Usage: {self.llm_token_counts[-1].completion_token_count}")
 
             # token costs
             self.llm_token_costs.append(
@@ -136,12 +133,8 @@ class CostCalculatingHandler(TokenCountingHandler):
                     model=self.model,
                 ))
             if self._verbose:
-                logger.info(
-                    "LLM Latest Token Cost: $"
-                    f"{self.llm_token_costs[-1].total_token_cost:.4f}\n",
-                    "LLM Total Token Cost: $"
-                    f"{self.total_llm_token_cost:.4f}\n",
-                )
+                logger.info(f"LLM Latest Token Cost: ${self.llm_token_costs[-1].total_token_cost:.4f}")
+                logger.info(f"LLM Total Token Cost: ${self.total_llm_token_cost:.4f}")
 
         elif (event_type == CBEventType.EMBEDDING and event_type not in self.event_ends_to_ignore and
               payload is not None):
