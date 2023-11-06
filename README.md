@@ -69,7 +69,8 @@ ______________________________________________________________________
 ### create a query engine in seconds
 
 ```python
->>> from autollm import AutoQueryEngine, read_files_as_documents
+>>> from autollm.utils.document_reading import read_files_as_documents
+>>> from autollm import AutoQueryEngine
 
 >>> documents = read_files_as_documents(input_dir="examples/data")
 >>> query_engine = AutoQueryEngine.from_parameters(documents)
