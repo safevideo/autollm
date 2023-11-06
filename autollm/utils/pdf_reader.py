@@ -3,7 +3,8 @@ from typing import List
 from langchain.document_loaders import PDFMinerLoader
 from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
-from tqdm import tqdm
+
+from autollm.utils.logging import logger
 
 
 class LangchainPDFReader(BaseReader):
@@ -17,11 +18,13 @@ class LangchainPDFReader(BaseReader):
         """Load data from a PDF file using langchain's PDFMinerLoader."""
         # Convert the PosixPath object to a string before passing it to PDFMinerLoader
         loader = PDFMinerLoader(str(file_path), extract_images=self.extract_images)
+
+        logger.info("Parsing PDF files..")
         langchain_documents = loader.load()  # This returns a list of langchain Document objects
 
         # Convert langchain documents into llama-index documents
         documents = []
-        for langchain_document in tqdm(langchain_documents, desc="Processing PDFs"):
+        for langchain_document in langchain_documents:
             # Create a llama-index document for each langchain document
             doc = Document.from_langchain_format(langchain_document)
 

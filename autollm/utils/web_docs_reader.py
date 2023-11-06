@@ -53,7 +53,7 @@ class WebDocsReader:
         return urls
 
     def load_data(self, url: str) -> List[Document]:
-        logger.info(f"Gathering URLs from {url}..")
+        logger.info(f"Listing child pages of {url}..")
         all_urls = self._get_all_urls(url)
         logger.info(f"Total URLs to process: {len(all_urls)}")
 
