@@ -1,4 +1,3 @@
-import logging
 from typing import List
 from urllib.parse import urljoin, urlparse
 
@@ -7,9 +6,8 @@ from bs4 import BeautifulSoup
 from llama_index.schema import Document
 from tqdm import tqdm
 
+from autollm.utils.logging import logger
 from autollm.utils.web_page_reader import WebPageReader
-
-logger = logging.getLogger(__name__)
 
 
 class WebDocsReader:

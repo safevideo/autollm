@@ -1,11 +1,10 @@
 import hashlib
-import logging
 from pathlib import Path
 from typing import List, Sequence, Tuple
 
 from llama_index.schema import Document
 
-logger = logging.getLogger(__name__)
+from autollm.utils.logging import logger
 
 
 def get_md5(file_path: Path) -> str:

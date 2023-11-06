@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, cast
 
@@ -6,7 +5,7 @@ from litellm.utils import cost_per_token, token_counter
 from llama_index.callbacks.schema import CBEventType, EventPayload
 from llama_index.callbacks.token_counting import TokenCountingEvent, TokenCountingHandler
 
-logger = logging.getLogger(__name__)
+from autollm.utils.logging import logger
 
 
 @dataclass
@@ -123,13 +122,11 @@ class CostCalculatingHandler(TokenCountingHandler):
             self.llm_token_counts.append(
                 get_llm_token_counts(payload=payload, event_id=event_id, model=self.model))
             if self._verbose:
-                print(
+                logger.info(
                     "LLM Prompt Token Usage: "
                     f"{self.llm_token_counts[-1].prompt_token_count}\n"
                     "LLM Completion Token Usage: "
-                    f"{self.llm_token_counts[-1].completion_token_count}",
-                    flush=True,
-                )
+                    f"{self.llm_token_counts[-1].completion_token_count}", )
 
             # token costs
             self.llm_token_costs.append(
@@ -139,10 +136,11 @@ class CostCalculatingHandler(TokenCountingHandler):
                     model=self.model,
                 ))
             if self._verbose:
-                print(
+                logger.info(
+                    "LLM Latest Token Cost: $"
+                    f"{self.llm_token_costs[-1].total_token_cost:.4f}\n",
                     "LLM Total Token Cost: $"
-                    f"{self.llm_token_costs[-1].total_token_cost:.6f}",
-                    flush=True,
+                    f"{self.total_llm_token_cost:.4f}\n",
                 )
 
         elif (event_type == CBEventType.EMBEDDING and event_type not in self.event_ends_to_ignore and
@@ -160,7 +158,7 @@ class CostCalculatingHandler(TokenCountingHandler):
                 total_chunk_tokens += self.embedding_token_counts[-1].total_token_count
 
             if self._verbose:
-                print(f"Embedding Token Usage: {total_chunk_tokens}", flush=True)
+                logger.info(f"Embedding Token Usage: {total_chunk_tokens}")
 
     @property
     def total_llm_token_cost(self) -> int:
