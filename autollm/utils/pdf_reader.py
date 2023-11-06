@@ -3,6 +3,7 @@ from typing import List
 from langchain.document_loaders import PDFMinerLoader
 from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
+from tqdm import tqdm
 
 
 class LangchainPDFReader(BaseReader):
@@ -20,7 +21,7 @@ class LangchainPDFReader(BaseReader):
 
         # Convert langchain documents into llama-index documents
         documents = []
-        for langchain_document in langchain_documents:
+        for langchain_document in tqdm(langchain_documents, desc="Processing PDFs"):
             # Create a llama-index document for each langchain document
             doc = Document.from_langchain_format(langchain_document)
 
