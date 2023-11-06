@@ -54,6 +54,9 @@ ______________________________________________________________________
 
   - [Make RAG with API Just in a few Seconds!!!](https://www.youtube.com/watch?v=sgKpBMGC6M0&list=LL&index=2)
   - [Autollm automagically create llm apps in seconds](https://www.youtube.com/watch?v=HZik9309wQc&list=LL&index=3)
+  - [AutoLLM: Create RAG Based LLM Web Apps in SECONDS!](https://www.youtube.com/watch?v=kPaiZe_qD34)
+  - [AutoLLM: Ship RAG based LLM Apps and API in Seconds](https://www.youtube.com/watch?v=iTGbwD-sSxM)
+  - [🚀 AutoLLM: Unlock the Power of 100+ Language Models! Step-by-Step Tutorial](https://www.youtube.com/watch?v=Dh9pIWO1VJw)
 
 - **blog posts**:
 
