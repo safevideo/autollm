@@ -1,9 +1,10 @@
-import logging
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from llama_index.schema import Document
+
+from autollm.utils.logging import logger
 
 # Constants defined outside the class
 SELECTORS = [
@@ -29,8 +30,6 @@ IGNORED_TAGS = [
     "script",
     "style",
 ]
-
-logger = logging.getLogger(__name__)
 
 
 class WebPageReader:

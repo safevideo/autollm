@@ -1,4 +1,3 @@
-import logging
 from typing import List
 from urllib.parse import urljoin, urlparse
 
@@ -7,9 +6,8 @@ from bs4 import BeautifulSoup
 from llama_index.schema import Document
 from tqdm import tqdm
 
+from autollm.utils.logging import logger
 from autollm.utils.web_page_reader import WebPageReader
-
-logger = logging.getLogger(__name__)
 
 
 class WebDocsReader:
@@ -55,6 +53,7 @@ class WebDocsReader:
         return urls
 
     def load_data(self, url: str) -> List[Document]:
+        logger.info(f"Listing child pages of {url}..")
         all_urls = self._get_all_urls(url)
         logger.info(f"Total URLs to process: {len(all_urls)}")
 

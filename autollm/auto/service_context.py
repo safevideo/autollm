@@ -1,4 +1,3 @@
-import logging
 from typing import Optional, Union
 
 from llama_index import ServiceContext
@@ -10,8 +9,6 @@ from llama_index.prompts.base import BasePromptTemplate
 
 from autollm.callbacks.cost_calculating import CostCalculatingHandler
 from autollm.utils.llm_utils import set_default_prompt_template
-
-logger = logging.getLogger(__name__)
 
 
 class AutoServiceContext:

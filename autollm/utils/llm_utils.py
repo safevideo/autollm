@@ -1,8 +1,4 @@
-import logging
-
 from autollm.utils.templates import QUERY_PROMPT_TEMPLATE, SYSTEM_PROMPT
-
-logger = logging.getLogger(__name__)
 
 
 def set_default_prompt_template():

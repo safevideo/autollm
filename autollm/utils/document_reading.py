@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 import stat
@@ -9,11 +8,10 @@ from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
 
 from autollm.utils.git_utils import clone_or_pull_repository
-from autollm.utils.multimarkdown_reader import MarkdownReader
+from autollm.utils.logging import logger
+from autollm.utils.markdown_reader import MarkdownReader
 from autollm.utils.pdf_reader import LangchainPDFReader
 from autollm.utils.web_docs_reader import WebDocsReader
-
-logger = logging.getLogger(__name__)
 
 
 def read_files_as_documents(
@@ -55,10 +53,13 @@ def read_files_as_documents(
         required_exts=required_exts,
         **kwargs)
 
+    logger.info(f"Reading files from {input_dir}..") if input_dir else logger.info(
+        f"Reading files {input_files}..")
+
     # Read and process the documents
     documents = reader.load_data()
 
-    logger.info(f"Found {len(documents)} 'documents'.")
+    logger.info(f"Found {len(documents)} 'document(s)'.")
     return documents
 
 
@@ -96,7 +97,7 @@ def read_github_repo_as_documents(
     temp_dir = Path("autollm/temp/")
     temp_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"Temporary directory created at {temp_dir}")
+    logger.info(f"Cloning github repo {git_repo_url} into temporary directory {temp_dir}..")
 
     try:
         # Clone or pull the GitHub repository to get the latest documents

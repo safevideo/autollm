@@ -1,7 +1,6 @@
-import logging
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+from autollm.utils.logging import logger
 
 
 def clone_or_pull_repository(git_url: str, local_path: Path) -> None:
