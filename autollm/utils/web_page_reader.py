@@ -46,7 +46,7 @@ class WebPageReader:
         Returns:
             List[Document]: A list containing Document objects with the processed content and its metadata.
         """
-        response = requests.get(url)
+        response = requests.get(url, timeout=3)
         if response.status_code != 200:
             logger.info(f"Failed to fetch the website: {response.status_code}")
             return []

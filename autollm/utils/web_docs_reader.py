@@ -20,7 +20,7 @@ class WebDocsReader:
         base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
         current_path = parsed_url.path
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=3)  # timeout in seconds
         if response.status_code != 200:
             logger.warning(f"Failed to fetch the website: {response.status_code}")
             return
