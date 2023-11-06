@@ -19,7 +19,7 @@ class LangchainPDFReader(BaseReader):
         # Convert the PosixPath object to a string before passing it to PDFMinerLoader
         loader = PDFMinerLoader(str(file_path), extract_images=self.extract_images)
 
-        logger.info(f"Parsing pages of PDF file {file_path}..")
+        logger.info(f"Parsing pages of the PDF file: {file_path}..")
         langchain_documents = loader.load()  # This returns a list of langchain Document objects
 
         # Convert langchain documents into llama-index documents
