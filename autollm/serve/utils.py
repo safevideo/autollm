@@ -35,7 +35,7 @@ def load_config_and_initialize_engines(
     query_engines = {}
     for task_params in config['tasks']:
         task_name = task_params.pop('name')
-        query_engines[task_name] = AutoQueryEngine.from_parameters(documents=documents, **task_params)
+        query_engines[task_name] = AutoQueryEngine.from_defaults(documents=documents, **task_params)
 
     return query_engines
 
