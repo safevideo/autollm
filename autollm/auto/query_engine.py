@@ -44,7 +44,7 @@ def create_query_engine(
         "vector_store_type": "LanceDBVectorStore"
     } if vector_store_params is None else vector_store_params
     service_context_params = {} if service_context_params is None else service_context_params
-    query_engine_params = {} if query_engine_params is None else query_engine_params
+    query_engine_params = {"similarity_top_k": 6} if query_engine_params is None else query_engine_params
 
     llm = AutoLiteLLM.from_defaults(**llm_params)
     service_context = AutoServiceContext.from_defaults(
