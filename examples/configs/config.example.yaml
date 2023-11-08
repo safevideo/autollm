@@ -1,5 +1,5 @@
 # config.example.yaml
-version: '3.0'  # Version of this configuration file
+version: '3.1'  # Version of this configuration file
 tasks:
   - name: "summarize"
     system_prompt: "You are an expert ai assistant specialized in summarization."  # System prompt for this task
@@ -24,10 +24,10 @@ tasks:
       table_name: "vectors"
       enable_metadata_extraction: false
     service_context_params:
-      chunk_size: 1024
+      chunk_size: 512
       context_window: 4096
     query_engine_params:
-      similarity_top_k: 5
+      similarity_top_k: 6
   - name: "qa"
     system_prompt: "You are a friendly ai assistant specialized in question answering."  # System prompt for this task
     enable_cost_calculator: true
