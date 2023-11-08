@@ -1,3 +1,5 @@
+from typing import Optional
+
 from llama_index.llms import LiteLLM
 from llama_index.llms.base import LLM
 
@@ -8,7 +10,11 @@ class AutoLiteLLM:
     """
 
     @staticmethod
-    def from_defaults(model: str = "gpt-3.5-turbo", **kwargs) -> LLM:
+    def from_defaults(
+            model: str = "gpt-3.5-turbo",
+            max_tokens: Optional[int] = None,
+            temperature: float = 0.1,
+            **kwargs) -> LLM:
         """
         Create any LLM by model name. Check https://docs.litellm.ai/docs/providers for a list of
         supported models.
@@ -19,11 +25,12 @@ class AutoLiteLLM:
         Parameters:
             model: Name of the LLM model to be initialized. Check
         https://docs.litellm.ai/docs/providers for a list of supported models.
-            *args: Variable length argument list.
+            max_tokens: The maximum number of tokens to generate by the LLM.
+            temperature: The temperature to use when sampling from the distribution.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
             LLM: The initialized LiteLLM instance for given model name and parameter set.
         """
 
-        return LiteLLM(model=model, **kwargs)
+        return LiteLLM(model=model, max_tokens=max_tokens, temperature=temperature, **kwargs)
