@@ -23,6 +23,8 @@ class AutoServiceContext:
             system_prompt: str = None,
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = False,
+            chunk_size: Optional[int] = 512,
+            context_window: Optional[int] = None,
             **kwargs) -> ServiceContext:
         """
         Create a ServiceContext with default parameters with extended enable_token_counting functionality. If
@@ -33,8 +35,9 @@ class AutoServiceContext:
             embed_model (BaseEmbedding): The embedding model to use for the query engine. Defaults to OpenAIEmbedding.
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
-            cost_calculator_verbose (bool): Flag to enable cost calculator logging.
-            *args: Variable length argument list.
+            enable_cost_calculator (bool): Flag to enable cost calculator logging.
+            chunk_size (int): The token chunk size for each chunk.
+            context_window (int): The maximum context size that will get sent to the LLM.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
@@ -56,6 +59,8 @@ class AutoServiceContext:
             embed_model=embed_model,
             system_prompt=system_prompt,
             query_wrapper_prompt=query_wrapper_prompt,
+            chunk_size=chunk_size,
+            context_window=context_window,
             callback_manager=callback_manager,
             **kwargs)
 
