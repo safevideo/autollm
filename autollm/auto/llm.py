@@ -12,9 +12,9 @@ class AutoLiteLLM:
     @staticmethod
     def from_defaults(
             model: str = "gpt-3.5-turbo",
-            api_base: Optional[str] = None,
-            max_tokens: Optional[int] = None,
-            temperature: float = 0.1) -> LLM:
+            max_tokens: Optional[int] = 256,
+            temperature: float = 0.1,
+            api_base: Optional[str] = None) -> LLM:
         """
         Create any LLM by model name. Check https://docs.litellm.ai/docs/providers for a list of
         supported models.
@@ -25,13 +25,12 @@ class AutoLiteLLM:
         Parameters:
             model: Name of the LLM model to be initialized. Check
         https://docs.litellm.ai/docs/providers for a list of supported models.
-            api_base: The API base URL to use for the LLM.
             max_tokens: The maximum number of tokens to generate by the LLM.
             temperature: The temperature to use when sampling from the distribution.
-            **kwargs: Arbitrary keyword arguments.
+            api_base: The API base URL to use for the LLM.
 
         Returns:
             LLM: The initialized LiteLLM instance for given model name and parameter set.
         """
 
-        return LiteLLM(model=model, api_base=api_base, max_tokens=max_tokens, temperature=temperature)
+        return LiteLLM(model=model, max_tokens=max_tokens, temperature=temperature, api_base=api_base)

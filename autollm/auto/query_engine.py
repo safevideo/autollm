@@ -14,9 +14,9 @@ def create_query_engine(
         documents: Optional[Sequence[Document]] = None,
         # llm_params
         llm_model: str = "gpt-3.5-turbo",
-        llm_api_base: Optional[str] = None,
-        llm_max_tokens: Optional[int] = None,
+        llm_max_tokens: Optional[int] = 256,
         llm_temperature: float = 0.1,
+        llm_api_base: Optional[str] = None,
         # service_context_params
         system_prompt: str = None,
         query_wrapper_prompt: str = None,
