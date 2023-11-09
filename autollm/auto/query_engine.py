@@ -59,18 +59,23 @@ def create_query_engine(
     # Check for deprecated parameters
     if llm_params is not None:
         raise ValueError(
-            "llm_params is deprecated. Use llm_model, llm_api_base, llm_max_tokens and llm_temperature instead."
+            "llm_params is deprecated. Instead of llm_params={'llm_model': 'model_name', ...}, "
+            "use llm_model='model_name', llm_api_base='api_base', llm_max_tokens=1028, llm_temperature=0.1 directly as arguments."
         )
     if vector_store_params is not None:
         raise ValueError(
-            "vector_store_params is deprecated. Use vector_store_type, lancedb_uri, lancedb_table_name and enable_metadata_extraction instead."
+            "vector_store_params is deprecated. Instead of vector_store_params={'vector_store_type': 'type', ...}, "
+            "use vector_store_type='type', lancedb_uri='uri', lancedb_table_name='table', enable_metadata_extraction=True directly as arguments."
         )
     if service_context_params is not None:
         raise ValueError(
-            "service_context_params is deprecated. Use system_prompt, query_wrapper_prompt, enable_cost_calculator, embed_model, chunk_size, chunk_overlap and context_window instead."
-        )
+            "service_context_params is deprecated. Use the explicit parameters like system_prompt='prompt', "
+            "query_wrapper_prompt='wrapper', enable_cost_calculator=True, embed_model='model', chunk_size=512, "
+            "chunk_overlap=..., context_window=... directly as arguments.")
     if query_engine_params is not None:
-        raise ValueError("query_engine_params is deprecated. Use similarity_top_k instead.")
+        raise ValueError(
+            "query_engine_params is deprecated. Instead of query_engine_params={'similarity_top_k': 5, ...}, "
+            "use similarity_top_k=5 directly as an argument.")
 
     llm = AutoLiteLLM.from_defaults(
         model=llm_model, api_base=llm_api_base, max_tokens=llm_max_tokens, temperature=llm_temperature)
