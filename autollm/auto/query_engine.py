@@ -311,7 +311,7 @@ class AutoQueryEngine:
             lancedb_uri=config.get('lancedb_uri'),
             lancedb_table_name=config.get('lancedb_table_name'),
             enable_metadata_extraction=config.get('enable_metadata_extraction'),
-            llm_params=config.get('llm_params', {}),
-            vector_store_params=config.get('vector_store_params', {}),
-            service_context_params=config.get('service_context_params', {}),
+            llm_params=config.get('llm_params'),
+            vector_store_params=config.get('vector_store_params'),
+            service_context_params=config.get('service_context_params'),
             **config.get('vector_store_kwargs', {}))
