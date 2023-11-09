@@ -1,4 +1,4 @@
-from typing import Sequence, Union
+from typing import Optional, Sequence, Union
 
 from llama_index import Document, ServiceContext, VectorStoreIndex
 from llama_index.embeddings.utils import EmbedType
@@ -16,7 +16,10 @@ def create_query_engine(
         query_wrapper_prompt: str = None,
         enable_cost_calculator: bool = True,
         embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
-        llm_params: dict = None,
+        llm_model: str = "gpt-3.5-turbo",
+        llm_api_base: Optional[str] = None,
+        llm_max_tokens: Optional[int] = None,
+        llm_temperature: float = 0.1,
         vector_store_params: dict = None,
         service_context_params: dict = None,
         query_engine_params: dict = None) -> BaseQueryEngine:
@@ -38,15 +41,14 @@ def create_query_engine(
     Returns:
         A llama_index.BaseQueryEngine instance.
     """
-
-    llm_params = {} if llm_params is None else llm_params
     vector_store_params = {
         "vector_store_type": "LanceDBVectorStore"
     } if vector_store_params is None else vector_store_params
     service_context_params = {} if service_context_params is None else service_context_params
     query_engine_params = {"similarity_top_k": 6} if query_engine_params is None else query_engine_params
 
-    llm = AutoLiteLLM.from_defaults(**llm_params)
+    llm = AutoLiteLLM.from_defaults(
+        model=llm_model, api_base=llm_api_base, max_tokens=llm_max_tokens, temperature=llm_temperature)
     service_context = AutoServiceContext.from_defaults(
         llm=llm,
         embed_model=embed_model,
