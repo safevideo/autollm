@@ -32,6 +32,11 @@ def create_query_engine(
         lancedb_uri: str = "./.lancedb",
         lancedb_table_name: str = "vectors",
         enable_metadata_extraction: bool = False,
+        # Deprecated parameters
+        llm_params: dict = None,
+        vector_store_params: dict = None,
+        service_context_params: dict = None,
+        query_engine_params: dict = None,
         **vector_store_kwargs) -> BaseQueryEngine:
     """
     Create a query engine from parameters.
@@ -51,6 +56,22 @@ def create_query_engine(
     Returns:
         A llama_index.BaseQueryEngine instance.
     """
+    # Check for deprecated parameters
+    if llm_params is not None:
+        raise ValueError(
+            "llm_params is deprecated. Use llm_model, llm_api_base, llm_max_tokens and llm_temperature instead."
+        )
+    if vector_store_params is not None:
+        raise ValueError(
+            "vector_store_params is deprecated. Use vector_store_type, lancedb_uri, lancedb_table_name and enable_metadata_extraction instead."
+        )
+    if service_context_params is not None:
+        raise ValueError(
+            "service_context_params is deprecated. Use system_prompt, query_wrapper_prompt, enable_cost_calculator, embed_model, chunk_size, chunk_overlap and context_window instead."
+        )
+    if query_engine_params is not None:
+        raise ValueError("query_engine_params is deprecated. Use similarity_top_k instead.")
+
     llm = AutoLiteLLM.from_defaults(
         model=llm_model, api_base=llm_api_base, max_tokens=llm_max_tokens, temperature=llm_temperature)
     service_context = AutoServiceContext.from_defaults(
@@ -156,6 +177,11 @@ class AutoQueryEngine:
             lancedb_uri: str = "./.lancedb",
             lancedb_table_name: str = "vectors",
             enable_metadata_extraction: bool = False,
+            # Deprecated parameters
+            llm_params: dict = None,
+            vector_store_params: dict = None,
+            service_context_params: dict = None,
+            query_engine_params: dict = None,
             **vector_store_kwargs) -> BaseQueryEngine:
         """
         Create an AutoQueryEngine from default parameters.
@@ -198,6 +224,11 @@ class AutoQueryEngine:
             lancedb_uri=lancedb_uri,
             lancedb_table_name=lancedb_table_name,
             enable_metadata_extraction=enable_metadata_extraction,
+            # Deprecated parameters
+            llm_params=llm_params,
+            vector_store_params=vector_store_params,
+            service_context_params=service_context_params,
+            query_engine_params=query_engine_params,
             **vector_store_kwargs)
 
     @staticmethod
@@ -275,4 +306,7 @@ class AutoQueryEngine:
             lancedb_uri=config.get('lancedb_uri'),
             lancedb_table_name=config.get('lancedb_table_name'),
             enable_metadata_extraction=config.get('enable_metadata_extraction'),
+            llm_params=config.get('llm_params', {}),
+            vector_store_params=config.get('vector_store_params', {}),
+            service_context_params=config.get('service_context_params', {}),
             **config.get('vector_store_kwargs', {}))
