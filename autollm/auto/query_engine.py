@@ -21,7 +21,9 @@ def create_query_engine(
         llm_max_tokens: Optional[int] = None,
         llm_temperature: float = 0.1,
         vector_store_params: dict = None,
-        service_context_params: dict = None,
+        chunk_size: Optional[int] = 512,
+        chunk_overlap: Optional[int] = None,
+        context_window: Optional[int] = None,
         query_engine_params: dict = None) -> BaseQueryEngine:
     """
     Create a query engine from parameters.
@@ -44,7 +46,6 @@ def create_query_engine(
     vector_store_params = {
         "vector_store_type": "LanceDBVectorStore"
     } if vector_store_params is None else vector_store_params
-    service_context_params = {} if service_context_params is None else service_context_params
     query_engine_params = {"similarity_top_k": 6} if query_engine_params is None else query_engine_params
 
     llm = AutoLiteLLM.from_defaults(
@@ -55,7 +56,9 @@ def create_query_engine(
         system_prompt=system_prompt,
         query_wrapper_prompt=query_wrapper_prompt,
         enable_cost_calculator=enable_cost_calculator,
-        **service_context_params)
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        context_window=context_window)
     vector_store_index = AutoVectorStoreIndex.from_defaults(
         **vector_store_params, documents=documents, service_context=service_context)
 

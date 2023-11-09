@@ -24,6 +24,7 @@ class AutoServiceContext:
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = False,
             chunk_size: Optional[int] = 512,
+            chunk_overlap: Optional[int] = None,
             context_window: Optional[int] = None,
             **kwargs) -> ServiceContext:
         """
@@ -37,6 +38,7 @@ class AutoServiceContext:
             query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
             enable_cost_calculator (bool): Flag to enable cost calculator logging.
             chunk_size (int): The token chunk size for each chunk.
+            chunk_overlap (int): The token overlap between each chunk.
             context_window (int): The maximum context size that will get sent to the LLM.
             **kwargs: Arbitrary keyword arguments.
 
@@ -60,6 +62,7 @@ class AutoServiceContext:
             system_prompt=system_prompt,
             query_wrapper_prompt=query_wrapper_prompt,
             chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
             context_window=context_window,
             callback_manager=callback_manager,
             **kwargs)
