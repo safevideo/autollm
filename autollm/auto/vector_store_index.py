@@ -33,6 +33,8 @@ class AutoVectorStoreIndex:
     @staticmethod
     def from_defaults(
             vector_store_type: str = "LanceDBVectorStore",
+            lancedb_uri: str = "./.lancedb",
+            lancedb_table_name: str = "vectors",
             enable_metadata_extraction: bool = False,
             documents: Optional[Sequence[Document]] = None,
             service_context: Optional[ServiceContext] = None,
@@ -56,17 +58,18 @@ class AutoVectorStoreIndex:
         # Initialize vector store
         VectorStoreClass = import_vector_store_class(vector_store_type)
 
+        # If LanceDBVectorStore, use lancedb_uri and lancedb_table_name
+        if vector_store_type == "LanceDBVectorStore":
+            vector_store = VectorStoreClass(uri=lancedb_uri, table_name=lancedb_table_name, **kwargs)
+        else:
+            vector_store = VectorStoreClass(**kwargs)
+
         # Initialize vector store index from existing vector store
         if documents is None:
-            vector_store = VectorStoreClass(**kwargs)
             index = VectorStoreIndex.from_vector_store(
                 vector_store=vector_store, service_context=service_context)
         # Initialize vector store index from documents
         else:
-            if vector_store_type == "LanceDBVectorStore":
-                kwargs["uri"] = "./.lancedb" if "uri" not in kwargs else kwargs["uri"]
-                kwargs["table_name"] = "vectors" if "table_name" not in kwargs else kwargs["table_name"]
-            vector_store = VectorStoreClass(**kwargs)
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
             # Get llm from service context for metadata extraction

@@ -20,11 +20,15 @@ def create_query_engine(
         llm_api_base: Optional[str] = None,
         llm_max_tokens: Optional[int] = None,
         llm_temperature: float = 0.1,
-        vector_store_params: dict = None,
         chunk_size: Optional[int] = 512,
         chunk_overlap: Optional[int] = None,
         context_window: Optional[int] = None,
-        query_engine_params: dict = None) -> BaseQueryEngine:
+        query_engine_params: dict = None,
+        vector_store_type: str = "LanceDBVectorStore",
+        lancedb_uri: str = "./.lancedb",
+        lancedb_table_name: str = "vectors",
+        enable_metadata_extraction: bool = False,
+        **vector_store_kwargs) -> BaseQueryEngine:
     """
     Create a query engine from parameters.
 
@@ -43,9 +47,6 @@ def create_query_engine(
     Returns:
         A llama_index.BaseQueryEngine instance.
     """
-    vector_store_params = {
-        "vector_store_type": "LanceDBVectorStore"
-    } if vector_store_params is None else vector_store_params
     query_engine_params = {"similarity_top_k": 6} if query_engine_params is None else query_engine_params
 
     llm = AutoLiteLLM.from_defaults(
@@ -60,7 +61,13 @@ def create_query_engine(
         chunk_overlap=chunk_overlap,
         context_window=context_window)
     vector_store_index = AutoVectorStoreIndex.from_defaults(
-        **vector_store_params, documents=documents, service_context=service_context)
+        vector_store_type=vector_store_type,
+        lancedb_uri=lancedb_uri,
+        lancedb_table_name=lancedb_table_name,
+        enable_metadata_extraction=enable_metadata_extraction,
+        documents=documents,
+        service_context=service_context,
+        **vector_store_kwargs)
 
     return vector_store_index.as_query_engine(**query_engine_params)
 
