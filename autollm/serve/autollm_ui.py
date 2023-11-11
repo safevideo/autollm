@@ -1,6 +1,10 @@
 import os
 
 import gradio as gr
+import yaml
+from dotenv import load_dotenv
+
+from autollm.utils.logging import logger
 
 
 # Function to process web page field input
@@ -21,14 +25,18 @@ def process_document_field(document_field):
     return f"Processed Document Field: {document_field}"
 
 
-def load_config():
-    # Placeholder function for loading config
-    return "Config Loaded"
+# Function to load and process config file
+def load_config(file_path):
+    with open(file_path.name) as file:
+        config = yaml.safe_load(file)
+    logger.info("Loaded config file")
+    return config
 
 
-def load_env():
-    # Placeholder function for loading .env
-    return ".env Loaded"
+# Function to load and process .env file
+def load_env(file_path):
+    load_dotenv(file_path.name)
+    logger.info("Loaded .env file")
 
 
 # Define Gradio interface
