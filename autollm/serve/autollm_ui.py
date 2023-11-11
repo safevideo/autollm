@@ -4,39 +4,37 @@ import gradio as gr
 import yaml
 from dotenv import load_dotenv
 
-from autollm.utils.logging import logger
+from autollm.utils.document_reading import read_files_as_documents, read_web_as_documents
 
 
-# Function to process web page field input
-def process_web_page_field(web_page_field):
-    # Placeholder logic for processing web page field input
-    return f"Processed Web Page Field: {web_page_field}"
+# Function to process uploaded files
+def process_uploaded_files(file_list):
+    documents = read_files_as_documents(input_files=[f.name for f in file_list])
+    return f"Processed {len(documents)} document(s) from files."
 
 
-# Function to process directory field input
-def process_directory_field(directory_field):
-    # Placeholder logic for processing directory field input
-    return f"Processed Directory Field: {directory_field}"
+# Function to process directory input
+def process_directory(directory_path):
+    documents = read_files_as_documents(input_dir=directory_path)
+    return f"Processed {len(documents)} document(s) from directory."
 
 
-# Function to process document field input
-def process_document_field(document_field):
-    # Placeholder logic for processing document field input
-    return f"Processed Document Field: {document_field}"
+# Function to process web page URL
+def process_web_url(url):
+    documents = read_web_as_documents(url)
+    return f"Processed {len(documents)} document(s) from web URL."
 
 
-# Function to load and process config file
+# Functions to load config and .env files
 def load_config(file_path):
     with open(file_path.name) as file:
         config = yaml.safe_load(file)
-    logger.info("Loaded config file")
     return config
 
 
-# Function to load and process .env file
 def load_env(file_path):
     load_dotenv(file_path.name)
-    logger.info("Loaded .env file")
+    return ".env Loaded."
 
 
 # Define Gradio interface
@@ -44,24 +42,27 @@ with gr.Blocks() as app:
     gr.Markdown("### Autollm UI")
 
     with gr.Row():
-        web_page_field = gr.Textbox(label="Web Page Field (comma-separated values)")
-        directory_field = gr.Textbox(label="Directory Field")
-        document_field = gr.Textbox(label="Document Field (list)")
+        file_upload = gr.File(label="Upload Files", multiple=True)
+        directory_input = gr.Textbox(label="Directory Path")
+        web_url_input = gr.Textbox(label="Web Page URL")
+
+    submit_files_btn = gr.Button("Process Files")
+    submit_dir_btn = gr.Button("Process Directory")
+    submit_url_btn = gr.Button("Process Web URL")
+
+    output = gr.Textbox(label="Output")
+
+    submit_files_btn.click(process_uploaded_files, [file_upload], output)
+    submit_dir_btn.click(process_directory, [directory_input], output)
+    submit_url_btn.click(process_web_url, [web_url_input], output)
+
+    config_upload = gr.File(label="Upload Config File")
+    env_upload = gr.File(label="Upload .env File")
 
     load_config_btn = gr.Button("Load Config")
     load_env_btn = gr.Button("Load .env")
 
-    output = gr.Textbox(label="Output")
-
-    load_config_btn.click(load_config, [], output)
-    load_env_btn.click(load_env, [], output)
-
-    submit_web_page_btn = gr.Button("Submit Web Page Field")
-    submit_directory_btn = gr.Button("Submit Directory Field")
-    submit_document_btn = gr.Button("Submit Document Field")
-
-    submit_web_page_btn.click(process_web_page_field, [web_page_field], output)
-    submit_directory_btn.click(process_directory_field, [directory_field], output)
-    submit_document_btn.click(process_document_field, [document_field], output)
+    load_config_btn.click(load_config, [config_upload], output)
+    load_env_btn.click(load_env, [env_upload], output)
 
 app.launch()
