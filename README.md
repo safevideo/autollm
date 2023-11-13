@@ -72,7 +72,7 @@ ______________________________________________________________________
 >>> from autollm import AutoQueryEngine, read_files_as_documents
 
 >>> documents = read_files_as_documents(input_dir="examples/data")
->>> query_engine = AutoQueryEngine.from_parameters(documents)
+>>> query_engine = AutoQueryEngine.from_defaults(documents)
 
 >>> response = query_engine.query(
 ...     "Why did SafeVideo AI develop this project?"
@@ -93,15 +93,17 @@ ______________________________________________________________________
 ...     system_prompt='...',
 ...     query_wrapper_prompt='...',
 ...     enable_cost_calculator=True,
-...     llm_params={"model": "gpt-3.5-turbo"},
-...     vector_store_params={
-...       "vector_store_type": "LanceDBVectorStore",
-...       "uri": "./.lancedb",
-...       "table_name": "vectors",
-...       "nprobs": 20
-...     },
-...     service_context_params={"chunk_size": 1024},
-...     query_engine_params={"similarity_top_k": 10},
+...     embed_model="local",
+...     chunk_size=1024,
+...     context_window=4096,
+...     llm_model="gpt-3.5-turbo",
+...     llm_max_tokens="256",
+...     llm_temperature="0.1",
+...     vector_store_type="LanceDBVectorStore",
+...     lancedb_uri="./.lancedb",
+...     lancedb_table_name="vectors",
+...     enable_metadata_extraction=False,
+...     similarity_top_k=3,
 ... )
 
 >>> response = query_engine.query("Who is SafeVideo AI?")
@@ -162,17 +164,13 @@ ______________________________________________________________________
 
 >>> os.environ["HUGGINGFACE_API_KEY"] = "huggingface_api_key"
 
->>> model = "huggingface/WizardLM/WizardCoder-Python-34B-V1.0"
->>> api_base = "https://my-endpoint.huggingface.cloud"
-
->>> llm_params = {
-...     "model": model,
-...     "api_base": api_base,
-... }
+>>> llm_model = "huggingface/WizardLM/WizardCoder-Python-34B-V1.0"
+>>> llm_api_base = "https://my-endpoint.huggingface.cloud"
 
 >>> AutoQueryEngine.from_parameters(
 ...     documents='...',
-...     llm_params=llm_params
+...     llm_model=llm_model,
+...     llm_api_base=llm_api_base,
 ... )
 ```
 
@@ -184,17 +182,13 @@ ______________________________________________________________________
   ```python
   >>> from autollm import AutoQueryEngine
 
-  >>> model = "ollama/llama2"
-  >>> api_base = "http://localhost:11434"
-
-  >>> llm_params = {
-  ...     "model": model,
-  ...     "api_base": api_base,
-  ... }
+  >>> llm_model = "ollama/llama2"
+  >>> llm_api_base = "http://localhost:11434"
 
   >>> AutoQueryEngine.from_parameters(
   ...     documents='...',
-  ...     llm_params=llm_params
+  ...     llm_model=llm_model,
+  ...     llm_api_base=llm_api_base,
   ... )
   ```
 
@@ -207,12 +201,11 @@ ______________________________________________________________________
   >>> os.environ["AZURE_API_BASE"] = ""
   >>> os.environ["AZURE_API_VERSION"] = ""
 
-  >>> model = "azure/<your_deployment_name>")
-  >>> llm_params = {"model": model}
+  >>> llm_model = "azure/<your_deployment_name>")
 
   >>> AutoQueryEngine.from_parameters(
   ...     documents='...',
-  ...     llm_params=llm_params
+  ...     llm_model=llm_model
   ... )
   ```
 
@@ -224,12 +217,11 @@ ______________________________________________________________________
   >>> os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"  # Your Project ID`
   >>> os.environ["VERTEXAI_LOCATION"] = "us-central1"  # Your Location
 
-  >>> model = "text-bison@001"
-  >>> llm_params = {"model": model}
+  >>> llm_model = "text-bison@001"
 
   >>> AutoQueryEngine.from_parameters(
   ...     documents='...',
-  ...     llm_params=llm_params
+  ...     llm_model=llm_model
   ... )
   ```
 
@@ -242,12 +234,11 @@ ______________________________________________________________________
   >>> os.environ["AWS_SECRET_ACCESS_KEY"] = ""
   >>> os.environ["AWS_REGION_NAME"] = ""
 
-  >>> model = "anthropic.claude-v2"
-  >>> llm_params = {"model": model}
+  >>> llm_model = "anthropic.claude-v2"
 
   >>> AutoQueryEngine.from_parameters(
   ...     documents='...',
-  ...     llm_params=llm_params
+  ...     llm_model=llm_model
   ... )
   ```
 
@@ -273,15 +264,11 @@ it's setup-free, serverless, and 100x more cost-effective!
   ... )
   >>> collection_name = "quickstart"
 
-  >>> vector_store_params = {
-  ...     "vector_store_type": vector_store_type,
-  ...     "client": client,
-  ...     "collection_name": collection_name,
-  ... }
-
   >>> AutoQueryEngine.from_parameters(
   ...     documents='...',
-  ...     vector_store_params=vector_store_params
+  ...     vector_store_type=vector_store_type,
+  ...     client=client,
+  ...     collection_name=collection_name,
   ... )
   ```
 
