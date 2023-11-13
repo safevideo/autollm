@@ -10,6 +10,7 @@ from llama_index.node_parser.extractors import (
     SummaryExtractor,
     TitleExtractor,
 )
+from llama_index.schema import BaseNode
 
 
 def import_vector_store_class(vector_store_class_name: str):
@@ -37,6 +38,7 @@ class AutoVectorStoreIndex:
             lancedb_table_name: str = "vectors",
             enable_metadata_extraction: bool = False,
             documents: Optional[Sequence[Document]] = None,
+            nodes: Optional[Sequence[BaseNode]] = None,
             service_context: Optional[ServiceContext] = None,
             **kwargs) -> VectorStoreIndex:
         """
@@ -46,14 +48,18 @@ class AutoVectorStoreIndex:
             vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'SimpleVectorStore'..)
             enable_metadata_extraction (bool): Whether to enable automated metadata extraction as questions, keywords, entities, or summaries.
             documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
+            nodes (Optional[Sequence[BaseNode]]): Nodes to initialize the vector store index from.
             service_context (Optional[ServiceContext]): Service context to initialize the vector store index from.
             **kwargs: Additional parameters for initializing the vector store
 
         Returns:
             index (VectorStoreIndex): The initialized Vector Store index instance for given vector store type and parameter set.
         """
-        if documents is None and vector_store_type == "SimpleVectorStore":
-            raise ValueError("documents must be provided for SimpleVectorStore")
+        if documents is None and nodes is None and vector_store_type == "SimpleVectorStore":
+            raise ValueError("documents or nodes must be provided for SimpleVectorStore")
+
+        if documents is not None and nodes is not None:
+            raise ValueError("documents and nodes cannot be provided at the same time")
 
         # Initialize vector store
         VectorStoreClass = import_vector_store_class(vector_store_type)
@@ -65,16 +71,19 @@ class AutoVectorStoreIndex:
             vector_store = VectorStoreClass(**kwargs)
 
         # Initialize vector store index from existing vector store
-        if documents is None:
+        if documents is None and nodes is None:
             index = VectorStoreIndex.from_vector_store(
                 vector_store=vector_store, service_context=service_context)
-        # Initialize vector store index from documents
-        else:
-            storage_context = StorageContext.from_defaults(vector_store=vector_store)
+            return index
 
-            # Get llm from service context for metadata extraction
-            llm = service_context.llm if service_context is not None else None
+        # Initialize vector store index from documents or nodes
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
+        # Get llm from service context for metadata extraction
+        llm = service_context.llm if service_context is not None else None
+
+        if documents is not None:
+            # TODO: create_index_from_documents() function
             if enable_metadata_extraction:
                 metadata_extractor = MetadataExtractor(
                     extractors=[
@@ -98,5 +107,12 @@ class AutoVectorStoreIndex:
                     storage_context=storage_context,
                     service_context=service_context,
                     show_progress=True)
+        else:
+            # TODO: create_index_from_nodes() function
+            index = VectorStoreIndex(
+                nodes=nodes,
+                storage_context=storage_context,
+                service_context=service_context,
+                show_progress=True)
 
         return index
