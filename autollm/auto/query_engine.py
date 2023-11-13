@@ -3,6 +3,7 @@ from typing import Optional, Sequence, Union
 from llama_index import Document, ServiceContext, VectorStoreIndex
 from llama_index.embeddings.utils import EmbedType
 from llama_index.indices.query.base import BaseQueryEngine
+from llama_index.schema import BaseNode
 
 from autollm.auto.llm import AutoLiteLLM
 from autollm.auto.service_context import AutoServiceContext
@@ -12,6 +13,7 @@ from autollm.utils.env_utils import load_config_and_dotenv
 
 def create_query_engine(
         documents: Optional[Sequence[Document]] = None,
+        nodes: Optional[Sequence[BaseNode]] = None,
         # llm_params
         llm_model: str = "gpt-3.5-turbo",
         llm_max_tokens: Optional[int] = 256,
@@ -94,6 +96,7 @@ def create_query_engine(
         lancedb_table_name=lancedb_table_name,
         enable_metadata_extraction=enable_metadata_extraction,
         documents=documents,
+        nodes=nodes,
         service_context=service_context,
         **vector_store_kwargs)
 
@@ -162,6 +165,7 @@ class AutoQueryEngine:
     @staticmethod
     def from_defaults(
             documents: Optional[Sequence[Document]] = None,
+            nodes: Optional[Sequence[BaseNode]] = None,
             # llm_params
             llm_model: str = "gpt-3.5-turbo",
             llm_api_base: Optional[str] = None,
@@ -209,6 +213,7 @@ class AutoQueryEngine:
 
         return create_query_engine(
             documents=documents,
+            nodes=nodes,
             # llm_params
             llm_model=llm_model,
             llm_api_base=llm_api_base,
@@ -276,7 +281,8 @@ class AutoQueryEngine:
     def from_config(
             config_file_path: str,
             env_file_path: str = None,
-            documents: Sequence[Document] = None) -> BaseQueryEngine:
+            documents: Sequence[Document] = None,
+            nodes: Optional[Sequence[BaseNode]] = None) -> BaseQueryEngine:
         """
         Create an AutoQueryEngine from a config file and optionally a .env file.
 
@@ -295,6 +301,7 @@ class AutoQueryEngine:
 
         return create_query_engine(
             documents=documents,
+            nodes=nodes,
             llm_model=config.get('llm_model'),
             llm_api_base=config.get('llm_api_base'),
             llm_max_tokens=config.get('llm_max_tokens'),
