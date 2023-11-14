@@ -44,6 +44,12 @@ easily install **autollm** package with pip in [**Python>=3.8**](https://www.pyt
 pip install autollm
 ```
 
+for built-in data readers (github, pdf, docx, ipynb, epub, mbox, websites..), install with:
+
+```bash
+pip install autollm[readers]
+```
+
 ______________________________________________________________________
 
 ## 🎯 quickstart
