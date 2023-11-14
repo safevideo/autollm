@@ -7,8 +7,8 @@ documents = [Document.example()]
 
 
 def test_auto_query_engine_from_defaults():
-    vector_store_params = {"vector_store_type": "SimpleVectorStore"}
-    query_engine = AutoQueryEngine.from_defaults(documents=documents, vector_store_params=vector_store_params)
+    vector_store_type = "SimpleVectorStore"
+    query_engine = AutoQueryEngine.from_defaults(documents=documents, vector_store_type=vector_store_type)
 
     # Check if the query_engine is an instance of BaseQueryEngine
     assert isinstance(query_engine, BaseQueryEngine)

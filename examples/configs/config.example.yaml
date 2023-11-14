@@ -1,7 +1,10 @@
 # config.example.yaml
-version: '3.1'  # Version of this configuration file
+version: '4.0'  # Version of this configuration file
 tasks:
   - name: "summarize"
+    llm_model: "gpt-3.5-turbo"
+    llm_max_tokens: 2048
+    llm_temperature: 0.1
     system_prompt: "You are an expert ai assistant specialized in summarization."  # System prompt for this task
     query_wrapper_prompt: |
       The document information is below.
@@ -14,29 +17,18 @@ tasks:
       Answer:
     enable_cost_calculator: true
     embed_model: "default"  # ["default", "local:intfloat/multilingual-e5-large"]
-    llm_params:
-      model: "gpt-3.5-turbo"
-      max_tokens: 2048
-      temperature: 0.1
-    vector_store_params:
-      vector_store_type: "LanceDBVectorStore"
-      uri: "./.lancedb"
-      table_name: "vectors"
-      enable_metadata_extraction: false
-    service_context_params:
-      chunk_size: 512
-      context_window: 4096
-    query_engine_params:
-      similarity_top_k: 6
+    chunk_size: 512
+    context_window: 4096
+    similarity_top_k: 6
+    vector_store_type: "LanceDBVectorStore"
+    lancedb_uri: "./.lancedb"
+    lancedb_table_name: "vectors"
+    enable_metadata_extraction: false
   - name: "qa"
     system_prompt: "You are a friendly ai assistant specialized in question answering."  # System prompt for this task
     enable_cost_calculator: true
     embed_model: "default"  # ["default", "local:intfloat/multilingual-e5-large"]
-    vector_store_params:
-      vector_store_type: "SimpleVectorStore"
-    llm_params:
-      model: "gpt-4"
-    service_context_params:
-      chunk_size: 1024
-    query_engine_params:
-      similarity_top_k: 3
+    vector_store_type: "SimpleVectorStore"
+    llm_model: "gpt-4"
+    chunk_size: 1028
+    similarity_top_k: 2
