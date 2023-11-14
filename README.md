@@ -41,6 +41,12 @@ ______________________________________________________________________
 easily install **autollm** package with pip in [**Python>=3.8**](https://www.python.org/downloads/) environment.
 
 ```bash
+pip install autollm
+```
+
+for extended functionality to read different file types like pdf, docx or read from websites and github repos, install the `readers` extra:
+
+```bash
 pip install autollm[readers]
 ```
 
