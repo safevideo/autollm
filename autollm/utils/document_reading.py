@@ -118,9 +118,9 @@ def read_github_repo_as_documents(
     return documents
 
 
-def read_web_as_documents(url: str) -> List[Document]:
+def read_website_as_documents(url: str) -> List[Document]:
     """
-    Read documents from a web with all its child pages using the WebDocsReader.
+    Read documents from a website with all its child pages using the WebDocsReader.
 
     Parameters:
         url (str): The starting URL from which to scrape documents.
@@ -133,9 +133,9 @@ def read_web_as_documents(url: str) -> List[Document]:
     return documents
 
 
-def read_website_as_documents(url: str) -> List[Document]:
+def read_webpage_as_documents(url: str) -> List[Document]:
     """
-    Read documents from a single web URL using the WebPageReader.
+    Read documents from a single webpage URL using the WebPageReader.
 
     Parameters:
         url (str): The URL of the web page to read.
