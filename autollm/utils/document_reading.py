@@ -12,6 +12,7 @@ from autollm.utils.logging import logger
 from autollm.utils.markdown_reader import MarkdownReader
 from autollm.utils.pdf_reader import LangchainPDFReader
 from autollm.utils.web_docs_reader import WebDocsReader
+from autollm.utils.web_page_reader import WebPageReader
 
 
 def read_files_as_documents(
@@ -119,7 +120,7 @@ def read_github_repo_as_documents(
 
 def read_web_as_documents(url: str) -> List[Document]:
     """
-    Read documents from a web URL using the WebDocsReader.
+    Read documents from a web with all its child pages using the WebDocsReader.
 
     Parameters:
         url (str): The starting URL from which to scrape documents.
@@ -128,5 +129,20 @@ def read_web_as_documents(url: str) -> List[Document]:
         List[Document]: A list of Document objects containing content and metadata from the web pages.
     """
     reader = WebDocsReader()
+    documents = reader.load_data(url)
+    return documents
+
+
+def read_website_as_documents(url: str) -> List[Document]:
+    """
+    Read documents from a single web URL using the WebPageReader.
+
+    Parameters:
+        url (str): The URL of the web page to read.
+
+    Returns:
+        List[Document]: A list of Document objects containing content and metadata from the web page.
+    """
+    reader = WebPageReader()
     documents = reader.load_data(url)
     return documents
