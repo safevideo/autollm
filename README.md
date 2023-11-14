@@ -41,7 +41,7 @@ ______________________________________________________________________
 easily install **autollm** package with pip in [**Python>=3.8**](https://www.python.org/downloads/) environment.
 
 ```bash
-pip install autollm
+pip install autollm[readers]
 ```
 
 ______________________________________________________________________
