@@ -1,3 +1,7 @@
 beautifulsoup4==4.12.2
 pdfminer.six==20221105
 gitpython==3.1.37
+docx2txt
+EbookLib
+html2text
+nbconvert

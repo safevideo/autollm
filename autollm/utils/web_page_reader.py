@@ -69,6 +69,8 @@ class WebPageReader:
 
         content = " ".join(soup.stripped_strings)
         document = Document(id_=url, text=content, metadata={"url": url})
+        logger.info(f"Processed URL: {url}")
+
         return [document]
 
 
