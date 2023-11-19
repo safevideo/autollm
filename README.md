@@ -332,10 +332,14 @@ switching from Llama-Index? We've got you covered.
 
 >>> vector_store = LanceDBVectorStore(uri="./.lancedb")
 >>> storage_context = StorageContext.from_defaults(vector_store=vector_store)
->>> index = VectorStoreIndex.from_documents(documents=documents)
 >>> service_context = ServiceContext.from_defaults()
+>>> index = VectorStoreIndex.from_documents(
+        documents=documents,
+        storage_context=storage_contex,
+        service_context=service_context,
+    )
 
->>> query_engine = AutoQueryEngine.from_instances(index, service_context)
+>>> query_engine = AutoQueryEngine.from_instances(index)
 ```
 
 </details>

@@ -1,15 +1,6 @@
 from typing import Optional, Sequence
 
 from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
-from llama_index.node_parser import SimpleNodeParser
-from llama_index.node_parser.extractors import (
-    EntityExtractor,
-    KeywordExtractor,
-    MetadataExtractor,
-    QuestionsAnsweredExtractor,
-    SummaryExtractor,
-    TitleExtractor,
-)
 from llama_index.schema import BaseNode
 
 
@@ -36,7 +27,6 @@ class AutoVectorStoreIndex:
             vector_store_type: str = "LanceDBVectorStore",
             lancedb_uri: str = "./.lancedb",
             lancedb_table_name: str = "vectors",
-            enable_metadata_extraction: bool = False,
             documents: Optional[Sequence[Document]] = None,
             nodes: Optional[Sequence[BaseNode]] = None,
             service_context: Optional[ServiceContext] = None,
@@ -46,7 +36,6 @@ class AutoVectorStoreIndex:
 
         Parameters:
             vector_store_type (str): The class name of the vector store (e.g., 'LanceDBVectorStore', 'SimpleVectorStore'..)
-            enable_metadata_extraction (bool): Whether to enable automated metadata extraction as questions, keywords, entities, or summaries.
             documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
             nodes (Optional[Sequence[BaseNode]]): Nodes to initialize the vector store index from.
             service_context (Optional[ServiceContext]): Service context to initialize the vector store index from.
@@ -79,36 +68,13 @@ class AutoVectorStoreIndex:
         # Initialize vector store index from documents or nodes
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-        # Get llm from service context for metadata extraction
-        llm = service_context.llm if service_context is not None else None
-
         if documents is not None:
-            # TODO: create_index_from_documents() function
-            if enable_metadata_extraction:
-                metadata_extractor = MetadataExtractor(
-                    extractors=[
-                        TitleExtractor(llm=llm, nodes=5),
-                        QuestionsAnsweredExtractor(llm=llm, questions=3),
-                        SummaryExtractor(llm=llm, summaries=["prev", "self"]),
-                        KeywordExtractor(llm=llm, keywords=10),
-                        EntityExtractor(prediction_threshold=0.5)
-                    ], )
-                node_parser = SimpleNodeParser.from_defaults(metadata_extractor=metadata_extractor)
-                nodes = node_parser.get_nodes_from_documents(documents)
-                index = VectorStoreIndex(
-                    nodes=nodes,
-                    storage_context=storage_context,
-                    service_context=service_context,
-                    show_progress=True)
-            # Initialize index without metadata extraction
-            else:
-                index = VectorStoreIndex.from_documents(
-                    documents=documents,
-                    storage_context=storage_context,
-                    service_context=service_context,
-                    show_progress=True)
+            index = VectorStoreIndex.from_documents(
+                documents=documents,
+                storage_context=storage_context,
+                service_context=service_context,
+                show_progress=True)
         else:
-            # TODO: create_index_from_nodes() function
             index = VectorStoreIndex(
                 nodes=nodes,
                 storage_context=storage_context,
