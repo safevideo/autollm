@@ -3,10 +3,10 @@ from typing import Optional, Sequence, Union
 from llama_index import Document, ServiceContext, VectorStoreIndex
 from llama_index.embeddings.utils import EmbedType
 from llama_index.indices.query.base import BaseQueryEngine
-from llama_index.schema import BaseNode
-from llama_index.response_synthesizers import get_response_synthesizer
 from llama_index.prompts.base import PromptTemplate
 from llama_index.prompts.prompt_type import PromptType
+from llama_index.response_synthesizers import get_response_synthesizer
+from llama_index.schema import BaseNode
 
 from autollm.auto.llm import AutoLiteLLM
 from autollm.auto.service_context import AutoServiceContext
@@ -130,19 +130,17 @@ def create_query_engine(
         service_context=service_context,
         **vector_store_kwargs)
     if refine_prompt is not None:
-        refine_prompt_template = PromptTemplate(
-            refine_prompt, prompt_type=PromptType.REFINE
-        )
+        refine_prompt_template = PromptTemplate(refine_prompt, prompt_type=PromptType.REFINE)
     else:
         refine_prompt_template = None
     response_synthesizer = get_response_synthesizer(
         service_context=service_context,
         response_mode=response_mode,
         refine_template=refine_prompt_template,
-        structured_answer_filtering=structured_answer_filtering
-    )
+        structured_answer_filtering=structured_answer_filtering)
 
-    return vector_store_index.as_query_engine(similarity_top_k=similarity_top_k, response_synthesizer=response_synthesizer)
+    return vector_store_index.as_query_engine(
+        similarity_top_k=similarity_top_k, response_synthesizer=response_synthesizer)
 
 
 class AutoQueryEngine:
@@ -240,35 +238,35 @@ class AutoQueryEngine:
         """
         Create an AutoQueryEngine from default parameters.
 
-    Parameters:
-        documents (Sequence[Document]): Sequence of llama_index.Document instances.
-        nodes (Sequence[BaseNode]): Sequence of llama_index.BaseNode instances.
-        llm_model (str): The LLM model to use for the query engine.
-        llm_max_tokens (int): The maximum number of tokens to be generated as LLM output.
-        llm_temperature (float): The temperature to use for the LLM.
-        llm_api_base (str): The API base to use for the LLM.
-        system_prompt (str): The system prompt to use for the query engine.
-        query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
-        enable_cost_calculator (bool): Flag to enable cost calculator logging.
-        embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
-                                            "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
-        chunk_size (int): The token chunk size for each chunk.
-        chunk_overlap (int): The token overlap between each chunk.
-        context_window (int): The maximum context size that will get sent to the LLM.
-        enable_title_extractor (bool): Flag to enable title extractor.
-        enable_summary_extractor (bool): Flag to enable summary extractor.
-        enable_qa_extractor (bool): Flag to enable question answering extractor.
-        enable_keyword_extractor (bool): Flag to enable keyword extractor.
-        enable_entity_extractor (bool): Flag to enable entity extractor.
-        similarity_top_k (int): The number of similar documents to return.
-        response_mode (str): The response mode to use for the query engine.
-        refine_prompt (str): The refine prompt to use for the query engine.
-        vector_store_type (str): The vector store type to use for the query engine.
-        lancedb_uri (str): The URI to use for the LanceDB vector store.
-        lancedb_table_name (str): The table name to use for the LanceDB vector store.
+        Parameters:
+            documents (Sequence[Document]): Sequence of llama_index.Document instances.
+            nodes (Sequence[BaseNode]): Sequence of llama_index.BaseNode instances.
+            llm_model (str): The LLM model to use for the query engine.
+            llm_max_tokens (int): The maximum number of tokens to be generated as LLM output.
+            llm_temperature (float): The temperature to use for the LLM.
+            llm_api_base (str): The API base to use for the LLM.
+            system_prompt (str): The system prompt to use for the query engine.
+            query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
+            enable_cost_calculator (bool): Flag to enable cost calculator logging.
+            embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
+                                                "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
+            chunk_size (int): The token chunk size for each chunk.
+            chunk_overlap (int): The token overlap between each chunk.
+            context_window (int): The maximum context size that will get sent to the LLM.
+            enable_title_extractor (bool): Flag to enable title extractor.
+            enable_summary_extractor (bool): Flag to enable summary extractor.
+            enable_qa_extractor (bool): Flag to enable question answering extractor.
+            enable_keyword_extractor (bool): Flag to enable keyword extractor.
+            enable_entity_extractor (bool): Flag to enable entity extractor.
+            similarity_top_k (int): The number of similar documents to return.
+            response_mode (str): The response mode to use for the query engine.
+            refine_prompt (str): The refine prompt to use for the query engine.
+            vector_store_type (str): The vector store type to use for the query engine.
+            lancedb_uri (str): The URI to use for the LanceDB vector store.
+            lancedb_table_name (str): The table name to use for the LanceDB vector store.
 
-        Returns:
-            A llama_index.BaseQueryEngine instance.
+            Returns:
+                A llama_index.BaseQueryEngine instance.
         """
 
         return create_query_engine(
@@ -366,4 +364,4 @@ class AutoQueryEngine:
             documents=documents,
             nodes=nodes,
             **config,
-            )
+        )

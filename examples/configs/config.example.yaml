@@ -17,7 +17,6 @@ tasks:
       Answer:
     enable_cost_calculator: true
     embed_model: "default"  # ["default", "local:intfloat/multilingual-e5-large"]
-    
     chunk_size: 512
     chunk_overlap: 200
     similarity_top_k: 6

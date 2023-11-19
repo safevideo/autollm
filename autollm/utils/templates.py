@@ -25,7 +25,7 @@ Here is the new context:
 ------------
 {context_msg}
 ------------
-Given the new context, refine the original answer to better 
+Given the new context, refine the original answer to better
 answer the query (only if necessary).
-Refined Answer: 
+Refined Answer:
 '''

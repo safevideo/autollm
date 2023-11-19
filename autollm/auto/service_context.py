@@ -3,11 +3,17 @@ from typing import Optional, Union
 from llama_index import ServiceContext
 from llama_index.callbacks import CallbackManager
 from llama_index.embeddings.utils import EmbedType
+from llama_index.extractors import (
+    EntityExtractor,
+    KeywordExtractor,
+    QuestionsAnsweredExtractor,
+    SummaryExtractor,
+    TitleExtractor,
+)
 from llama_index.llms.utils import LLMType
 from llama_index.prompts import PromptTemplate
 from llama_index.prompts.base import BasePromptTemplate
 from llama_index.text_splitter import SentenceSplitter
-from llama_index.extractors import TitleExtractor, SummaryExtractor, QuestionsAnsweredExtractor, KeywordExtractor, EntityExtractor
 
 from autollm.callbacks.cost_calculating import CostCalculatingHandler
 from autollm.utils.llm_utils import set_default_prompt_template
