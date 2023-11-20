@@ -1,5 +1,5 @@
-llama-index==0.8.58
-litellm==0.12.11
+llama-index @ git+https://github.com/fcakyon/llama_index@fix-litellm
+litellm==1.1.1
 uvicorn
 fastapi
 python-dotenv

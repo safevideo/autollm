@@ -5,3 +5,4 @@ docx2txt
 EbookLib
 html2text
 nbconvert
+langchain

@@ -17,3 +17,15 @@ answer the query.
 Query: {query_str}
 Answer:
 '''
+
+REFINE_PROMPT_TEMPLATE = '''
+The original query is as follows: {query_str}
+You have provided an existing answer: {existing_answer}
+Here is the new context:
+------------
+{context_msg}
+------------
+Given the new context, refine the original answer to better
+answer the query (only if necessary).
+Refined Answer:
+'''

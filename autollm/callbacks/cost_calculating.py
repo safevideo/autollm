@@ -87,20 +87,20 @@ class CostCalculatingHandler(TokenCountingHandler):
     Callback handler for counting costs in LLM events. (Embeddings not supported yet)
 
     Parameters:
-        model: The model to use for tokenizer to calculate the cost.
+        model_name: The model to use for tokenizer to calculate the cost.
         event_starts_to_ignore: List of event types to ignore at the start of the event.
         event_ends_to_ignore: List of event types to ignore at the end of the event.
     """
 
     def __init__(
         self,
-        model: str = "gpt-3.5-turbo",
+        model_name: str = "gpt-3.5-turbo",
         event_starts_to_ignore: Optional[List[CBEventType]] = None,
         event_ends_to_ignore: Optional[List[CBEventType]] = None,
         verbose: bool = False,
     ) -> None:
         self.llm_token_costs: List[CostCalculatingEvent] = []
-        self.model = model
+        self.model_name = model_name
 
         super().__init__(
             event_starts_to_ignore=event_starts_to_ignore,
@@ -120,7 +120,7 @@ class CostCalculatingHandler(TokenCountingHandler):
                 payload is not None):
             # token counts
             self.llm_token_counts.append(
-                get_llm_token_counts(payload=payload, event_id=event_id, model=self.model))
+                get_llm_token_counts(payload=payload, event_id=event_id, model=self.model_name))
             if self._verbose:
                 logger.info(f"LLM Prompt Token Usage: {self.llm_token_counts[-1].prompt_token_count}")
                 logger.info(f"LLM Completion Token Usage: {self.llm_token_counts[-1].completion_token_count}")
@@ -130,7 +130,7 @@ class CostCalculatingHandler(TokenCountingHandler):
                 get_llm_token_costs(
                     latest_llm_token_count=self.llm_token_counts[-1],
                     event_id=event_id,
-                    model=self.model,
+                    model=self.model_name,
                 ))
             if self._verbose:
                 logger.info(f"LLM Latest Token Cost: ${self.llm_token_costs[-1].total_token_cost:.4f}")
