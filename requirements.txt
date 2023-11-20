@@ -1,4 +1,4 @@
-llama-index @ git+https://github.com/fcakyon/llama_index@fix-litellm
+llama-index @ git+https://github.com/run-llama/llama_index@d47424ef82b25e2d266d19d7706cafaeee00533a
 litellm==1.1.1
 uvicorn
 fastapi
