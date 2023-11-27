@@ -1,4 +1,5 @@
-from typing import List
+import xml.etree.ElementTree as ET
+from typing import List, Optional
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -13,8 +14,32 @@ from autollm.utils.web_page_reader import WebPageReader
 
 class WebDocsReader:
 
-    def __init__(self):
+    def __init__(self, sitemap_url: Optional[str] = None):
         self.visited_links = set()
+        self.sitemap_url = sitemap_url
+
+    def _fetch_and_parse_sitemap(self) -> List[str]:
+        """Fetches and parses the sitemap, returning URLs."""
+        try:
+            response = requests.get(self.sitemap_url)
+            response.raise_for_status()
+            sitemap_content = response.text
+        except requests.RequestException as e:
+            logger.error(f"Error fetching sitemap: {e}")
+            return []
+
+        return self._extract_urls_from_sitemap(sitemap_content)
+
+    def _extract_urls_from_sitemap(self, sitemap_content: str) -> List[str]:
+        """Extracts URLs from sitemap content."""
+        sitemap = ET.fromstring(sitemap_content)
+        urls = []
+
+        for url in sitemap.findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}url"):
+            location = url.find("{http://www.sitemaps.org/schemas/sitemap/0.9}loc").text
+            urls.append(location)
+
+        return urls
 
     def _get_child_links_recursive(self, url):
         parsed_url = urlparse(url)
@@ -54,13 +79,22 @@ class WebDocsReader:
         return urls
 
     def load_data(self, url: str) -> List[Document]:
-        logger.info(f"Listing child pages of {url}..")
-        all_urls = self._get_all_urls(url)
-        logger.info(f"Total URLs to process: {len(all_urls)}")
+        """Loads data from either a standard URL or a sitemap URL."""
+        if self.sitemap_url:
+            logger.info(f"Fetching and parsing sitemap {self.sitemap_url}..")
+            urls_to_process = self._fetch_and_parse_sitemap()
+        else:
+            logger.info(f"Listing child pages of {url}..")
+            urls_to_process = self._get_child_links_recursive(url)
 
         web_reader = WebPageReader()
         documents = []
-        for u in tqdm(all_urls, desc="Processing URLs"):
-            documents.extend(web_reader.load_data(u))
+
+        logger.info(f"Total URLs to process: {len(urls_to_process)}")
+
+        for u in tqdm(urls_to_process, desc="Processing URLs"):
+            if u not in self.visited_links:
+                self.visited_links.add(u)
+                documents.extend(web_reader.load_data(u))
 
         return documents
