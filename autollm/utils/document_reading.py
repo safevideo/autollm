@@ -118,18 +118,29 @@ def read_github_repo_as_documents(
     return documents
 
 
-def read_website_as_documents(url: str) -> List[Document]:
+def read_website_as_documents(url: Optional[str] = None, sitemap_url: Optional[str] = None) -> List[Document]:
     """
-    Read documents from a website with all its child pages using the WebDocsReader.
+    Read documents from a website or a sitemap.
 
     Parameters:
-        url (str): The starting URL from which to scrape documents.
+        url (str, optional): The starting URL from which to scrape documents.
+        sitemap_url (str, optional): The URL of the sitemap to process.
 
     Returns:
-        List[Document]: A list of Document objects containing content and metadata from the web pages.
+        List[Document]: A list of Document objects containing content and metadata.
+
+    Raises:
+        ValueError: If neither or both parameters are provided.
     """
-    reader = WebDocsReader()
-    documents = reader.load_data(url)
+    if (url is None and sitemap_url is None) or (url is not None and sitemap_url is not None):
+        raise ValueError("Please provide either a url or a sitemap_url, not both or none.")
+
+    reader = WebDocsReader(sitemap_url=sitemap_url)
+    if url:
+        documents = reader.load_data(url)
+    else:
+        documents = reader.load_data()
+
     return documents
 
 
