@@ -11,8 +11,8 @@ from autollm.utils.git_utils import clone_or_pull_repository
 from autollm.utils.logging import logger
 from autollm.utils.markdown_reader import MarkdownReader
 from autollm.utils.pdf_reader import LangchainPDFReader
-from autollm.utils.web_docs_reader import WebDocsReader
-from autollm.utils.web_page_reader import WebPageReader
+from autollm.utils.webpage_reader import WebPageReader
+from autollm.utils.website_reader import WebSiteReader
 
 
 def read_files_as_documents(
@@ -135,7 +135,7 @@ def read_website_as_documents(url: Optional[str] = None, sitemap_url: Optional[s
     if (url is None and sitemap_url is None) or (url is not None and sitemap_url is not None):
         raise ValueError("Please provide either a url or a sitemap_url, not both or none.")
 
-    reader = WebDocsReader(sitemap_url=sitemap_url)
+    reader = WebSiteReader(sitemap_url=sitemap_url)
     if url:
         documents = reader.load_data(url)
     else:

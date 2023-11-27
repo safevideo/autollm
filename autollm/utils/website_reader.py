@@ -9,10 +9,10 @@ from tqdm import tqdm
 
 from autollm.utils.constants import WEBPAGE_READER_TIMEOUT
 from autollm.utils.logging import logger
-from autollm.utils.web_page_reader import WebPageReader
+from autollm.utils.webpage_reader import WebPageReader
 
 
-class WebDocsReader:
+class WebSiteReader:
 
     def __init__(self, sitemap_url: Optional[str] = None):
         self.visited_links = set()
