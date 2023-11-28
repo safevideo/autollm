@@ -14,29 +14,38 @@ from autollm.utils.webpage_reader import WebPageReader
 
 class WebSiteReader:
 
-    def __init__(self, sitemap_url: Optional[str] = None):
+    def __init__(self):
         self.visited_links = set()
-        self.sitemap_url = sitemap_url
 
-    def _fetch_and_parse_sitemap(self) -> List[str]:
+    def _fetch_and_parse_sitemap(
+            self,
+            sitemap_url: str,
+            include_filter_str: Optional[str] = None,
+            exclude_filter_str: Optional[str] = None) -> List[str]:
         """Fetches and parses the sitemap, returning URLs."""
         try:
-            response = requests.get(self.sitemap_url)
+            response = requests.get(sitemap_url)
             response.raise_for_status()
             sitemap_content = response.text
         except requests.RequestException as e:
             logger.error(f"Error fetching sitemap: {e}")
             return []
 
-        return self._extract_urls_from_sitemap(sitemap_content)
+        return self._extract_urls_from_sitemap(sitemap_content, include_filter_str, exclude_filter_str)
 
-    def _extract_urls_from_sitemap(self, sitemap_content: str) -> List[str]:
+    def _extract_urls_from_sitemap(
+            self, sitemap_content: str, include_filter_str: Optional[str],
+            exclude_filter_str: Optional[str]) -> List[str]:
         """Extracts URLs from sitemap content."""
         sitemap = ET.fromstring(sitemap_content)
         urls = []
 
         for url in sitemap.findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}url"):
             location = url.find("{http://www.sitemaps.org/schemas/sitemap/0.9}loc").text
+            if (include_filter_str and
+                    include_filter_str not in location) or (exclude_filter_str and
+                                                            exclude_filter_str in location):
+                continue
             urls.append(location)
 
         return urls
@@ -78,21 +87,28 @@ class WebSiteReader:
         urls = [link for link in self.visited_links if urlparse(link).netloc == urlparse(url).netloc]
         return urls
 
-    def load_data(self, url: str) -> List[Document]:
+    def load_data(
+            self,
+            parent_url: str,
+            sitemap_url: str,
+            include_filter_str: str = None,
+            exclude_filter_str: str = None) -> List[Document]:
         """Loads data from either a standard URL or a sitemap URL."""
-        if self.sitemap_url:
+        if sitemap_url:
             logger.info(f"Fetching and parsing sitemap {self.sitemap_url}..")
-            urls_to_process = self._fetch_and_parse_sitemap()
+            all_urls = self._fetch_and_parse_sitemap()
+        elif parent_url:
+            logger.info(f"Parsing child pages of {parent_url}..")
+            all_urls = self._get_child_links_recursive(parent_url)
         else:
-            logger.info(f"Listing child pages of {url}..")
-            urls_to_process = self._get_child_links_recursive(url)
+            raise ValueError("Either sitemap_url or parent_url must be provided.")
 
         web_reader = WebPageReader()
         documents = []
 
-        logger.info(f"Total URLs to process: {len(urls_to_process)}")
+        logger.info(f"Total URLs to process: {len(all_urls)}")
 
-        for u in tqdm(urls_to_process, desc="Processing URLs"):
+        for u in tqdm(all_urls, desc="Processing URLs"):
             if u not in self.visited_links:
                 self.visited_links.add(u)
                 documents.extend(web_reader.load_data(u))
