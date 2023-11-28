@@ -118,28 +118,40 @@ def read_github_repo_as_documents(
     return documents
 
 
-def read_website_as_documents(url: Optional[str] = None, sitemap_url: Optional[str] = None) -> List[Document]:
+def read_website_as_documents(
+        parent_url: Optional[str] = None,
+        sitemap_url: Optional[str] = None,
+        include_filter_str: Optional[str] = None,
+        exclude_filter_str: Optional[str] = None) -> List[Document]:
     """
     Read documents from a website or a sitemap.
 
     Parameters:
-        url (str, optional): The starting URL from which to scrape documents.
+        parent_url (str, optional): The starting URL from which to scrape documents.
         sitemap_url (str, optional): The URL of the sitemap to process.
+        include_filter_str (str, optional): Filter string to include certain URLs.
+        exclude_filter_str (str, optional): Filter string to exclude certain URLs.
 
     Returns:
         List[Document]: A list of Document objects containing content and metadata.
 
     Raises:
-        ValueError: If neither or both parameters are provided.
+        ValueError: If neither parent_url nor sitemap_url is provided, or if both are provided.
     """
-    if (url is None and sitemap_url is None) or (url is not None and sitemap_url is not None):
-        raise ValueError("Please provide either a url or a sitemap_url, not both or none.")
+    if (parent_url is None and sitemap_url is None) or (parent_url is not None and sitemap_url is not None):
+        raise ValueError("Please provide either parent_url or sitemap_url, not both or none.")
 
-    reader = WebSiteReader(sitemap_url=sitemap_url)
-    if url:
-        documents = reader.load_data(url)
+    reader = WebSiteReader()
+    if parent_url:
+        documents = reader.load_data(
+            parent_url=parent_url,
+            include_filter_str=include_filter_str,
+            exclude_filter_str=exclude_filter_str)
     else:
-        documents = reader.load_data()
+        documents = reader.load_data(
+            sitemap_url=sitemap_url,
+            include_filter_str=include_filter_str,
+            exclude_filter_str=exclude_filter_str)
 
     return documents
 

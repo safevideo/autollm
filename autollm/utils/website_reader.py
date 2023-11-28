@@ -89,14 +89,14 @@ class WebSiteReader:
 
     def load_data(
             self,
-            parent_url: str,
-            sitemap_url: str,
+            parent_url: str = None,
+            sitemap_url: str = None,
             include_filter_str: str = None,
             exclude_filter_str: str = None) -> List[Document]:
         """Loads data from either a standard URL or a sitemap URL."""
         if sitemap_url:
-            logger.info(f"Fetching and parsing sitemap {self.sitemap_url}..")
-            all_urls = self._fetch_and_parse_sitemap()
+            logger.info(f"Fetching and parsing sitemap {sitemap_url}..")
+            all_urls = self._fetch_and_parse_sitemap(sitemap_url, include_filter_str, exclude_filter_str)
         elif parent_url:
             logger.info(f"Parsing child pages of {parent_url}..")
             all_urls = self._get_child_links_recursive(parent_url)
