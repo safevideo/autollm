@@ -94,7 +94,7 @@ ______________________________________________________________________
 ```python
 >>> from autollm import AutoQueryEngine
 
->>> query_engine = AutoQueryEngine.from_parameters(
+>>> query_engine = AutoQueryEngine.from_defaults(
 ...     documents=documents,
 ...     system_prompt='...',
 ...     query_wrapper_prompt='...',
@@ -173,7 +173,7 @@ ______________________________________________________________________
 >>> llm_model = "huggingface/WizardLM/WizardCoder-Python-34B-V1.0"
 >>> llm_api_base = "https://my-endpoint.huggingface.cloud"
 
->>> AutoQueryEngine.from_parameters(
+>>> AutoQueryEngine.from_defaults(
 ...     documents='...',
 ...     llm_model=llm_model,
 ...     llm_api_base=llm_api_base,
@@ -191,7 +191,7 @@ ______________________________________________________________________
   >>> llm_model = "ollama/llama2"
   >>> llm_api_base = "http://localhost:11434"
 
-  >>> AutoQueryEngine.from_parameters(
+  >>> AutoQueryEngine.from_defaults(
   ...     documents='...',
   ...     llm_model=llm_model,
   ...     llm_api_base=llm_api_base,
@@ -209,7 +209,7 @@ ______________________________________________________________________
 
   >>> llm_model = "azure/<your_deployment_name>")
 
-  >>> AutoQueryEngine.from_parameters(
+  >>> AutoQueryEngine.from_defaults(
   ...     documents='...',
   ...     llm_model=llm_model
   ... )
@@ -225,7 +225,7 @@ ______________________________________________________________________
 
   >>> llm_model = "text-bison@001"
 
-  >>> AutoQueryEngine.from_parameters(
+  >>> AutoQueryEngine.from_defaults(
   ...     documents='...',
   ...     llm_model=llm_model
   ... )
@@ -242,7 +242,7 @@ ______________________________________________________________________
 
   >>> llm_model = "anthropic.claude-v2"
 
-  >>> AutoQueryEngine.from_parameters(
+  >>> AutoQueryEngine.from_defaults(
   ...     documents='...',
   ...     llm_model=llm_model
   ... )
@@ -250,7 +250,7 @@ ______________________________________________________________________
 
 </details>
 
-### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
+### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/module_guides/storing/vector_stores.html#vector-store-options-feature-support)
 
 🌟**Pro Tip**: `autollm` defaults to `lancedb` as the vector store:
 it's setup-free, serverless, and 100x more cost-effective!
@@ -270,7 +270,7 @@ it's setup-free, serverless, and 100x more cost-effective!
   ... )
   >>> collection_name = "quickstart"
 
-  >>> AutoQueryEngine.from_parameters(
+  >>> AutoQueryEngine.from_defaults(
   ...     documents='...',
   ...     vector_store_type=vector_store_type,
   ...     client=client,
