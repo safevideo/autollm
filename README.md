@@ -250,7 +250,7 @@ ______________________________________________________________________
 
 </details>
 
-### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/core_modules/data_modules/storage/vector_stores.html#vector-store-options-feature-support)
+### supports [20+ VectorDBs](https://docs.llamaindex.ai/en/stable/module_guides/storing/vector_stores.html#vector-store-options-feature-support)
 
 🌟**Pro Tip**: `autollm` defaults to `lancedb` as the vector store:
 it's setup-free, serverless, and 100x more cost-effective!
