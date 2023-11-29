@@ -1,6 +1,5 @@
 from typing import List
 
-from langchain.document_loaders import PDFMinerLoader
 from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
 
@@ -16,6 +15,8 @@ class LangchainPDFReader(BaseReader):
 
     def load_data(self, file_path: str, extra_info: dict = None) -> List[Document]:
         """Load data from a PDF file using langchain's PDFMinerLoader."""
+        from langchain.document_loaders import PDFMinerLoader
+
         # Convert the PosixPath object to a string before passing it to PDFMinerLoader
         loader = PDFMinerLoader(str(file_path), extract_images=self.extract_images)
 
