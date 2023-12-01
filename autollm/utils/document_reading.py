@@ -22,6 +22,7 @@ def read_files_as_documents(
         filename_as_id: bool = True,
         recursive: bool = True,
         required_exts: Optional[List[str]] = None,
+        show_progress: bool = True,
         **kwargs) -> Sequence[Document]:
     """
     Process markdown files to extract documents using SimpleDirectoryReader.
@@ -58,7 +59,7 @@ def read_files_as_documents(
         f"Reading files {input_files}..")
 
     # Read and process the documents
-    documents = reader.load_data()
+    documents = reader.load_data(show_progress=show_progress)
 
     logger.info(f"Found {len(documents)} 'document(s)'.")
     return documents
