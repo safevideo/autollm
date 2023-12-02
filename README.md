@@ -77,7 +77,7 @@ ______________________________________________________________________
 ```python
 >>> from autollm import AutoQueryEngine, read_files_as_documents
 
->>> documents = read_files_as_documents(input_dir="examples/data")
+>>> documents = read_files_as_documents(input_dir="path/to/documents")
 >>> query_engine = AutoQueryEngine.from_defaults(documents)
 
 >>> response = query_engine.query(
