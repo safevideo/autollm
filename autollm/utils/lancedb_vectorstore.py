@@ -56,6 +56,9 @@ class LanceDBVectorStore(VectorStore):
         LanceDBVectorStore: Updated VectorStore for LanceDB with cloud support.
     """
 
+    stores_text = True
+    flat_metadata: bool = True
+
     def __init__(
         self,
         uri: str,
