@@ -3,7 +3,7 @@ from typing import Optional, Sequence, Union
 from llama_index import Document, ServiceContext, VectorStoreIndex
 from llama_index.embeddings.utils import EmbedType
 from llama_index.indices.query.base import BaseQueryEngine
-from llama_index.prompts.base import PromptTemplate
+from llama_index.prompts.base import BasePromptTemplate, PromptTemplate
 from llama_index.prompts.prompt_type import PromptType
 from llama_index.response_synthesizers import get_response_synthesizer
 from llama_index.schema import BaseNode
@@ -24,7 +24,7 @@ def create_query_engine(
         llm_api_base: Optional[str] = None,
         # service_context_params
         system_prompt: str = None,
-        query_wrapper_prompt: str = None,
+        query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
         enable_cost_calculator: bool = True,
         embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
         chunk_size: Optional[int] = 512,
@@ -61,7 +61,7 @@ def create_query_engine(
         llm_temperature (float): The temperature to use for the LLM.
         llm_api_base (str): The API base to use for the LLM.
         system_prompt (str): The system prompt to use for the query engine.
-        query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
+        query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
         enable_cost_calculator (bool): Flag to enable cost calculator logging.
         embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
                                             "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
@@ -133,10 +133,15 @@ def create_query_engine(
         refine_prompt_template = PromptTemplate(refine_prompt, prompt_type=PromptType.REFINE)
     else:
         refine_prompt_template = None
+
+    # Convert query_wrapper_prompt to PromptTemplate if it is a string
+    if isinstance(query_wrapper_prompt, str):
+        query_wrapper_prompt = PromptTemplate(template=query_wrapper_prompt)
     response_synthesizer = get_response_synthesizer(
         service_context=service_context,
-        response_mode=response_mode,
+        text_qa_template=query_wrapper_prompt,
         refine_template=refine_prompt_template,
+        response_mode=response_mode,
         structured_answer_filtering=structured_answer_filtering)
 
     return vector_store_index.as_query_engine(
@@ -213,7 +218,7 @@ class AutoQueryEngine:
             llm_temperature: float = 0.1,
             # service_context_params
             system_prompt: str = None,
-            query_wrapper_prompt: str = None,
+            query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = True,
             embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
             chunk_size: Optional[int] = 512,
@@ -246,7 +251,7 @@ class AutoQueryEngine:
             llm_temperature (float): The temperature to use for the LLM.
             llm_api_base (str): The API base to use for the LLM.
             system_prompt (str): The system prompt to use for the query engine.
-            query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
+            query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
             enable_cost_calculator (bool): Flag to enable cost calculator logging.
             embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
                                                 "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
