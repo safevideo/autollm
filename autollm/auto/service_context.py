@@ -65,11 +65,14 @@ class AutoServiceContext:
         """
         if not system_prompt and not query_wrapper_prompt:
             system_prompt, query_wrapper_prompt = set_default_prompt_template()
-        # Convert system_prompt to ChatPromptTemplate if it is a string
+        # Convert query_wrapper_prompt to PromptTemplate if it is a string
         if isinstance(query_wrapper_prompt, str):
             query_wrapper_prompt = PromptTemplate(template=query_wrapper_prompt)
 
         callback_manager: CallbackManager = kwargs.get('callback_manager', CallbackManager())
+        kwargs.pop(
+            'callback_manager', None)  # Make sure callback_manager is not passed to ServiceContext twice
+
         if enable_cost_calculator:
             llm_model_name = llm.metadata.model_name if not "default" else "gpt-3.5-turbo"
             callback_manager.add_handler(CostCalculatingHandler(model_name=llm_model_name, verbose=True))
