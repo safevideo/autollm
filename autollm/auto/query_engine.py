@@ -28,7 +28,7 @@ def create_query_engine(
         enable_cost_calculator: bool = True,
         embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
         chunk_size: Optional[int] = 512,
-        chunk_overlap: Optional[int] = 200,
+        chunk_overlap: Optional[int] = 100,
         context_window: Optional[int] = None,
         enable_title_extractor: bool = False,
         enable_summary_extractor: bool = False,
