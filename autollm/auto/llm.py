@@ -1,7 +1,7 @@
 from typing import Optional
 
 from llama_index.llms import LiteLLM
-from llama_index.llms.base import LLM
+from llama_index.llms.base import BaseLLM
 
 
 class AutoLiteLLM:
@@ -14,7 +14,7 @@ class AutoLiteLLM:
             model: str = "gpt-3.5-turbo",
             max_tokens: Optional[int] = 256,
             temperature: float = 0.1,
-            api_base: Optional[str] = None) -> LLM:
+            api_base: Optional[str] = None) -> BaseLLM:
         """
         Create any LLM by model name. Check https://docs.litellm.ai/docs/providers for a list of
         supported models.
