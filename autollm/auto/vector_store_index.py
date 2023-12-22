@@ -1,3 +1,4 @@
+import os
 from typing import Optional, Sequence
 
 from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
@@ -82,3 +83,21 @@ class AutoVectorStoreIndex:
                 show_progress=True)
 
         return index
+
+    @staticmethod
+    def _increment_lancedb_uri(base_uri: str) -> str:
+        """
+        Increment the lancedb uri to create a new database.
+
+        Parameters:
+            base_uri (str): The base path for the lancedb uri.
+
+        Returns:
+            str: The incremented lancedb URI.
+        """
+        suffix = 1
+        new_lancedb_uri = f"{base_uri}_{suffix}"
+        while os.path.exists(new_lancedb_uri):
+            suffix += 1
+            new_lancedb_uri = f"{base_uri}_{suffix}"
+        return new_lancedb_uri
