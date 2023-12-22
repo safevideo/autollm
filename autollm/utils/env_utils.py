@@ -1,5 +1,7 @@
 import os
+import stat
 from pathlib import Path
+from typing import Callable, Tuple
 
 import yaml
 from dotenv import load_dotenv
@@ -55,3 +57,17 @@ def load_config_and_dotenv(config_file_path: str, env_file_path: str = None) -> 
         config = yaml.safe_load(f)
 
     return config
+
+
+# From http://stackoverflow.com/a/4829285/548792
+def on_rm_error(func: Callable, path: str, exc_info: Tuple):
+    """
+    Error handler for `shutil.rmtree` to handle permission errors.
+
+    Parameters:
+        func (Callable): The function that raised the error.
+        path (str): The path to the file or directory which couldn't be removed.
+        exc_info (Tuple): Exception information returned by sys.exc_info().
+    """
+    os.chmod(path, stat.S_IWRITE)
+    os.unlink(path)

@@ -45,11 +45,8 @@ def create_query_engine(
         vector_store_type: str = "LanceDBVectorStore",
         lancedb_uri: str = "./.lancedb",
         lancedb_table_name: str = "vectors",
-        # Deprecated parameters
-        llm_params: dict = None,
-        vector_store_params: dict = None,
-        service_context_params: dict = None,
-        query_engine_params: dict = None,
+        exist_ok: bool = False,
+        overwrite_existing: bool = False,
         **vector_store_kwargs) -> BaseQueryEngine:
     """
     Create a query engine from parameters.
@@ -84,27 +81,6 @@ def create_query_engine(
     Returns:
         A llama_index.BaseQueryEngine instance.
     """
-    # Check for deprecated parameters
-    if llm_params is not None:
-        raise ValueError(
-            "llm_params is deprecated. Instead of llm_params={'llm_model': 'model_name', ...}, "
-            "use llm_model='model_name', llm_api_base='api_base', llm_max_tokens=1028, llm_temperature=0.1 directly as arguments."
-        )
-    if vector_store_params is not None:
-        raise ValueError(
-            "vector_store_params is deprecated. Instead of vector_store_params={'vector_store_type': 'type', ...}, "
-            "use vector_store_type='type', lancedb_uri='uri', lancedb_table_name='table', enable_metadata_extraction=True directly as arguments."
-        )
-    if service_context_params is not None:
-        raise ValueError(
-            "service_context_params is deprecated. Use the explicit parameters like system_prompt='prompt', "
-            "query_wrapper_prompt='wrapper', enable_cost_calculator=True, embed_model='model', chunk_size=512, "
-            "chunk_overlap=..., context_window=... directly as arguments.")
-    if query_engine_params is not None:
-        raise ValueError(
-            "query_engine_params is deprecated. Instead of query_engine_params={'similarity_top_k': 5, ...}, "
-            "use similarity_top_k=5 directly as an argument.")
-
     llm = AutoLiteLLM.from_defaults(
         model=llm_model, api_base=llm_api_base, max_tokens=llm_max_tokens, temperature=llm_temperature)
 
@@ -132,6 +108,8 @@ def create_query_engine(
         documents=documents,
         nodes=nodes,
         service_context=service_context,
+        exist_ok=exist_ok,
+        overwrite_existing=overwrite_existing,
         **vector_store_kwargs)
     if refine_prompt is not None:
         refine_prompt_template = PromptTemplate(refine_prompt, prompt_type=PromptType.REFINE)
@@ -187,7 +165,6 @@ class AutoQueryEngine:
         vector_store_type="LanceDBVectorStore",
         lancedb_uri="./.lancedb",
         lancedb_table_name="vectors",
-        enable_metadata_extraction=False,
         **vector_store_kwargs)
     )
     ```
@@ -237,12 +214,8 @@ class AutoQueryEngine:
             vector_store_type: str = "LanceDBVectorStore",
             lancedb_uri: str = "./.lancedb",
             lancedb_table_name: str = "vectors",
-            enable_metadata_extraction: bool = False,
-            # Deprecated parameters
-            llm_params: dict = None,
-            vector_store_params: dict = None,
-            service_context_params: dict = None,
-            query_engine_params: dict = None,
+            exist_ok: bool = False,
+            overwrite_existing: bool = False,
             **vector_store_kwargs) -> BaseQueryEngine:
         """
         Create an AutoQueryEngine from default parameters.
@@ -272,6 +245,8 @@ class AutoQueryEngine:
             vector_store_type (str): The vector store type to use for the query engine.
             lancedb_uri (str): The URI to use for the LanceDB vector store.
             lancedb_table_name (str): The table name to use for the LanceDB vector store.
+            exist_ok (bool): Flag to allow overwriting an existing vector store.
+            overwrite_existing (bool): Flag to allow overwriting an existing vector store.
 
             Returns:
                 A llama_index.BaseQueryEngine instance.
@@ -302,49 +277,9 @@ class AutoQueryEngine:
             vector_store_type=vector_store_type,
             lancedb_uri=lancedb_uri,
             lancedb_table_name=lancedb_table_name,
-            enable_metadata_extraction=enable_metadata_extraction,
-            # Deprecated parameters
-            llm_params=llm_params,
-            vector_store_params=vector_store_params,
-            service_context_params=service_context_params,
-            query_engine_params=query_engine_params,
+            exist_ok=exist_ok,
+            overwrite_existing=overwrite_existing,
             **vector_store_kwargs)
-
-    @staticmethod
-    def from_parameters(
-            documents: Sequence[Document] = None,
-            system_prompt: str = None,
-            query_wrapper_prompt: str = None,
-            enable_cost_calculator: bool = True,
-            embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
-            llm_params: dict = None,
-            vector_store_params: dict = None,
-            service_context_params: dict = None,
-            query_engine_params: dict = None) -> BaseQueryEngine:
-        """
-        DEPRECATED. Use AutoQueryEngine.from_defaults instead.
-
-        Create an AutoQueryEngine from parameters.
-
-        Parameters:
-            documents (Sequence[Document]): Sequence of llama_index.Document instances.
-            system_prompt (str): The system prompt to use for the query engine.
-            query_wrapper_prompt (str): The query wrapper prompt to use for the query engine.
-            enable_cost_calculator (bool): Flag to enable cost calculator logging.
-            embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
-                                                "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
-            llm_params (dict): Parameters for the LLM.
-            vector_store_params (dict): Parameters for the vector store.
-            service_context_params (dict): Parameters for the service context.
-            query_engine_params (dict): Parameters for the query engine.
-
-        Returns:
-            A llama_index.BaseQueryEngine instance.
-        """
-
-        # TODO: Remove this method in the next release
-        raise ValueError(
-            "AutoQueryEngine.from_parameters is deprecated. Use AutoQueryEngine.from_defaults instead.")
 
     @staticmethod
     def from_config(
