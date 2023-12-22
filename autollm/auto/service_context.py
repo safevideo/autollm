@@ -27,7 +27,7 @@ class AutoServiceContext:
     @staticmethod
     def from_defaults(
             llm: Optional[LLMType] = "default",
-            embed_model: Optional[EmbedType] = "text-embedding-ada-002",
+            embed_model: Optional[EmbedType] = "default",
             system_prompt: str = None,
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = False,

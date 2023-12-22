@@ -27,7 +27,7 @@ def create_query_engine(
         system_prompt: str = None,
         query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
         enable_cost_calculator: bool = True,
-        embed_model: Union[str, EmbedType] = "text-embedding-ada-002",
+        embed_model: Optional[str] = "text-embedding-ada-002",
         chunk_size: Optional[int] = 512,
         chunk_overlap: Optional[int] = 100,
         context_window: Optional[int] = None,
@@ -216,15 +216,15 @@ class AutoQueryEngine:
             documents: Optional[Sequence[Document]] = None,
             nodes: Optional[Sequence[BaseNode]] = None,
             # llm_params
-            llm_model: str = "gpt-3.5-turbo",
+            llm_model: Optional[str] = "gpt-3.5-turbo",
             llm_api_base: Optional[str] = None,
             llm_max_tokens: Optional[int] = None,
-            llm_temperature: float = 0.1,
+            llm_temperature: Optional[float] = 0.1,
             # service_context_params
             system_prompt: str = None,
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = True,
-            embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
+            embed_model: Optional[str] = "text-embedding-ada-002",
             chunk_size: Optional[int] = 512,
             chunk_overlap: Optional[int] = 200,
             context_window: Optional[int] = None,

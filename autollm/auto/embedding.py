@@ -15,7 +15,7 @@ class AutoEmbedding(BaseEmbedding):
     """
 
     # Define the model attribute using Pydantic's Field
-    model: str = Field(default="unknown", description="The name of the embedding model.")
+    model: str = Field(default="text-embedding-ada-002", description="The name of the embedding model.")
 
     def __init__(self, model: str, **kwargs: Any) -> None:
         """
@@ -77,30 +77,6 @@ class AutoEmbedding(BaseEmbedding):
             Embedding: The embedding vector.
         """
         return await self._aget_query_embedding(text)
-
-    def _get_text_embeddings(self, texts: List[str]) -> List[Embedding]:
-        """
-        Synchronously get embeddings for a list of text strings.
-
-        Args:
-            texts (List[str]): The texts to embed.
-
-        Returns:
-            List[Embedding]: The list of embedding vectors.
-        """
-        return [self._get_text_embedding(text) for text in texts]
-
-    async def _aget_text_embeddings(self, texts: List[str]) -> List[Embedding]:
-        """
-        Asynchronously get embeddings for a list of text strings.
-
-        Args:
-            texts (List[str]): The texts to embed.
-
-        Returns:
-            List[Embedding]: The list of embedding vectors.
-        """
-        return await asyncio.gather(*[self._aget_text_embedding(text) for text in texts])
 
     def _parse_embedding_response(self, response):
         """
