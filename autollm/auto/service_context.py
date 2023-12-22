@@ -32,7 +32,7 @@ class AutoServiceContext:
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = False,
             chunk_size: Optional[int] = 512,
-            chunk_overlap: Optional[int] = 200,
+            chunk_overlap: Optional[int] = 100,
             context_window: Optional[int] = None,
             enable_title_extractor: bool = False,
             enable_summary_extractor: bool = False,
