@@ -8,6 +8,7 @@ from llama_index.prompts.prompt_type import PromptType
 from llama_index.response_synthesizers import get_response_synthesizer
 from llama_index.schema import BaseNode
 
+from autollm.auto.embedding import AutoEmbedding
 from autollm.auto.llm import AutoLiteLLM
 from autollm.auto.service_context import AutoServiceContext
 from autollm.auto.vector_store_index import AutoVectorStoreIndex
@@ -26,7 +27,7 @@ def create_query_engine(
         system_prompt: str = None,
         query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
         enable_cost_calculator: bool = True,
-        embed_model: Union[str, EmbedType] = "default",  # ["default", "local"]
+        embed_model: Union[str, EmbedType] = "text-embedding-ada-002",
         chunk_size: Optional[int] = 512,
         chunk_overlap: Optional[int] = 100,
         context_window: Optional[int] = None,
@@ -106,9 +107,12 @@ def create_query_engine(
 
     llm = AutoLiteLLM.from_defaults(
         model=llm_model, api_base=llm_api_base, max_tokens=llm_max_tokens, temperature=llm_temperature)
+
+    embedding = AutoEmbedding(model=embed_model)
+
     service_context = AutoServiceContext.from_defaults(
         llm=llm,
-        embed_model=embed_model,
+        embed_model=embedding,
         system_prompt=system_prompt,
         query_wrapper_prompt=query_wrapper_prompt,
         enable_cost_calculator=enable_cost_calculator,
@@ -173,7 +177,7 @@ class AutoQueryEngine:
         system_prompt=None,
         query_wrapper_prompt=None,
         enable_cost_calculator=True,
-        embed_model="default",  # ["default", "local"]
+        embed_model="text-embedding-ada-002",
         chunk_size=512,
         chunk_overlap=None,
         context_window=None,
@@ -253,8 +257,7 @@ class AutoQueryEngine:
             system_prompt (str): The system prompt to use for the query engine.
             query_wrapper_prompt (Union[str, BasePromptTemplate]): The query wrapper prompt to use for the query engine.
             enable_cost_calculator (bool): Flag to enable cost calculator logging.
-            embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings. "default" for OpenAI,
-                                                "local" for HuggingFace or use full identifier (e.g., local:intfloat/multilingual-e5-large)
+            embed_model (Union[str, EmbedType]): The embedding model to use for generating embeddings.
             chunk_size (int): The token chunk size for each chunk.
             chunk_overlap (int): The token overlap between each chunk.
             context_window (int): The maximum context size that will get sent to the LLM.
