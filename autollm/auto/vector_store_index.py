@@ -72,7 +72,7 @@ class AutoVectorStoreIndex:
                 documents=documents,
                 exist_ok=exist_ok,
                 overwrite_existing=overwrite_existing)
-
+            print(f"lancedb_uri: {lancedb_uri}")
             vector_store = VectorStoreClass(uri=lancedb_uri, table_name=lancedb_table_name, **kwargs)
         else:
             vector_store = VectorStoreClass(**kwargs)
@@ -139,39 +139,27 @@ class AutoVectorStoreIndex:
             )
 
         # Scenario 3: Handle lancedb uri given and documents provided
-        db_exists = os.path.exists(lancedb_uri)
         if documents and lancedb_uri:
+            db_exists = os.path.exists(lancedb_uri)
             if exist_ok and overwrite_existing:
-                # Overwrite the existing database
                 if db_exists:
                     os.remove(lancedb_uri)
-                    db_exists = False
-            elif exist_ok and not overwrite_existing:
-                # Add to the existing database (no action needed here)
-                pass
+                    logger.info(f"Overwriting existing database at {lancedb_uri}.")
             elif not exist_ok and overwrite_existing:
-                raise ValueError("Please also set exist_ok to True to overwrite an existing database.")
-            else:
-                # Increment the database
-                if db_exists:
-                    lancedb_uri = AutoVectorStoreIndex._increment_lancedb_uri(lancedb_uri)
+                raise ValueError("Cannot overwrite existing database without exist_ok set to True.")
+            elif db_exists:
+                lancedb_uri = AutoVectorStoreIndex._increment_lancedb_uri(lancedb_uri)
+                logger.info(f"Existing database found. Creating a new database at {lancedb_uri}.")
+                logger.info(
+                    "Please use exist_ok=True to add to the existing database and overwrite_existing=True to overwrite the existing database."
+                )
 
         return lancedb_uri
 
     @staticmethod
     def _increment_lancedb_uri(base_uri: str) -> str:
-        """
-        Increment the lancedb uri to create a new database.
-
-        Parameters:
-            base_uri (str): The base path for the lancedb uri.
-
-        Returns:
-            str: The incremented lancedb URI.
-        """
-        suffix = 1
-        new_lancedb_uri = f"{base_uri}_{suffix}"
-        while os.path.exists(new_lancedb_uri):
-            suffix += 1
-            new_lancedb_uri = f"{base_uri}_{suffix}"
-        return new_lancedb_uri
+        """Increment the lancedb uri to create a new database."""
+        i = 1
+        while os.path.exists(f"{base_uri}_{i}"):
+            i += 1
+        return f"{base_uri}_{i}"
