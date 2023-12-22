@@ -72,7 +72,7 @@ class AutoVectorStoreIndex:
                 documents=documents,
                 exist_ok=exist_ok,
                 overwrite_existing=overwrite_existing)
-            print(f"lancedb_uri: {lancedb_uri}")
+
             vector_store = VectorStoreClass(uri=lancedb_uri, table_name=lancedb_table_name, **kwargs)
         else:
             vector_store = VectorStoreClass(**kwargs)
@@ -148,11 +148,14 @@ class AutoVectorStoreIndex:
             elif not exist_ok and overwrite_existing:
                 raise ValueError("Cannot overwrite existing database without exist_ok set to True.")
             elif db_exists:
-                lancedb_uri = AutoVectorStoreIndex._increment_lancedb_uri(lancedb_uri)
-                logger.info(f"Existing database found. Creating a new database at {lancedb_uri}.")
-                logger.info(
-                    "Please use exist_ok=True to add to the existing database and overwrite_existing=True to overwrite the existing database."
-                )
+                if not exist_ok:
+                    lancedb_uri = AutoVectorStoreIndex._increment_lancedb_uri(lancedb_uri)
+                    logger.info(f"Existing database found. Creating a new database at {lancedb_uri}.")
+                    logger.info(
+                        "Please use exist_ok=True to add to the existing database and overwrite_existing=True to overwrite the existing database."
+                    )
+                else:
+                    logger.info(f"Adding documents to existing database at {lancedb_uri}.")
 
         return lancedb_uri
 
