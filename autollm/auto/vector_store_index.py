@@ -1,9 +1,11 @@
 import os
+import shutil
 from typing import Optional, Sequence
 
 from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
 from llama_index.schema import BaseNode
 
+from autollm.utils.env_utils import on_rm_error
 from autollm.utils.logging import logger
 
 
@@ -143,7 +145,7 @@ class AutoVectorStoreIndex:
             db_exists = os.path.exists(lancedb_uri)
             if exist_ok and overwrite_existing:
                 if db_exists:
-                    os.remove(lancedb_uri)
+                    shutil.rmtree(lancedb_uri)
                     logger.info(f"Overwriting existing database at {lancedb_uri}.")
             elif not exist_ok and overwrite_existing:
                 raise ValueError("Cannot overwrite existing database without exist_ok set to True.")
