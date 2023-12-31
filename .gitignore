@@ -170,4 +170,4 @@ storage/
 # vscode settings
 .vscode
 .lancedb
-lancedb
+lancedb/
