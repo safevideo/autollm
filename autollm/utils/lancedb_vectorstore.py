@@ -55,26 +55,27 @@ class LanceDBVectorStore(LanceDBVectorStoreBase):
     def query(
         self,
         query: VectorStoreQuery,
-        where: Optional[str] = None,
-        prefilter: bool = False,
+        **kwargs: Any,
     ) -> VectorStoreQueryResult:
         """Enhanced query method to support prefiltering in LanceDB queries."""
         table = self.connection.open_table(self.table_name)
-        lance_query = self._prepare_lance_query(query, table, where, prefilter)
+        lance_query = self._prepare_lance_query(query, table, **kwargs)
 
         results = lance_query.to_df()
         return self._construct_query_result(results)
 
-    def _prepare_lance_query(
-            self, query: VectorStoreQuery, table: Table, where: str, prefilter: bool) -> LanceQueryBuilder:
+    def _prepare_lance_query(self, query: VectorStoreQuery, table: Table, **kwargs) -> LanceQueryBuilder:
         """Prepares the LanceDB query considering prefiltering and additional parameters."""
         if query.filters is not None:
-            if where:
+            if "where" in kwargs:
                 raise ValueError(
-                    "Cannot specify filter via both query and lance-specific "
+                    "Cannot specify filter via both query and kwargs. "
                     "Use kwargs only for lancedb specific items that are "
                     "not supported via the generic query interface.")
             where = _to_lance_filter(query.filters)
+        else:
+            where = kwargs.pop("where", None)
+        prefilter = kwargs.pop("prefilter", False)
 
         table = self.connection.open_table(self.table_name)
         lance_query = (
