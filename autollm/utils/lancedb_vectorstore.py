@@ -9,6 +9,7 @@ load_dotenv()
 
 
 class LanceDBVectorStore(LanceDBVectorStoreBase):
+    """Advanced LanceDB Vector Store supporting cloud storage and prefiltering."""
 
     def __init__(
         self,
@@ -20,26 +21,27 @@ class LanceDBVectorStore(LanceDBVectorStoreBase):
         region: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        import_err_msg = "`lancedb` package not found, please run `pip install lancedb`"
-        try:
-            import lancedb
-        except ImportError:
-            raise ImportError(import_err_msg)
-
-        # Check for API key and region in environment variables if not provided
-        if api_key is None:
-            api_key = os.getenv('LANCEDB_API_KEY')
-        if region is None:
-            region = os.getenv('LANCEDB_REGION')
-
-        if api_key and region:
-            self.connection = lancedb.connect(uri, api_key=api_key, region=region)
-        else:
-            self.connection = lancedb.connect(uri)
-
+        """Init params."""
+        self._setup_connection(uri, api_key, region)
         self.uri = uri
         self.table_name = table_name
         self.nprobes = nprobes
         self.refine_factor = refine_factor
         self.api_key = api_key
         self.region = region
+
+    def _setup_connection(self, uri: str, api_key: Optional[str], region: Optional[str]):
+        """Establishes a robust connection to LanceDB."""
+        api_key = api_key or os.getenv('LANCEDB_API_KEY')
+        region = region or os.getenv('LANCEDB_REGION')
+
+        import_err_msg = "`lancedb` package not found, please run `pip install lancedb`"
+        try:
+            import lancedb
+        except ImportError:
+            raise ImportError(import_err_msg)
+
+        if api_key and region:
+            self.connection = lancedb.connect(uri, api_key=api_key, region=region)
+        else:
+            self.connection = lancedb.connect(uri)
