@@ -4,4 +4,4 @@ uvicorn
 fastapi
 python-dotenv
 httpx
-lancedb==0.3.3
+lancedb==0.3.4

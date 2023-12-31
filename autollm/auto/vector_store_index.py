@@ -6,6 +6,7 @@ from llama_index import Document, ServiceContext, StorageContext, VectorStoreInd
 from llama_index.schema import BaseNode
 
 from autollm.utils.env_utils import on_rm_error
+from autollm.utils.lancedb_vectorstore import LanceDBVectorStore
 from autollm.utils.logging import logger
 
 
@@ -32,6 +33,8 @@ class AutoVectorStoreIndex:
             vector_store_type: str = "LanceDBVectorStore",
             lancedb_uri: str = None,
             lancedb_table_name: str = "vectors",
+            lancedb_api_key: Optional[str] = None,
+            lancedb_region: Optional[str] = None,
             documents: Optional[Sequence[Document]] = None,
             nodes: Optional[Sequence[BaseNode]] = None,
             service_context: Optional[ServiceContext] = None,
@@ -75,7 +78,15 @@ class AutoVectorStoreIndex:
                 exist_ok=exist_ok,
                 overwrite_existing=overwrite_existing)
 
+            vector_store = LanceDBVectorStore(
+                uri=lancedb_uri,
+                table_name=lancedb_table_name,
+                api_key=lancedb_api_key,
+                region=lancedb_region,
+                **kwargs)
+
             vector_store = VectorStoreClass(uri=lancedb_uri, table_name=lancedb_table_name, **kwargs)
+
         else:
             vector_store = VectorStoreClass(**kwargs)
 
