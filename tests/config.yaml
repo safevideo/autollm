@@ -6,7 +6,7 @@ tasks:
     llm_temperature: 0.1
     system_prompt: "You are a friendly chatbot that can summarize documents.:"  # System prompt for this task
     enable_cost_calculator: true
-    embed_model: "default"
+    embed_model: "text-embedding-ada-002"
     chunk_size: 512
     chunk_overlap: 64
     context_window: 2048

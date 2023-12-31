@@ -32,7 +32,7 @@ class AutoServiceContext:
             query_wrapper_prompt: Union[str, BasePromptTemplate] = None,
             enable_cost_calculator: bool = False,
             chunk_size: Optional[int] = 512,
-            chunk_overlap: Optional[int] = 200,
+            chunk_overlap: Optional[int] = 100,
             context_window: Optional[int] = None,
             enable_title_extractor: bool = False,
             enable_summary_extractor: bool = False,
@@ -65,7 +65,7 @@ class AutoServiceContext:
         """
         if not system_prompt and not query_wrapper_prompt:
             system_prompt, query_wrapper_prompt = set_default_prompt_template()
-        # Convert system_prompt to ChatPromptTemplate if it is a string
+        # Convert query_wrapper_prompt to PromptTemplate if it is a string
         if isinstance(query_wrapper_prompt, str):
             query_wrapper_prompt = PromptTemplate(template=query_wrapper_prompt)
 
