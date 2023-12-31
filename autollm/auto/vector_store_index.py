@@ -85,8 +85,6 @@ class AutoVectorStoreIndex:
                 region=lancedb_region,
                 **kwargs)
 
-            vector_store = VectorStoreClass(uri=lancedb_uri, table_name=lancedb_table_name, **kwargs)
-
         else:
             vector_store = VectorStoreClass(**kwargs)
 
