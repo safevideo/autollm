@@ -36,7 +36,7 @@ class LanceDBVectorStore(LanceDBVectorStoreBase):
         self.api_key = api_key
         self.region = region
 
-    def _setup_connection(self, uri: str, api_key: Optional[str], region: Optional[str]):
+    def _setup_connection(self, uri: str, api_key: Optional[str] = None, region: Optional[str] = None):
         """Establishes a robust connection to LanceDB."""
         api_key = api_key or os.getenv('LANCEDB_API_KEY')
         region = region or os.getenv('LANCEDB_REGION')
