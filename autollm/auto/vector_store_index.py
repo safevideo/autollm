@@ -3,7 +3,9 @@ from typing import Optional, Sequence
 from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
 from llama_index.schema import BaseNode
 
+from autollm.utils.env_utils import on_rm_error
 from autollm.utils.lancedb_vectorstore import LanceDBVectorStore
+from autollm.utils.logging import logger
 
 
 def import_vector_store_class(vector_store_class_name: str):
