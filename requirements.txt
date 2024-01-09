@@ -1,5 +1,5 @@
-llama-index==0.9.26
-litellm==1.16.19
+llama-index==0.9.27
+litellm==1.16.21
 uvicorn
 fastapi
 python-dotenv
