@@ -188,6 +188,10 @@ class AutoVectorStoreIndex:
     def _increment_lancedb_uri(base_uri: str) -> str:
         """Increment the lancedb uri to create a new database."""
         i = 1
+
         while os.path.exists(f"{base_uri}_{i}"):
+            # check if the directory at path is empty. if so, use this path
+            if not os.listdir(f"{base_uri}_{i}"):
+                break
             i += 1
         return f"{base_uri}_{i}"
