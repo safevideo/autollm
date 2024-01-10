@@ -3,6 +3,7 @@ import shutil
 from typing import Optional, Sequence
 
 from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
+from llama_index.node_parser import SentenceSplitter
 from llama_index.schema import BaseNode
 
 from autollm.utils.env_utils import on_rm_error
@@ -35,6 +36,7 @@ class AutoVectorStoreIndex:
             lancedb_table_name: str = "vectors",
             lancedb_api_key: Optional[str] = None,
             lancedb_region: Optional[str] = None,
+            use_async_embedding: bool = False,
             documents: Optional[Sequence[Document]] = None,
             nodes: Optional[Sequence[BaseNode]] = None,
             service_context: Optional[ServiceContext] = None,
@@ -49,6 +51,9 @@ class AutoVectorStoreIndex:
             vector_store_type (str): The class name of the vector store.
             lancedb_uri (str): The URI for the LanceDB vector store.
             lancedb_table_name (str): The table name for the LanceDB vector store.
+            lancedb_api_key (Optional[str]): The API key for the LanceDB CLOUD vector store.
+            lancedb_region (Optional[str]): The region for the LanceDB CLOUD vector store.
+            use_async_embedding (bool): If True, uses async embedding for the vector store index. (Supported for SimpleVectorStore only)
             documents (Optional[Sequence[Document]]): Documents to initialize the vector store index from.
             service_context (Optional[ServiceContext]): Service context for initialization.
             exist_ok (bool): If True, allows adding to an existing database.
@@ -66,6 +71,10 @@ class AutoVectorStoreIndex:
 
         if documents is not None and nodes is not None:
             raise ValueError("documents and nodes cannot be provided at the same time")
+
+        if use_async_embedding and vector_store_type != "SimpleVectorStore":
+            logger.warning(
+                "use_async_embedding is only supported for SimpleVectorStore. Ignoring use_async_embedding.")
 
         # Initialize vector store
         VectorStoreClass = import_vector_store_class(vector_store_type)
@@ -98,6 +107,11 @@ class AutoVectorStoreIndex:
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
         if documents is not None:
+            # TODO: AutoServiceContext'e node parser olarak sentence splitter eklenecek (chunk size vs kullanılarak), sonrasında
+            # parser olarak service_context.node_parser() çağrılacak.
+            # Amaç: use_async_embedding=True olduğunda, VectorStoreIndex'i nodes kullanarak çağırabilmek.
+            # nodes = service_context.node_parser.get_nodes_from_documents(documents=documents)
+            # index = VectorStoreIndex(nodes, use_async, ...)
             index = VectorStoreIndex.from_documents(
                 documents=documents,
                 storage_context=storage_context,
