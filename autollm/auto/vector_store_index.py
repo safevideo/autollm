@@ -168,7 +168,7 @@ class AutoVectorStoreIndex:
             db_exists = os.path.exists(lancedb_uri)
             if exist_ok and overwrite_existing:
                 if db_exists:
-                    shutil.rmtree(lancedb_uri)
+                    shutil.rmtree(lancedb_uri, onerror=on_rm_error)
                     logger.info(f"Overwriting existing database at {lancedb_uri}.")
             elif not exist_ok and overwrite_existing:
                 raise ValueError("Cannot overwrite existing database without exist_ok set to True.")
