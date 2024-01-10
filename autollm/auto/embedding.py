@@ -1,6 +1,6 @@
-import asyncio
-from typing import Any, List
+from typing import Any
 
+from litellm import aembedding as lite_aembedding
 from litellm import embedding as lite_embedding
 from llama_index.bridge.pydantic import Field
 from llama_index.embeddings.base import BaseEmbedding, Embedding
@@ -51,7 +51,7 @@ class AutoEmbedding(BaseEmbedding):
         Returns:
             Embedding: The embedding vector.
         """
-        response = await asyncio.to_thread(lite_embedding, model=self.model, input=[query])
+        response = await lite_aembedding(model=self.model, input=[query])
         return self._parse_embedding_response(response)
 
     def _get_text_embedding(self, text: str) -> Embedding:
