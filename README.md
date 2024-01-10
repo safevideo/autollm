@@ -96,20 +96,24 @@ ______________________________________________________________________
 
 >>> query_engine = AutoQueryEngine.from_defaults(
 ...     documents=documents,
+...     llm_model="gpt-3.5-turbo",
+...     llm_max_tokens="256",
+...     llm_temperature="0.1",
 ...     system_prompt='...',
 ...     query_wrapper_prompt='...',
 ...     enable_cost_calculator=True,
 ...     embed_model="huggingface/BAAI/bge-large-zh",
-...     chunk_size=1024,
+...     chunk_size=512,
+...     chunk_overlap=64,
 ...     context_window=4096,
-...     llm_model="gpt-3.5-turbo",
-...     llm_max_tokens="256",
-...     llm_temperature="0.1",
-...     vector_store_type="LanceDBVectorStore",
-...     lancedb_uri="./.lancedb",
-...     lancedb_table_name="vectors",
-...     enable_metadata_extraction=False,
 ...     similarity_top_k=3,
+...     response_mode="compact",
+...     structured_answer_filtering=False,
+...     vector_store_type="LanceDBVectorStore",
+...     lancedb_uri="./lancedb",
+...     lancedb_table_name="vectors",
+...     exist_ok=True,
+...     overwrite_existing=False,
 ... )
 
 >>> response = query_engine.query("Who is SafeVideo AI?")
