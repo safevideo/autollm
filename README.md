@@ -99,7 +99,7 @@ ______________________________________________________________________
 ...     system_prompt='...',
 ...     query_wrapper_prompt='...',
 ...     enable_cost_calculator=True,
-...     embed_model="local",
+...     embed_model="huggingface/BAAI/bge-large-zh",
 ...     chunk_size=1024,
 ...     context_window=4096,
 ...     llm_model="gpt-3.5-turbo",
