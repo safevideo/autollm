@@ -8,6 +8,7 @@ __version__ = '0.1.8'
 __author__ = 'safevideo'
 __license__ = 'AGPL-3.0'
 
+from autollm.auto.embedding import AutoEmbedding
 from autollm.auto.fastapi_app import AutoFastAPI
 from autollm.auto.llm import AutoLiteLLM
 from autollm.auto.query_engine import AutoQueryEngine
@@ -22,6 +23,6 @@ from autollm.utils.document_reading import (
 
 __all__ = [
     'AutoLiteLLM', 'AutoServiceContext', 'AutoVectorStoreIndex', 'AutoQueryEngine', 'AutoFastAPI',
-    'read_files_as_documents', 'read_github_repo_as_documents', 'read_webpage_as_documents',
+    'AutoEmbedding', 'read_files_as_documents', 'read_github_repo_as_documents', 'read_webpage_as_documents',
     'read_website_as_documents'
 ]
