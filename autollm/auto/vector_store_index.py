@@ -3,8 +3,8 @@ import shutil
 from typing import Optional, Sequence
 
 from llama_index import Document, ServiceContext, StorageContext, VectorStoreIndex
-from llama_index.node_parser import SentenceSplitter
 from llama_index.schema import BaseNode
+from llama_index.vector_stores.types import VectorStore
 
 from autollm.utils.env_utils import on_rm_error
 from autollm.utils.lancedb_vectorstore import LanceDBVectorStore
@@ -103,14 +103,10 @@ class AutoVectorStoreIndex:
             return index
 
         # Initialize vector store index from documents or nodes
-        storage_context = StorageContext.from_defaults(vector_store=vector_store)
-
-        if documents is not None:
-            nodes = service_context.node_parser.get_nodes_from_documents(documents=documents)
-
-        index = VectorStoreIndex(
+        index = AutoVectorStoreIndex.create_index(
+            documents=documents,
             nodes=nodes,
-            storage_context=storage_context,
+            vector_store=vector_store,
             service_context=service_context,
             use_async=use_async,
             show_progress=True)
@@ -186,3 +182,47 @@ class AutoVectorStoreIndex:
                 break
             i += 1
         return f"{base_uri}_{i}"
+
+    @staticmethod
+    def create_index(
+            documents: Optional[Sequence[Document]] = None,
+            nodes: Optional[Sequence[BaseNode]] = None,
+            vector_store: Optional[VectorStore] = None,
+            service_context: Optional[ServiceContext] = None,
+            use_async: Optional[bool] = False,
+            show_progress: Optional[bool] = True):
+        """
+        Sets up the index from documents or nodes.
+
+        Parameters:
+            documents (Sequence[Document]): Documents to initialize the vector store index from.
+            nodes (Sequence[BaseNode]): Nodes to initialize the vector store index from.
+            vector_store (VectorStore): The vector store to initialize the index from.
+            service_context (ServiceContext): Service context for initialization.
+            use_async (bool): Flag to use async embedding.
+            show_progress (bool): Flag to show progress.
+        """
+        if documents is None and nodes is None:
+            raise ValueError("documents or nodes must be provided")
+
+        if documents and nodes:
+            raise ValueError("documents and nodes cannot be provided at the same time")
+
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+        if documents is not None:
+            index = VectorStoreIndex.from_documents(
+                documents=documents,
+                storage_context=storage_context,
+                service_context=service_context,
+                use_async=use_async,
+                show_progress=show_progress)
+        else:
+            index = VectorStoreIndex(
+                nodes=nodes,
+                storage_context=storage_context,
+                service_context=service_context,
+                use_async=use_async,
+                show_progress=show_progress)
+
+        return index
