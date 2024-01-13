@@ -103,7 +103,7 @@ class AutoVectorStoreIndex:
             return index
 
         # Initialize vector store index from documents or nodes
-        index = AutoVectorStoreIndex.create_index(
+        index = AutoVectorStoreIndex._create_index(
             documents=documents,
             nodes=nodes,
             vector_store=vector_store,
@@ -184,7 +184,7 @@ class AutoVectorStoreIndex:
         return f"{base_uri}_{i}"
 
     @staticmethod
-    def create_index(
+    def _create_index(
             documents: Optional[Sequence[Document]] = None,
             nodes: Optional[Sequence[BaseNode]] = None,
             vector_store: Optional[VectorStore] = None,
