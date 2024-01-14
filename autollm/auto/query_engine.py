@@ -45,6 +45,7 @@ def create_query_engine(
         vector_store_type: str = "LanceDBVectorStore",
         lancedb_uri: str = "./.lancedb",
         lancedb_table_name: str = "vectors",
+        use_async: bool = True,
         exist_ok: bool = False,
         overwrite_existing: bool = False,
         **vector_store_kwargs) -> BaseQueryEngine:
@@ -105,6 +106,7 @@ def create_query_engine(
         vector_store_type=vector_store_type,
         lancedb_uri=lancedb_uri,
         lancedb_table_name=lancedb_table_name,
+        use_async=use_async,
         documents=documents,
         nodes=nodes,
         service_context=service_context,
@@ -214,6 +216,7 @@ class AutoQueryEngine:
             vector_store_type: str = "LanceDBVectorStore",
             lancedb_uri: str = "./.lancedb",
             lancedb_table_name: str = "vectors",
+            use_async: bool = True,
             exist_ok: bool = False,
             overwrite_existing: bool = False,
             **vector_store_kwargs) -> BaseQueryEngine:
@@ -277,6 +280,7 @@ class AutoQueryEngine:
             vector_store_type=vector_store_type,
             lancedb_uri=lancedb_uri,
             lancedb_table_name=lancedb_table_name,
+            use_async=use_async,
             exist_ok=exist_ok,
             overwrite_existing=overwrite_existing,
             **vector_store_kwargs)
