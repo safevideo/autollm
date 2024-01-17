@@ -1,3 +1,6 @@
+import random
+import time
+
 import gradio as gr
 
 
@@ -28,16 +31,24 @@ with gr.Blocks() as demo:
                 make_db_private = gr.Checkbox(label="Make db private")
                 create_preview_button = gr.Button("Create Preview")
         with gr.Column():
-            preview_area = gr.Textbox(label="Preview", interactive=False)
-            message_input = gr.Textbox(label="Message llm...")
-            submit_button = gr.Button("Submit")
-            download_api_button = gr.Button("Download API")
-            deploy_button = gr.Button("Deploy to 🚀")
+            with gr.Row():
+                download_api_button = gr.Button("Download API")
+                deploy_button = gr.Button("Deploy to 🤗")
+
+            chatbot = gr.Chatbot()
+            msg = gr.Textbox()
+            clear = gr.ClearButton([msg, chatbot])
+
+            def respond(message, chat_history):
+                bot_message = random.choice(["How are you?", "I love you", "I'm very hungry"])
+                chat_history.append((message, bot_message))
+                time.sleep(2)
+                return "", chat_history
+
+            msg.submit(respond, [msg, chatbot], [msg, chatbot])
 
     # Define interactions
-    create_preview_button.click(create_preview, inputs=[hf_api_key, make_db_private], outputs=[preview_area])
-
-    submit_button.click(submit_message, inputs=[message_input], outputs=[preview_area])
+    # create_preview_button.click(create_preview, inputs=[hf_api_key, make_db_private], outputs=[preview_area])
 
 
 def main():
