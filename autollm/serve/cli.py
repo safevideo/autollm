@@ -20,8 +20,15 @@ with gr.Blocks() as demo:
     with gr.Row():
         with gr.Column():
             with gr.Tab("Create"):
-                # Controls for 'Create' tab
-                pass
+                with gr.Tab("OpenAI"):
+                    api_key_input = gr.Textbox(label="OPENAI_API_KEY", type="password")
+                with gr.Tab("Palm"):
+                    # Controls for 'Palm' tab
+                    pass
+                file_upload = gr.File(label="Add knowledge from files", file_count="multiple")
+                webpage_input = gr.Textbox(label="Add knowledge from webpages")
+                what_to_make_area = gr.Textbox(label="What would you like to make")
+                create_preview_button = gr.Button("Create Preview")
             with gr.Tab("Configure"):
                 # Controls for 'Configure' tab
                 pass
