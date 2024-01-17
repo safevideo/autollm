@@ -2,6 +2,14 @@ import random
 import time
 
 import gradio as gr
+from dotenv import load_dotenv
+from llama_index import Document
+from llama_index.prompts import ChatMessage
+
+from autollm.auto.llm import AutoLiteLLM
+from autollm.auto.query_engine import AutoQueryEngine
+
+load_dotenv()
 
 
 def create_preview(hf_api_key, make_db_private):
@@ -19,6 +27,20 @@ def configure_app(config_file, emoji, name, description, instruction):
     # Here you would process the configuration file and inputs.
     # Placeholder function for the sake of example.
     return "Configuration updated (dummy response)."
+
+
+llm = AutoLiteLLM.from_defaults()
+# query_engine = AutoQueryEngine.from_defaults(documents=[Document.example()])
+
+
+def predict(message, history):
+    messages = [
+        ChatMessage(role="system", content="You are an helpful AI assistant."),
+        ChatMessage(role="user", content=message)
+    ]
+    chat_response = llm.chat(messages).message.content
+    # chat_response = query_engine.query(message).response
+    return chat_response
 
 
 with gr.Blocks() as demo:
@@ -65,17 +87,7 @@ with gr.Blocks() as demo:
                 download_api_button = gr.Button("Download API")
                 deploy_button = gr.Button("Deploy to 🤗")
 
-            chatbot = gr.Chatbot()
-            msg = gr.Textbox()
-            clear = gr.ClearButton([msg, chatbot])
-
-            def respond(message, chat_history):
-                bot_message = random.choice(["How are you?", "I love you", "I'm very hungry"])
-                chat_history.append((message, bot_message))
-                time.sleep(2)
-                return "", chat_history
-
-            msg.submit(respond, [msg, chatbot], [msg, chatbot])
+            gr.ChatInterface(predict)
 
     # Define interactions
 
