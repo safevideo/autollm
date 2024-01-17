@@ -43,8 +43,8 @@ def predict(message, history):
     return chat_response
 
 
-with gr.Blocks() as demo:
-    gr.Markdown("### AutoLLM UI")  # Title for the app
+with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes.colors.teal)) as demo:
+    gr.Markdown("# AutoLLM UI")
     with gr.Row():
         with gr.Column():
             with gr.Tab("Create"):
@@ -58,7 +58,11 @@ with gr.Blocks() as demo:
                     file_upload = gr.File(label="Add knowledge from files", file_count="multiple")
                     webpage_input = gr.Textbox(label="Add knowledge from webpages")
                 what_to_make_area = gr.Textbox(label="What would you like to make?")
-                create_preview_button = gr.Button("Create Preview")
+                with gr.Row():
+                    with gr.Column(scale=1, min_width=10):
+                        placeholder = gr.Button(visible=False, interactive=False)
+                    with gr.Column(scale=1, min_width=100):
+                        create_preview_button = gr.Button("Create Preview", variant="primary")
 
             with gr.Tab("Configure"):
                 with gr.Column(variant="compact"):
@@ -70,7 +74,12 @@ with gr.Blocks() as demo:
                     name_input = gr.Textbox(label="name:")
                     description_input = gr.TextArea(label="description:")
                     instruction_input = gr.TextArea(label="instruction:")
-                    configure_button = gr.Button("Create Preview")
+                    with gr.Row():
+                        with gr.Column(scale=2, min_width=10):
+                            placeholder = gr.Button(visible=False, interactive=False)
+                        with gr.Column(scale=1, min_width=100):
+                            configure_button = gr.Button("Create Preview", variant="primary")
+
                     configure_button.click(
                         configure_app,
                         inputs=[
@@ -81,13 +90,19 @@ with gr.Blocks() as demo:
                 # Controls for 'Export' tab
                 hf_api_key = gr.Textbox(label="Hf api key:", type="password")
                 make_db_private = gr.Checkbox(label="Make db private")
-                create_preview_button = gr.Button("Create Preview")
+                with gr.Row():
+                    with gr.Column(scale=2, min_width=10):
+                        placeholder = gr.Button(visible=False, interactive=False)
+                    with gr.Column(scale=1, min_width=100):
+                        create_preview_button = gr.Button("Create Preview", variant="primary")
         with gr.Column():
             with gr.Row():
                 download_api_button = gr.Button("Download API")
                 deploy_button = gr.Button("Deploy to 🤗")
 
-            gr.ChatInterface(predict)
+            with gr.Row():
+                with gr.Column():
+                    gr.ChatInterface(predict)
 
     # Define interactions
 
