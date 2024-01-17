@@ -71,4 +71,9 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Internet :: WWW/HTTP :: HTTP Servers'
     ],
+    entry_points={
+        'console_scripts': [
+            'autollm=autollm.serve.cli:main',
+        ],
+    },
 )
