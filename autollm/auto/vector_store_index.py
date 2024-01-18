@@ -73,6 +73,7 @@ class AutoVectorStoreIndex:
             raise ValueError("documents and nodes cannot be provided at the same time")
 
         if use_async and vector_store_type != "SimpleVectorStore":
+            use_async = False
             logger.warning("use_async is only supported for SimpleVectorStore. Ignoring use_async.")
 
         # Initialize vector store
