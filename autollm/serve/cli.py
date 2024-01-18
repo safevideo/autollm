@@ -12,10 +12,10 @@ llama_index.set_global_handler("simple")
 
 def configure_app(
         openai_api_key, palm_api_key, uploaded_files, webpage_input, what_to_make_area, config_file, emoji,
-        name, description, instruction, progress):
+        name, description, instruction):
     global query_engine
+    progress = gr.Progress()
 
-    progress: gr.Progress()
     os.environ["OPENAI_API_KEY"] = openai_api_key
     os.environ["PALM_API_KEY"] = palm_api_key
 
