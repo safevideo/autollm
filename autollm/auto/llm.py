@@ -14,6 +14,7 @@ class AutoLiteLLM:
             model: str = "gpt-3.5-turbo",
             max_tokens: Optional[int] = 256,
             temperature: float = 0.1,
+            system_prompt: Optional[str] = None,
             api_base: Optional[str] = None) -> BaseLLM:
         """
         Create any LLM by model name. Check https://docs.litellm.ai/docs/providers for a list of
@@ -33,4 +34,9 @@ class AutoLiteLLM:
             LLM: The initialized LiteLLM instance for given model name and parameter set.
         """
 
-        return LiteLLM(model=model, max_tokens=max_tokens, temperature=temperature, api_base=api_base)
+        return LiteLLM(
+            model=model,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            system_prompt=system_prompt,
+            api_base=api_base)
