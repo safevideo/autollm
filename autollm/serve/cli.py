@@ -1,45 +1,37 @@
-import random
-import time
+import os
 
 import gradio as gr
-from dotenv import load_dotenv
+import llama_index
 from llama_index import Document
-from llama_index.prompts import ChatMessage
 
-from autollm.auto.llm import AutoLiteLLM
 from autollm.auto.query_engine import AutoQueryEngine
+from autollm.utils.document_reading import read_files_as_documents
 
-load_dotenv()
-
-
-def create_preview(hf_api_key, make_db_private):
-    # Placeholder for the logic to create the preview.
-    preview_content = f"API Key: , DB Private: {make_db_private}"
-    return preview_content
+llama_index.set_global_handler("simple")
 
 
-def submit_message(message):
-    # Placeholder for the logic to process the message.
-    return f"Message received: {message}"
+def configure_app(
+        openai_api_key, palm_api_key, uploaded_files, webpage_input, what_to_make_area, config_file, emoji,
+        name, description, instruction):
+    global query_engine
 
+    os.environ["OPENAI_API_KEY"] = openai_api_key
+    os.environ["PALM_API_KEY"] = palm_api_key
 
-def configure_app(config_file, emoji, name, description, instruction):
-    # Here you would process the configuration file and inputs.
-    # Placeholder function for the sake of example.
-    return "Configuration updated (dummy response)."
+    file_documents = read_files_as_documents(input_files=uploaded_files)
 
+    query_engine = AutoQueryEngine.from_defaults(
+        documents=file_documents,
+        use_async=False,
+        system_prompt=instruction,
+        exist_ok=True,
+        overwrite_existing=True)
 
-llm = AutoLiteLLM.from_defaults()
-# query_engine = AutoQueryEngine.from_defaults(documents=[Document.example()])
+    return "Custom GPT configuration updated."
 
 
 def predict(message, history):
-    messages = [
-        ChatMessage(role="system", content="You are an helpful AI assistant."),
-        ChatMessage(role="user", content=message)
-    ]
-    chat_response = llm.chat(messages).message.content
-    # chat_response = query_engine.query(message).response
+    chat_response = query_engine.query(message).response
     return chat_response
 
 
@@ -49,20 +41,20 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
         with gr.Column():
             with gr.Tab("Create"):
                 with gr.Tab("OpenAI"):
-                    api_key_input = gr.Textbox(label="OPENAI_API_KEY", type="password")
+                    openai_api_key_input = gr.Textbox(label="OPENAI_API_KEY", type="password")
                 with gr.Tab("Palm"):
-                    # Controls for 'Palm' tab
-                    pass
+                    palm_api_key_input = gr.Textbox(label="PALM_API_KEY", type="password")
 
                 with gr.Column(variant="compact"):
-                    file_upload = gr.File(label="Add knowledge from files", file_count="multiple")
+                    uploaded_files = gr.File(label="Add knowledge from files", file_count="multiple")
                     webpage_input = gr.Textbox(label="Add knowledge from webpages")
-                what_to_make_area = gr.Textbox(label="What would you like to make?")
+                what_to_make_area = gr.Textbox(label="What would you like to make?", lines=2)
                 with gr.Row():
                     with gr.Column(scale=1, min_width=10):
                         placeholder = gr.Button(visible=False, interactive=False)
                     with gr.Column(scale=1, min_width=100):
                         create_preview_button = gr.Button("Create Preview", variant="primary")
+                create_preview_output = gr.Textbox(label="Preview")
 
             with gr.Tab("Configure"):
                 with gr.Column(variant="compact"):
@@ -78,14 +70,8 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
                         with gr.Column(scale=2, min_width=10):
                             placeholder = gr.Button(visible=False, interactive=False)
                         with gr.Column(scale=1, min_width=100):
-                            configure_button = gr.Button("Create Preview", variant="primary")
-
-                    configure_button.click(
-                        configure_app,
-                        inputs=[
-                            config_file_upload, emoji_input, name_input, description_input, instruction_input
-                        ],
-                        outputs=[])
+                            create_preview_button_2 = gr.Button("Create Preview", variant="primary")
+                configure_output = gr.Textbox(label="Configuration")
             with gr.Tab("Export"):
                 # Controls for 'Export' tab
                 hf_api_key = gr.Textbox(label="Hf api key:", type="password")
@@ -94,7 +80,7 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
                     with gr.Column(scale=2, min_width=10):
                         placeholder = gr.Button(visible=False, interactive=False)
                     with gr.Column(scale=1, min_width=100):
-                        create_preview_button = gr.Button("Create Preview", variant="primary")
+                        create_preview_button_3 = gr.Button("Create Preview", variant="primary")
         with gr.Column():
             with gr.Row():
                 download_api_button = gr.Button("Download API")
@@ -102,9 +88,31 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
 
             with gr.Row():
                 with gr.Column():
-                    gr.ChatInterface(predict)
+                    ai_avatar_image = os.path.join(os.path.dirname(__file__), "avatar.jpg")
 
-    # Define interactions
+                    chatbot = gr.Chatbot(
+                        bubble_full_width=False,
+                        render=False,
+                        show_copy_button=True,
+                        avatar_images=(None, ai_avatar_image))
+                    chat_interface = gr.ChatInterface(predict, chatbot=chatbot)
+
+        create_preview_button.click(
+            configure_app,
+            inputs=[
+                openai_api_key_input, palm_api_key_input, uploaded_files, webpage_input, what_to_make_area,
+                config_file_upload, emoji_input, name_input, description_input, instruction_input
+            ],
+            outputs=[create_preview_output])
+
+        create_preview_button_2.click(
+            configure_app,
+            inputs=[
+                openai_api_key_input, palm_api_key_input, uploaded_files, webpage_input, what_to_make_area,
+                config_file_upload, emoji_input, name_input, description_input, instruction_input
+            ],
+            outputs=[configure_output],
+            scroll_to_output=True)
 
 
 def main():
