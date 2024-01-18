@@ -4,10 +4,14 @@ import gradio as gr
 import llama_index
 from llama_index import Document
 
+from autollm.auto.llm import AutoLiteLLM
 from autollm.auto.query_engine import AutoQueryEngine
+from autollm.serve.prompts import LLM_BUILDER_SYSTEM_PROMPT
 from autollm.utils.document_reading import read_files_as_documents
 
 llama_index.set_global_handler("simple")
+
+llm_builder = AutoLiteLLM.from_defaults(system_prompt=LLM_BUILDER_SYSTEM_PROMPT)
 
 
 def configure_app(
