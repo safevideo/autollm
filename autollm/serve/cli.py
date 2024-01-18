@@ -27,7 +27,7 @@ def configure_app(
         exist_ok=True,
         overwrite_existing=True)
 
-    return "Custom GPT configuration updated."
+    return gr.Textbox("Custom GPT configuration updated.", visible=True)
 
 
 def predict(message, history):
@@ -36,42 +36,53 @@ def predict(message, history):
 
 
 with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes.colors.teal)) as demo:
-    gr.Markdown("# AutoLLM UI")
+    gr.Markdown("# LLM Builder")
     with gr.Row():
         with gr.Column():
             with gr.Tab("Create"):
-                with gr.Tab("OpenAI"):
-                    openai_api_key_input = gr.Textbox(label="OPENAI_API_KEY", type="password")
-                with gr.Tab("Palm"):
-                    palm_api_key_input = gr.Textbox(label="PALM_API_KEY", type="password")
+                with gr.Accordion(label="LLM Provider API key", open=False):
+                    with gr.Tab("OpenAI"):
+                        openai_api_key_input = gr.Textbox(label="OPENAI_API_KEY", type="password")
+                    with gr.Tab("Palm"):
+                        palm_api_key_input = gr.Textbox(label="PALM_API_KEY", type="password")
+                what_to_make_area = gr.Textbox(label="What would you like to make?", lines=2)
 
                 with gr.Column(variant="compact"):
-                    uploaded_files = gr.File(label="Add knowledge from files", file_count="multiple")
-                    webpage_input = gr.Textbox(label="Add knowledge from webpages")
-                what_to_make_area = gr.Textbox(label="What would you like to make?", lines=2)
+                    with gr.Accordion(label="Add knowledge from files", open=False):
+                        uploaded_files = gr.File(label="Add knowledge from files", file_count="multiple")
+                    with gr.Accordion(label="Add knowledge from folder", open=False):
+                        directory_input = gr.File(
+                            label="Add knowledge from directory", file_count="directory")
+                    with gr.Accordion(label="Add knowledge from webpages", open=False):
+                        webpage_input = gr.Textbox(
+                            lines=2,
+                            info="Enter URLs separated by commas.",
+                            placeholder="https://www.example1.com, https://www.example2.com")
+
                 with gr.Row():
                     with gr.Column(scale=1, min_width=10):
                         placeholder = gr.Button(visible=False, interactive=False)
                     with gr.Column(scale=1, min_width=100):
                         create_preview_button = gr.Button("Create Preview", variant="primary")
-                create_preview_output = gr.Textbox(label="Preview")
+                create_preview_output = gr.Textbox(label="Preview", elem_id="preview", visible=False)
 
             with gr.Tab("Configure"):
                 with gr.Column(variant="compact"):
                     detail_html = gr.HTML(
                         '<a href="https://github.com/safevideo/autollm/blob/main/examples/configs/config.example.yaml">click here for example config</a>'
                     )
-                    config_file_upload = gr.File(label="Load .config file", file_count="single")
-                    emoji_input = gr.Textbox(label="emoji:")
-                    name_input = gr.Textbox(label="name:")
-                    description_input = gr.TextArea(label="description:")
-                    instruction_input = gr.TextArea(label="instruction:")
+                    with gr.Accordion(label="Load config file", open=False):
+                        config_file_upload = gr.File(label="Load .config file", file_count="single")
+                    emoji_input = gr.Textbox(label="Emoji")
+                    name_input = gr.Textbox(label="Name")
+                    description_input = gr.Textbox(label="Description")
+                    instruction_input = gr.TextArea(label="Instructions")
                     with gr.Row():
                         with gr.Column(scale=2, min_width=10):
                             placeholder = gr.Button(visible=False, interactive=False)
                         with gr.Column(scale=1, min_width=100):
                             create_preview_button_2 = gr.Button("Create Preview", variant="primary")
-                configure_output = gr.Textbox(label="Configuration")
+                configure_output = gr.Textbox(label="Status")
             with gr.Tab("Export"):
                 # Controls for 'Export' tab
                 hf_api_key = gr.Textbox(label="Hf api key:", type="password")
@@ -83,7 +94,7 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
                         create_preview_button_3 = gr.Button("Create Preview", variant="primary")
         with gr.Column():
             with gr.Row():
-                download_api_button = gr.Button("Download API")
+                download_api_button = gr.Button("Download as API")
                 deploy_button = gr.Button("Deploy to 🤗")
 
             with gr.Row():
