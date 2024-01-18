@@ -12,14 +12,17 @@ llama_index.set_global_handler("simple")
 
 def configure_app(
         openai_api_key, palm_api_key, uploaded_files, webpage_input, what_to_make_area, config_file, emoji,
-        name, description, instruction):
+        name, description, instruction, progress):
     global query_engine
 
+    progress: gr.Progress()
     os.environ["OPENAI_API_KEY"] = openai_api_key
     os.environ["PALM_API_KEY"] = palm_api_key
 
+    progress(0.2, desc="Reading files...")
     file_documents = read_files_as_documents(input_files=uploaded_files)
 
+    progress(0.8, desc="Configuring app..")
     query_engine = AutoQueryEngine.from_defaults(
         documents=file_documents,
         use_async=False,
@@ -27,7 +30,10 @@ def configure_app(
         exist_ok=True,
         overwrite_existing=True)
 
-    return gr.Textbox("Custom GPT configuration updated.", visible=True)
+    # Complete progress
+    progress(1.0, desc="Completed")  # Complete progress bar
+
+    return gr.Textbox("App preview created on the right screen.")
 
 
 def predict(message, history):
@@ -61,10 +67,9 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
 
                 with gr.Row():
                     with gr.Column(scale=1, min_width=10):
-                        placeholder = gr.Button(visible=False, interactive=False)
+                        create_preview_output = gr.Textbox(label="Build preview of the LLM app 👉")
                     with gr.Column(scale=1, min_width=100):
                         create_preview_button = gr.Button("Create Preview", variant="primary")
-                create_preview_output = gr.Textbox(label="Preview", elem_id="preview", visible=False)
 
             with gr.Tab("Configure"):
                 with gr.Column(variant="compact"):
@@ -72,26 +77,23 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
                         '<a href="https://github.com/safevideo/autollm/blob/main/examples/configs/config.example.yaml">click here for example config</a>'
                     )
                     with gr.Accordion(label="Load config file", open=False):
-                        config_file_upload = gr.File(label="Load .config file", file_count="single")
+                        config_file_upload = gr.File(
+                            label="Configurations of LLM, Vector Store..", file_count="single")
                     emoji_input = gr.Textbox(label="Emoji")
                     name_input = gr.Textbox(label="Name")
                     description_input = gr.Textbox(label="Description")
                     instruction_input = gr.TextArea(label="Instructions")
                     with gr.Row():
-                        with gr.Column(scale=2, min_width=10):
+                        with gr.Column(scale=1, min_width=10):
                             placeholder = gr.Button(visible=False, interactive=False)
                         with gr.Column(scale=1, min_width=100):
                             create_preview_button_2 = gr.Button("Create Preview", variant="primary")
-                configure_output = gr.Textbox(label="Status")
+                configure_output = gr.Textbox(label="👆 Click `Create Preview` to see preview of the LLM app")
             with gr.Tab("Export"):
                 # Controls for 'Export' tab
                 hf_api_key = gr.Textbox(label="Hf api key:", type="password")
                 make_db_private = gr.Checkbox(label="Make db private")
-                with gr.Row():
-                    with gr.Column(scale=2, min_width=10):
-                        placeholder = gr.Button(visible=False, interactive=False)
-                    with gr.Column(scale=1, min_width=100):
-                        create_preview_button_3 = gr.Button("Create Preview", variant="primary")
+
         with gr.Column():
             with gr.Row():
                 download_api_button = gr.Button("Download as API")
