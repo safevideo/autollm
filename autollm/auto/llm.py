@@ -28,6 +28,7 @@ class AutoLiteLLM:
         https://docs.litellm.ai/docs/providers for a list of supported models.
             max_tokens: The maximum number of tokens to generate by the LLM.
             temperature: The temperature to use when sampling from the distribution.
+            system_prompt: The system prompt to use for the LLM.
             api_base: The API base URL to use for the LLM.
 
         Returns:
