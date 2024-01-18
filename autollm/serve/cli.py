@@ -47,6 +47,12 @@ def predict(message, history):
 
 with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes.colors.teal)) as demo:
     gr.Markdown("# LLM Builder")
+    gr.Markdown(
+        """
+        <p style='text-align: center'>
+        Powered by <a href='https://github.com/safevideo/autollm' target='_blank'>autollm</a>
+        </p>
+    """)
     with gr.Row():
         with gr.Column():
             with gr.Tab("Create"):
@@ -130,6 +136,13 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
             ],
             outputs=[configure_output],
             scroll_to_output=True)
+
+    gr.Markdown(
+        """
+        <p style='text-align: center'>
+        Automatically created by <a href='https://huggingface.co/safevideo' target='_blank'>LLM Builder</a>
+        </p>
+        """)
 
 
 def main():
