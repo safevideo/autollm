@@ -22,32 +22,38 @@ def create_app(openai_api_key, palm_api_key, what_to_make_area, uploaded_files, 
     progress(0.2, desc="Reading files...")
     file_documents = read_files_as_documents(input_files=uploaded_files)
 
-    progress(0.4, desc="Updating LLM...")
+    progress(0.6, desc="Updating LLM...")
     custom_llm = create_custom_llm(user_prompt=what_to_make_area, config=config_file)
-    emoji, name, description, instruction = update_configurations(custom_llm)
+    emoji, name, description, instructions = update_configurations(custom_llm)
 
     progress(0.8, desc="Configuring app..")
     query_engine = AutoQueryEngine.from_defaults(
         documents=file_documents,
         use_async=False,
-        system_prompt=instruction,
+        system_prompt=custom_llm.instructions,
         exist_ok=True,
         overwrite_existing=True)
 
     # Complete progress
     progress(1.0, desc="Completed")  # Complete progress bar
-    create_preview_output = gr.Textbox("App preview created on the right screen.")
+    create_preview_output = gr.Textbox(
+        """LLM details are updated in configuration tab and LLM App is ready to be previewed 🚀. Start chatting with your custom LLM on the preview 👉"""
+    )
 
-    return create_preview_output, emoji, name, description, instruction
+    return create_preview_output, emoji, name, description, instructions
 
 
 def update_configurations(custom_llm):
     emoji = custom_llm.emoji
     name = custom_llm.name
     description = custom_llm.description
-    instruction = custom_llm.instructions
+    instructions = custom_llm.instructions
 
-    return gr.Textbox(emoji), gr.Textbox(name), gr.Textbox(description), gr.Textbox(instruction)
+    return gr.Textbox(
+        emoji, interactive=True), gr.Textbox(
+            name, interactive=True), gr.Textbox(
+                description, interactive=True), gr.Textbox(
+                    instructions, interactive=True)
 
 
 def update_app():
@@ -91,9 +97,12 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
 
                 with gr.Row():
                     with gr.Column(scale=1, min_width=10):
-                        create_preview_output = gr.Textbox(label="Build preview of the LLM app 👉")
+                        placeholder = gr.Button(visible=False, interactive=False)
                     with gr.Column(scale=1, min_width=100):
                         create_preview_button = gr.Button("Create Preview", variant="primary")
+                create_preview_output = gr.Textbox(
+                    label="Status",
+                    info="Click `Create Preview` 👆 to build preview of the LLM app on the right")
 
             with gr.Tab("Configure"):
                 with gr.Column(variant="compact"):
@@ -128,6 +137,10 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
                     ai_avatar_image = os.path.join(os.path.dirname(__file__), "avatar.jpg")
 
                     chatbot = gr.Chatbot(
+                        value=[[
+                            "Who are you?", "I am your custom LLM 🤖, enhanced with specialized knowledge."
+                        ]],
+                        label="Preview",
                         bubble_full_width=False,
                         render=False,
                         show_copy_button=True,
