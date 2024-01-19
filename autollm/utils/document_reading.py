@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from typing import List, Optional, Sequence
 
+from llama_index import download_loader
 from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index.schema import Document
 
@@ -37,10 +38,13 @@ def read_files_as_documents(
     Returns:
         documents (Sequence[Document]): A sequence of Document objects.
     """
+    JSONReader = download_loader("JSONReader")
+
     # Configure file_extractor to use MarkdownReader for md files
     file_extractor = {
         ".md": MarkdownReader(read_as_single_doc=True),
-        ".pdf": LangchainPDFReader(extract_images=False)
+        ".pdf": LangchainPDFReader(extract_images=False),
+        ".json": JSONReader(),
     }
 
     # Initialize SimpleDirectoryReader
