@@ -5,9 +5,13 @@ from pydantic import BaseModel, Field
 
 from autollm import AutoLiteLLM
 
+DEFAULT_LLM_MODEL = "azure/gpt-4-1106"
+DEFAULT_LLM_MAX_TOKENS = 1024
+DEFAULT_LLM_TEMPERATURE = 0.1
+
 
 class CustomLLM(BaseModel):
-    """Data model for custom LLM creation."""
+    """Data model for custom LLM creation from user prompt."""
 
     emoji: str = Field(
         ...,
@@ -52,17 +56,18 @@ class CustomLLM(BaseModel):
 
 
 PROMPT_TEMPLATE_STR = """\
-Enhance the following user prompt for optimal interaction \
-with a custom LLM model. Ensure the revised prompt maintains the \
-original intent, is clear and detailed, and is adapted to the \
-specific context and task mentioned in the user input.
-
-User Input: {user_prompt}
+Your task is to revise the user prompt and create a JSON object \
+in the format of the CustomLLM data model. The JSON object will \
+be used to create a custom LLM model. Ensure the revised prompt \
+maintains the original intent, is clear and detailed, and is \
+adapted to the specific context and task mentioned in the user input.
 
 1. Analyze the basic prompt to understand its primary purpose and context.
 2. Refine the prompt to be clear, detailed, specific, and tailored to the context and task.
 3. Retain the core elements and intent of the original prompt.
 4. Provide an enhanced version of the prompt, ensuring it is optimized for a LLM model interaction.
+
+User prompt: {user_prompt}
 """
 
 
@@ -71,9 +76,12 @@ def create_custom_llm(user_prompt: str, config: Optional[Any] = None) -> CustomL
     if not user_prompt:
         raise ValueError("Please fill in the area of 'What would you like to make?'")
 
-    llm_model = config.get('llm_model', 'azure/gpt-4-1106')
-    llm_max_tokens = config.get('llm_max_tokens', 1024)
-    llm_temperature = config.get('llm_temperature', 0.1)
+    if not config:
+        config = {}
+
+    llm_model = config.get('llm_model', DEFAULT_LLM_MODEL)
+    llm_max_tokens = config.get('llm_max_tokens', DEFAULT_LLM_MAX_TOKENS)
+    llm_temperature = config.get('llm_temperature', DEFAULT_LLM_TEMPERATURE)
     llm_api_base = config.get('llm_api_base', None)
 
     llm = AutoLiteLLM.from_defaults(
