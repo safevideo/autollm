@@ -1,12 +1,12 @@
 # config.example.yaml
 tasks:
   - name: "summarize"
-    llm_model: "gpt-3.5-turbo"
+    llm_model: "azure/gpt-35-turbo-1106"
     llm_max_tokens: 1028
     llm_temperature: 0.1
     system_prompt: "You are a friendly chatbot that can summarize documents.:"  # System prompt for this task
     enable_cost_calculator: true
-    embed_model: "text-embedding-ada-002"
+    embed_model: "azure/text-embedding-ada-002"
     chunk_size: 512
     chunk_overlap: 64
     context_window: 2048
@@ -15,3 +15,6 @@ tasks:
   - name: "qa"
     system_prompt: "You are a friendly chatbot that can answer questions."  # System prompt for this task
     enable_cost_calculator: false
+    embed_model: "azure/text-embedding-ada-002"
+    llm_model: "azure/gpt-35-turbo-1106"
+    vector_store_type: "SimpleVectorStore"
