@@ -1,8 +1,11 @@
 # Importing the necessary modules for testing and mocking
+import os
 
 from fastapi.testclient import TestClient
-from llama_index import Document, VectorStoreIndex
+from llama_index import Document, ServiceContext, VectorStoreIndex
+from llama_index.embeddings import AzureOpenAIEmbedding
 from llama_index.indices.query.base import BaseQueryEngine
+from llama_index.llms import AzureOpenAI
 
 from autollm.auto.fastapi_app import AutoFastAPI
 from autollm.serve.utils import load_config_and_initialize_engines
@@ -19,6 +22,11 @@ sample_config = {
         'system_prompt': 'You are a friendly chatbot that can answer questions.'
     }
 }
+
+# set the environment variables
+azure_api_key = os.environ.get("AZURE_API_KEY")
+azure_endpoint = os.environ.get("AZURE_API_BASE")
+azure_api_version = os.environ.get("AZURE_API_VERSION")
 
 
 def test_load_config_and_initialize_engines():
@@ -38,8 +46,22 @@ def test_auto_fastapi_from_config():
 
 
 def test_auto_fastapi_from_query_engine():
-    from llama_index import VectorStoreIndex
-    index = VectorStoreIndex.from_documents(documents=documents)
+    llm = AzureOpenAI(
+        engine="gpt-35-turbo-1106",
+        model="gpt-35-turbo-16k",
+        api_key=azure_api_key,
+        azure_endpoint=azure_endpoint,
+        api_version=azure_api_version,
+    )
+    embed_model = AzureOpenAIEmbedding(
+        model="text-embedding-ada-002",
+        deployment_name="text-embedding-ada-002",
+        api_key=azure_api_key,
+        azure_endpoint=azure_endpoint,
+        api_version=azure_api_version,
+    )
+    service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
+    index = VectorStoreIndex.from_documents(documents=documents, service_context=service_context)
     query_engine = index.as_query_engine()
 
     # Create the FastAPI app from the query engine
@@ -65,7 +87,22 @@ def test_query_endpoint_from_config():
 
 def test_query_endpoint_from_query_engine():
     # Create llama-index query engine
-    index = VectorStoreIndex.from_documents(documents=documents)
+    llm = AzureOpenAI(
+        engine="gpt-35-turbo-1106",
+        model="gpt-35-turbo-16k",
+        api_key=azure_api_key,
+        azure_endpoint=azure_endpoint,
+        api_version=azure_api_version,
+    )
+    embed_model = AzureOpenAIEmbedding(
+        model="text-embedding-ada-002",
+        deployment_name="text-embedding-ada-002",
+        api_key=azure_api_key,
+        azure_endpoint=azure_endpoint,
+        api_version=azure_api_version,
+    )
+    service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
+    index = VectorStoreIndex.from_documents(documents=documents, service_context=service_context)
     query_engine = index.as_query_engine()
 
     # Create the FastAPI app from the query engine
