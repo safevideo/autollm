@@ -134,12 +134,9 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
 
             with gr.Row():
                 with gr.Column():
-                    ai_avatar_image = os.path.join(os.path.dirname(__file__), "avatar.jpg")
+                    ai_avatar_image = os.path.join(os.path.dirname(__file__), "serve/avatar.jpg")
 
                     chatbot = gr.Chatbot(
-                        value=[[
-                            "Who are you?", "I am your custom LLM 🤖, enhanced with specialized knowledge."
-                        ]],
                         label="Preview",
                         bubble_full_width=False,
                         render=False,
