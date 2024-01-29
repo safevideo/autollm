@@ -2,6 +2,7 @@ llama-index==0.9.27
 litellm==1.16.21
 uvicorn
 fastapi
-python-dotenv
+python-dotenv==1.0.1
 httpx
 lancedb==0.3.4
+gradio==4.14.0
