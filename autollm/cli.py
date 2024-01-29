@@ -11,13 +11,44 @@ from autollm.utils.document_reading import read_files_as_documents
 
 llama_index.set_global_handler("simple")
 
+DEFAULT_LLM_MODEL = "gpt-4-0125-preview"
+OPENAI_MODELS = [
+    "gpt-4-0125-preview", "gpt-4-1106-preview", "gpt-4", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0613",
+    "gpt-3.5-turbo-1106", "gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-instruct"
+]
+GEMINI_MODELS = [
+    "gemini-pro",
+]
 
-def create_app(openai_api_key, palm_api_key, what_to_make_area, uploaded_files, webpage_input, config_file):
+
+def determine_llm_model(model_selections: list[tuple[str, bool]]) -> str:
+    """
+    Determines which LLM model is selected based on user input.
+
+    Parameters:
+    model_selections (list of tuples): List containing tuples of (model_name, input_variable).
+
+    Returns:
+    str: Selected LLM model name.
+    """
+    selected_models = []
+    for model_name, is_selected in model_selections:
+        if is_selected:
+            selected_models.append(model_name)
+
+    if len(selected_models) != 1:
+        raise ValueError("Exactly one LLM model must be selected.")
+    return selected_models[0]
+
+
+def create_app(
+        use_openai, openai_model, openai_api_key, use_gemini, gemini_model, gemini_api_key, what_to_make_area,
+        uploaded_files, webpage_input, config_file):
     global query_engine
     progress = gr.Progress()
 
     os.environ["OPENAI_API_KEY"] = openai_api_key
-    os.environ["PALM_API_KEY"] = palm_api_key
+    os.environ["GEMINI_API_KEY"] = gemini_api_key
 
     progress(0.2, desc="Reading files...")
     file_documents = read_files_as_documents(input_files=uploaded_files)
@@ -27,12 +58,24 @@ def create_app(openai_api_key, palm_api_key, what_to_make_area, uploaded_files, 
     emoji, name, description, instructions = update_configurations(custom_llm)
 
     progress(0.8, desc="Configuring app..")
+    # List of model selections - easily extendable
+    model_selections = [
+        (openai_model, use_openai),
+        (gemini_model, use_gemini),
+        # Add new models here as ('model_name', use_model),
+    ]
+
+    # Determine the selected LLM provider
+    selected_llm_model = determine_llm_model(model_selections)
+
+    # Update the query engine with the selected LLM model
     query_engine = AutoQueryEngine.from_defaults(
         documents=file_documents,
         use_async=False,
         system_prompt=custom_llm.instructions,
         exist_ok=True,
-        overwrite_existing=True)
+        overwrite_existing=True,
+        llm_model=selected_llm_model)
 
     # Complete progress
     progress(1.0, desc="Completed")  # Complete progress bar
@@ -76,11 +119,23 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
     with gr.Row():
         with gr.Column():
             with gr.Tab("Create"):
-                with gr.Accordion(label="LLM Provider API key", open=False):
+                with gr.Accordion(label="LLM Model (default openai gpt-4-0125-preview)", open=False):
                     with gr.Tab("OpenAI"):
+                        use_openai = gr.Checkbox(value=True, label="Use OpenAI", interactive=True)
+                        openai_model = gr.Dropdown(
+                            label="OpenAI Model",
+                            choices=OPENAI_MODELS,
+                            value=DEFAULT_LLM_MODEL,
+                            interactive=True)
                         openai_api_key_input = gr.Textbox(label="OPENAI_API_KEY", type="password")
-                    with gr.Tab("Palm"):
-                        palm_api_key_input = gr.Textbox(label="PALM_API_KEY", type="password")
+                    with gr.Tab("Gemini"):
+                        use_gemini = gr.Checkbox(value=False, label="Use Gemini", interactive=True)
+                        gemini_model = gr.Dropdown(
+                            label="Gemini Model", choices=GEMINI_MODELS, value="gemini-pro", interactive=True)
+                        gemini_api_key_input = gr.Textbox(label="GEMINI_API_KEY", type="password")
+                with gr.Accordion(label="Embedding Model API key", open=False):
+                    with gr.Tab("HuggingFace TGI"):
+                        hf_api_key_input = gr.Textbox(label="HF_API_KEY", type="password")
                 what_to_make_area = gr.Textbox(label="What would you like to make?", lines=2)
 
                 with gr.Column(variant="compact"):
@@ -147,15 +202,15 @@ with gr.Blocks(title="autollm UI", theme=gr.themes.Default(primary_hue=gr.themes
         create_preview_button.click(
             create_app,
             inputs=[
-                openai_api_key_input, palm_api_key_input, what_to_make_area, uploaded_files, webpage_input,
-                config_file_upload
+                use_openai, openai_model, openai_api_key_input, use_gemini, gemini_model,
+                gemini_api_key_input, what_to_make_area, uploaded_files, webpage_input, config_file_upload
             ],
             outputs=[create_preview_output, emoji, name, description, instruction])
 
         update_preview_button.click(
             update_app,
             inputs=[
-                openai_api_key_input, palm_api_key_input, what_to_make_area, uploaded_files, webpage_input,
+                openai_api_key_input, gemini_api_key_input, what_to_make_area, uploaded_files, webpage_input,
                 config_file_upload, emoji, name, description, instruction
             ],
             outputs=[configure_output],
